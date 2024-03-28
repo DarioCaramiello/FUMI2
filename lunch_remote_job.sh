@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 home_container="/home/fumi2/FUMI2"
 home_webserv="/home/d.caramiello"
 scratch_frontend="/scratch/d.caramiello/tmp"
@@ -17,5 +16,9 @@ hours=HOURS
 temperature=TEMPERATURE 
 dst_dir=DSTDIR
 
-ssh frontend "mkdir $scratch_frontend_user/$user_key; mkdir $scratch_frontend_user/$user_key/$user_key; module load slurm; source $smoketracer_path/etc/profile; cd $smoketracer_path; ./smoketracer $lon $lat $date $hours $temperature $scratch_frontend_user/$user_key/out_job;" 
+
+su fumi2 
+ssh d.caramiello@193.205.230.5 "mkdir $scratch_frontend_user/$user_key; mkdir $scratch_frontend_user/$user_key/$user_key;"
+
+# module load slurm; source $smoketracer_path/etc/profile; cd $smoketracer_path; ./smoketracer $lon $lat $date $hours $temperature $scratch_frontend_user/$user_key/out_job;" 
 
