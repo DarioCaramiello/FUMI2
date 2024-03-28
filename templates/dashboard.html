@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/ionicons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/Login-Form-Basic-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/VentasPro-Login.css') }}">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+            <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#"><img style="width: 32px;height: 33px;" src="{{ url_for('static', filename='/img/Regione_Campania-logo-0A3FAC65C4-seeklogo.com.png') }}">
+                    <div class="sidebar-brand-icon rotate-n-15"></div>
+                    <div class="sidebar-brand-text mx-3"><span>FUMI2</span></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazione multipla</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profilo">
+                            <!-- <i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3);"></i> -->
+                            <i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255, 255, 255, 0.3);border-right-color: rgba(255, 255, 255, 0.3);border-bottom-color: rgba(255, 255, 255, 0.3);border-left-color: rgba(0, 0, 0, 0.3);"></i>
+                            <span style="color: var(--bs-accordion-bg);">Profilo</span>
+                        </a>
+                    </li>
+                    <li class="nav-item"></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button><small class="form-text fs-4 fw-semibold" style="width: auto;height: auto;">Benvenuto! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
+                        <form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
+                            <div class="input-group"></div>
+                        </form>
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <div class="d-none d-sm-block topbar-divider"></div>
+                        </ul><small class="form-text" style="margin-left: 0px;width: 250.1641px;font-weight: bold;"><h4><b>{{ user }}</b></h4></small><a href="{{ url_for('logout') }}" class="btn btn-primary">Log Out</a>
+                    </div>
+                </nav>
+                <div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+                    <div class="container">
+                        <div class="container text-center"><small class="form-text fs-4 fw-semibold " style="width: auto;height: auto; ">Benvenuto al sistema FUMI!<br />Potrai accedere alle diverse modalita dalla dashboard o dal menu a lato. </small></div>
+                        <div class="row" style="padding-bottom: 25px; padding-top: 25px;">
+                            <div class="col">
+                                <a href="interattivo" style="text-decoration:none;">
+                                    <div class="card">
+                                        <div class="card-body" style="margin: auto;">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h4>Simulazione Singola</h4>
+                                                </div>
+                                                <div class="col text-end"><i class="fas fa-eye fa-2x text-gray-300"></i></div>
+                                            </div>
+                                            <h6 class="text-muted card-subtitle mb-2" style="color: rgba(128, 128, 128, 0.767);">Simulazione e visualizzazione</h6>
+                                            <p class="card-text" style="color: Gray;">In questa sezione potrai sottomettere singole simulazioni e vederne il risultato.</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="coda" style="text-decoration:none;">                            
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h4>Simulazioni Multiple</h4>
+                                                </div>
+                                                <div class="col text-end"><i class="fas fa-list-ol fa-2x text-gray-300"></i></div>
+                                            </div>
+                                            <h6 class="text-muted card-subtitle mb-2" style="color: rgba(128, 128, 128, 0.767);">Simulazioni parallele</h6>
+                                            <p class="card-text" style="color: Gray;">In questa sezione potrai sottomettere più operazioni contemporaneamente e vederne lo stato associato nella coda.</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-bottom: 25px;">
+                            <div class="col">
+                                <a href="storico" style="text-decoration:none;">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h4>Storico</h4>
+                                                </div>
+                                                <div class="col text-end"><i class="fas fa-table fa-2x text-gray-300"></i></div>
+                                            </div>
+                                            <h6 class="text-muted card-subtitle mb-2" style="color: rgba(128, 128, 128, 0.767);">Lista delle simulazioni effettuate</h6>
+                                            <p class="card-text" style="color: Gray;">In questa sezione potrai vedere tutte le simulazioni sottomesse in passato. Inoltre potrai mostrare, scaricare ed eliminare i dati ad esse associati.</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="profilo" style="text-decoration:none;">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h4>Profilo</h4>
+                                                </div>
+                                                <div class="col text-end"><i class="far fa-user-circle fa-2x text-gray-300"></i></div>
+                                            </div>
+                                            <h6 class="text-muted card-subtitle mb-2" style="color: rgba(128, 128, 128, 0.767);">Informazioni Personali</h6>
+                                            <p class="card-text" style="color: Gray;">In questa sezione potrai accedere al tuo profilo e mostrare, modificare e salvare le tue informazioni personali.</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span>Copyright © Uniparthenope 2023</span></div>
+                </div>
+            </footer>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+
+</html>

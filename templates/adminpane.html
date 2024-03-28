@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Pannello Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/Login-Form-Basic-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/VentasPro-Login.css') }}">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+            <div class="container-fluid d-flex flex-column p-0">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                    <div class="sidebar-brand-icon rotate-n-15">
+                        <i class="far fa-calendar-minus"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3">
+                        <span><br>FUMI2 ADMIN</span>
+                    </div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid">
+                        <button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="col fs-5 fw-semibold">
+                            <small class="form-text">Benvenuto Admin! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
+                        </div>
+                        <a href="{{ url_for('logout') }}" class="btn btn-primary">Log Out</a>
+                    </div>
+                </nav>
+
+
+                <div class="container-fluid">
+                    <form method="POST">
+                        <div class="d-sm-flex justify-content-between align-items-center mb-4" style="border-style: none;">
+                            <h3 class="text-dark mb-0">Aggiungi Utente</h3>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col" style="margin-bottom: 20px;">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1">
+                                                            <span>Username</span>
+                                                        </div>
+                                                        <input type="text" name="username" id="username_admin" style="width: 162px;" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card shadow border-start-primary py-2">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1">
+                                                            <span style="color: var(--bs-purple);">Nome</span>
+                                                        </div>
+                                                        <div class="text-dark fw-bold h5 mb-0">
+                                                            <span><input type="text" name="firstname" id="firstname" style="width: 160px;" required></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="card shadow border-start-success py-2" style="margin-bottom: 10px;height: 100.8047px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                    <span>Cognome</span>
+                                                </div>
+                                                <div class="text-dark fw-bold h5 mb-0">
+                                                    <span><input type="text" id="lastname_admin" name="lastname" style="width: 168px;" required></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card shadow border-start-success py-2">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                    <span style="color: var(--bs-indigo);">Struttura</span>
+                                                </div>
+                                                <input type="text" name="struttura" id="struttura" style="width: 160px;" list="strutture_list" required>
+                                                <datalist id="strutture_list">
+                                                    <option value="Regione Campania">
+                                                    <option value="IZSM">
+                                                    <option value="ASL Avellino">
+                                                    <option value="ASL Benevento">
+                                                    <option value="ASL Caserta">
+                                                    <option value="ASL Napoli 1 Centro">
+                                                    <option value="ASL Napoli 2 Nord">
+                                                    <option value="ASL Napoli 3 Sud">
+                                                </datalist>
+                                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                                            </div>
+                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> --> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="card shadow border-start-success py-2" style="margin-bottom: 10px;height: 100.8047px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                    <span>Cellulare</span>
+                                                </div>
+                                                <div class="text-dark fw-bold h5 mb-0">
+                                                    <span><input type="number" id="cellulare_label" name="cellulare" style="width: 168px;"></span>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card shadow border-start-success py-2">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                    <span style="color: var(--bs-indigo);">Ruolo</span>
+                                                </div>
+                                                <input type="text" name="ruolo" id="ruolo_label" style="width: 160px;" list="ruoli_list" required>
+                                                <datalist id="ruoli_list">
+                                                    <option value="Amministratore">
+                                                    <option value="Regione Campania">
+                                                    <option value="IZSM">
+                                                    <option value="Servizi Veterinari">
+                                                    <option value="SIAN">
+                                                </datalist>
+                                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                                            </div>
+                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="card shadow border-start-success py-2" style="margin-bottom: 10px;height: 100.8047px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                    <span>Email</span>
+                                                </div>
+                                                <div class="text-dark fw-bold h5 mb-0">
+                                                    <span><input type="email" id="email_admin" name="email" style="width: 168px;" required></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card shadow border-start-success py-2" style="margin-bottom: 10px;height: 100.8047px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <button name="savebutton" class="btn btn-success" type="submit" style="font-weight: bold;margin-bottom: 5px;">Salva<i class="fas fa-save"></i></button>
+                                                <button class="btn btn-danger" type="reset" style="font-weight: bold;margin-top: 5px;">Reset&nbsp;<i class="fas fa-trash"></i></button> 
+                                            </div>
+                                            <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+<!--
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row">
+                                        <button name="savebutton" class="btn btn-success" type="submit" style="font-weight: bold;margin-bottom: 5px;">Salva<i class="fas fa-save"></i></button>
+                                    </div>
+                                    <div class="row">
+                                        <button class="btn btn-danger" type="reset" style="font-weight: bold;margin-top: 5px;">Reset&nbsp;<i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        -->
+
+                         <!--
+                        
+
+                        <h3 class="text-dark mb-4">Aggiungi Utente</h3>
+                    
+                        <div class="row" style="margin-bottom: 26px;">
+                            
+                            <div class="col">
+                                <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Username</span></div><input type="text" name="username" id="username_admin" style="width: 162px;" required>
+                                                <div class="text-dark fw-bold h5 mb-0"></div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-user-alt fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col">
+                                <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>nome</span></div><input type="text" name="firstname" id="firstname_admin" style="width: 162px;" required>
+                                                <div class="text-dark fw-bold h5 mb-0"></div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-pen-fancy fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col">
+                                <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>cognome</span></div><input type="text" name="lastname" id="lastname_admin" style="width: 162px;" required>
+                                                <div class="text-dark fw-bold h5 mb-0"></div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-signature fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <div class="row" style="margin-bottom: 26px;">
+                        
+                            <div class="col">
+                                <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2" id="dropdownContainer">
+                                                <div class="text-uppercase text-primary fw-bold text-xs mb-1">
+                                                    <span>Struttura</span>
+                                                </div>
+                                                <input type="text" name="struttura" id="struttura_label" style="width: 162px;" list="strutture_list" required>
+                                                <datalist id="strutture_list">
+                                                    <option value="Regione Campania">
+                                                    <option value="IZSM">
+                                                    <option value="ASL Avellino">
+                                                    <option value="ASL Benevento">
+                                                    <option value="ASL Caserta">
+                                                    <option value="ASL Napoli 1 Centro">
+                                                    <option value="ASL Napoli 2 Nord">
+                                                    <option value="ASL Napoli 3 Sud">
+                                                </datalist>
+                                                <div class="text-dark fw-bold h5 mb-0"></div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-mail-bulk fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Ruolo</span></div>
+                                                <input type="text" name="ruolo" id="ruolo_label" style="width: 162px;" list="ruoli_list" required>
+                                                <datalist id="ruoli_list">
+                                                    <option value="Amministratore">
+                                                    <option value="Regione Campania">
+                                                    <option value="IZSM">
+                                                    <option value="Servizi Veterinari">
+                                                    <option value="SIAN">
+                                                </datalist>
+                                                <div class="text-dark fw-bold h5 mb-0"></div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-mail-bulk fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <div class="col">
+                                <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col">
+                                                <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>EMAIL</span></div><input type="email" name="email" id="email_admin" style="width: 162px;" required>
+                                                <div class="text-dark fw-bold h5 mb-0"></div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-mail-bulk fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <button name="savebutton" class="btn btn-success" type="submit" style="font-weight: bold;margin-bottom: 5px;">Salva<i class="fas fa-save"></i></button>
+                                </div>
+                                <div class="row">
+                                    <button class="btn btn-danger" type="reset" style="font-weight: bold;margin-top: 5px;">Reset&nbsp;<i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                                                      
+                    </form>
+                </div>
+                -->
+                    
+
+                <!--
+                <form method="POST">
+
+                        <h3 class="text-dark mb-4">Aggiungi Utente</h3>
+
+                        <div class="row" style="margin-bottom: 26px;">
+
+                            <div class="col" style="width: auto;">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Username</span></div><input type="text" name="username" id="username_admin" style="width: 162px;" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-user-alt fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>nome</span></div><input type="text" name="firstname" id="firstname_admin" style="width: 162px;" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-pen-fancy fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>cognome</span></div><input type="text" name="lastname" id="lastname_admin" style="width: 162px;" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-signature fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2" id="dropdownContainer">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1">
+                                                            <span>Struttura</span>
+                                                        </div>
+                                                        <input type="text" name="struttura" id="email_admin" style="width: 162px;" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-mail-bulk fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Ruolo</span></div><input type="text" name="ruolo" id="email_admin" style="width: 162px;" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-mail-bulk fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>EMAIL</span></div><input type="email" name="email" id="email_admin" style="width: 162px;" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-mail-bulk fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <button name="savebutton" class="btn btn-success" type="submit" style="font-weight: bold;margin-bottom: 5px;">Salva<i class="fas fa-save"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><button class="btn btn-danger" type="reset" style="font-weight: bold;margin-top: 5px;">Reset&nbsp;<i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </form> 
+ -->
+
+                    <div class="row">
+                        <p>{% for mesg in get_flashed_messages() %}
+                            <div class="alert {{ category }} text-center"><b>{{ mesg }}</b></div>
+                            {% endfor %}</p>
+                    </div>
+                    <h3 class="text-dark mb-4">Lista Utenti</h3>
+                    <div class="card shadow">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="text-primary fw-bold m-0">Info Dipendenti</h6>
+                            <form method="POST">
+                                <button class="btn btn-danger" type="submit" name="aresetusers" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
+                            </form>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                
+                                    <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                        <div class="input-group">
+                                            <div class="col-sm-3">
+                                            <input class="bg-light form-control border-0 large" type="text" name="searchvalue" id="searchnamebar" placeholder="Cerca ...">
+                                            </div>
+                                            <button class="btn btn-primary py-0" id="searchnamebutton" name="searchbutton" form="searchform" type="submit"><i class="fas fa-search"></i></button>
+                                        
+                                    </form>
+                                    <label class="form-label"></label> 
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                                <table class="table my-0" id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Cognome</th>
+                                            <th>Username</th>
+                                            <th>Cellulare</th>
+                                            <th>Email</th>
+                                            <th>Struttura</th>
+                                            <th>Ruolo</th>
+                                            <th>Attivo</th>
+                                            <th>Azioni</th>
+                                            <th>Dati Storage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in users %}
+                                        <tr>
+                                            <td>{{ user[0] }}</td>
+                                            <td>{{ user[1] }}</td>
+                                            <td>{{ user[2] }}</td>
+                                            <td>{{ user[3] }}</td>
+                                            <td>{{ user[4] }}</td>
+                                            <td>{{ user[5] }}</td>
+                                            <td>{{ user[6] }}</td>
+
+                                            {% if users[loop.index0][7] == 1 %}
+                                                <td>SI</td>
+                                            {% else %}
+                                                <td>NO</td>
+                                            {% endif %}
+                                    
+                                          <form method="post"> 
+                                            <input type="hidden" id="{{ users[loop.index0][2] }}" name="confirmed"> 
+                                          <td><button class="btn btn-warning" type="submit" name="passwordbutton" value="{{ users[loop.index0][2] }}" style="margin: 0px;margin-right: 2px;color: var(--bs-card-bg);font-weight: bold;">Password&nbsp;<i class="fas fa-key"></i></button>
+                                            <button class="btn btn-danger" type="submit" name="deletebutton" onclick="confirmation('{{ users[loop.index0][2] }}')" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button>
+                                            
+                                            {% if users[loop.index0][7] == '0' %}
+                                                <button class="btn btn-success" type="submit" name="activatebutton" value="{{ users[loop.index0][2] }}"style="margin-left: 2px;font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attiva&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-user-check"></i></button>
+                                            {% else %}
+                                                <button class="btn btn-secondary" type="submit" name="deactivatebutton" value="{{ users[loop.index0][2] }}" style="margin-left: 2px;font-weight: bold;"> &nbsp;Disattiva&nbsp;<i class="fas fa-user-alt-slash"></i></button>
+                                            {% endif %}
+                                        </td>
+                                            <td>
+                                                <div class="form-check">
+                                                    {% if users[loop.index0][7] == '1' %}
+                                                        <input id="formCheck-1" name="datacheck" class="form-check-input" type="checkbox" />
+                                                        <label class="form-check-label" for="formCheck-1">Cancella</label>
+                                                    {% else %}
+                                                        <input id="formCheck-1" name="datacheck" class="form-check-input" type="checkbox" disabled/>
+                                                        <label class="form-check-label" for="formCheck-1">Cancella</label>
+                                                    {% endif %}
+                                                </div>
+                                              </td>                                            
+                                        </form>
+
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                
+                                <div class="pagination">
+                                    {{ pagination.links }}
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 align-self-center">
+                                    <p id="datatable_info_admin" role="status" aria-live="polite">{{ datainfo[0] }} - {{ datainfo[1] }} elementi di {{ datainfo[2] }} totali.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer"><small class="form-text" style="text-align: center;margin-left: auto;margin-right: auto;"></small>
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span class="sdsd"></span></div>
+                </div>
+            </footer>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>   
+    <script src="{{ url_for('static', filename='js/adminutils.js') }}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <!-- <title>Coda Operazioni</title> -->
+    <title>Simulazione Multipla</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/ionicons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/Login-Form-Basic-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/VentasPro-Login.css') }}">
+
+    <link rel="stylesheet" href="http://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <script src="http://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+
+</head>
+
+<body id="page-top" onload="checkUpdate()">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+            <div class="container-fluid d-flex flex-column p-0">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#"><img style="width: 32px;height: 33px;" src="{{ url_for('static', filename='/img/Regione_Campania-logo-0A3FAC65C4-seeklogo.com.png') }}">
+                    <div class="sidebar-brand-icon rotate-n-15"></div>
+                    <div class="sidebar-brand-text mx-3"><span>FUMI2</span></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazione multipla</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3);"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li> -->
+                    <li class="nav-item"></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button><small class="form-text fs-4 fw-semibold" style="width: auto;height: auto;">Benvenuto! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
+                        <form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
+                            <div class="input-group"></div>
+                        </form>
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <div class="d-none d-sm-block topbar-divider"></div>
+                        </ul>
+                        </ul><small class="form-text" style="margin-left: 0px;width: 250.1641px; font-weight:bold"><h4><b>{{ user }}</b></h4></small><a href="{{ url_for('logout') }}" class="btn btn-primary">Log Out</a>
+
+                    </div>
+                </nav>
+                <div class="container-fluid" style="width: auto;height: auto;">
+                    <form method="POST">
+                        <div class="d-sm-flex justify-content-between align-items-center mb-4" style="border-style: none;">
+                            <h3 class="text-dark mb-0">Simulazioni in Coda</h3>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col" style="margin-bottom: 20px;">
+                                        <div class="card shadow border-start-primary py-2" style="margin-bottom: 10px;width: auto;height: auto;">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>AREA</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" value="a" required>
+                                                        <div class="text-dark fw-bold h5 mb-0"></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card shadow border-start-primary py-2">
+                                            <div class="card-body">
+                                                <div class="row align-items-center no-gutters">
+                                                    <div class="col me-2">
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-purple);">Longitudine</span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" value=1 required></span></div>
+                                                    </div>
+                                                    <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card shadow border-start-success py-2" style="margin-bottom: 10px;height: 100.8047px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>DATA</span></div>
+                                                <div class="text-dark fw-bold h5 mb-0"><span><input id="date_dash" type="date" name="data" style="width: 168px;" value="03/03/2023" required></span></div>
+                                            </div>
+                                            <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card shadow border-start-success py-2">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" value="1" required>
+                                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                                            </div>
+                                            <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card shadow border-start-info py-2" style="margin-bottom: 10px;height: 100.805px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span style="color: var(--bs-red);">ora</span></div>
+                                                <div class="text-dark fw-bold h5 mb-0">
+
+                                                    <select name="hours" class="Input">
+                                                        {% for hour in hours %}
+                                                        <option value="{{ hour }}">{{ hour }}</option>
+                                                        {% endfor %}
+                                                    </select><br><br>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-auto"><i class="far fa-clock fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card shadow border-start-info py-2">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Temperatura</span></div><input type="number" name="temp" id="temp_dash" style="width: 160px;" value=1 required>
+                                                <div class="row g-0 align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="text-dark fw-bold h5 mb-0 me-3"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-temperature-high fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card shadow border-start-warning py-2" style="margin-bottom: 10px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" min="1" name="durata" id="duration_dash" style="width: 160px;" value=1 required>
+                                                <div class="text-dark fw-bold h5 mb-0"></div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-long-arrow-alt-right fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 25px;">
+                            <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;"><button class="btn btn-danger btn-lg" type="submit" style="margin-left: 5px;font-weight: bold;width: auto;height: auto;margin-right: 8px;">&nbsp;Reset&nbsp;<i class="fas fa-eraser"></i>&nbsp; &nbsp;</button>
+                                <button class="btn btn-success btn-lg" type="submit" name="generate" id="start-button" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Genera&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button></div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <p>{% for mesg in get_flashed_messages() %}
+                            <div class="alert alert-danger text-center"><b>{{ mesg }}</b></div>
+                            {% endfor %}</p>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                    <div class="progress" style="margin-bottom: 25px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100" ></div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-lg-5 col-xl-4" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);width: AUTO;">
+                            <div class="card shadow mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Coda Operazioni</h6>
+                                    <form method="POST">
+                                        <button class="btn btn-danger" type="submit" name="qresetjob" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
+                                    </form>
+                                </div>
+                                <div class="card-body">
+                                    <input type="hidden" id="update" , value="{{ update }}">
+                                    <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                                        <table class="table", id="queue-table">
+                                            <thead>
+                                                <tr>
+                                                    <!-- <th>Identificativo</th> -->
+                                                    <!-- <th>Stato</th> -->
+                                                    <th>Num. Simulazione</th>
+                                                    <th>Area</th>
+                                                    <th>Data</th>
+                                                    <th>Ora</th>
+                                                    <th>Durata</th>
+                                                    <th>Longitudine</th>
+                                                    <th>Latitudine</th>
+                                                    <th>Temperatura</th>
+                                                    <th>Stato Workflow Simulazione</th>
+                                                    <!-- <th>Azioni</th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for job in queue %}
+                                                    <tr>
+                                                        <td>{{ job[7] }}</td>
+                                                        <td>{{ job[8] }}</td>
+                                                        <td>{{ job[0] }}</td>
+                                                        <td>{{ job[1] }}</td>
+                                                        <td>{{ job[2] }}</td>
+                                                        <td>{{ job[3] }}</td>
+                                                        <td>{{ job[4] }}</td>
+                                                        <td>{{ job[5] }}</td>
+                                                        <td>{{ job[6] }}</td>
+                                                        <td>
+                                                            <form method="POST">
+                                                                {% if job[9] == 0 %}
+                                                                    <button class="btn btn-danger" type="submit" name="qcancel" value="{{ datainfo[0]+loop.index0 }}" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
+                                                                {% else %}
+                                                                    <button class="btn btn-danger" type="submit" name="qcancel" style="margin-left: 2px;font-weight: bold;" disabled><i class="fas fa-trash"></i></button>
+                                                                {% endif %}
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                <tr></tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr></tr>
+                                            </tfoot>
+                                        </table>
+                                        <div class="pagination">
+                                            {{ pagination.links }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        
+                                        <div class="col-md-6 align-self-center">
+                                            <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">{{ datainfo[0] }} - {{ datainfo[1] }} elementi di {{ datainfo[2] }} totali.</p>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="col"></div>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span>Copyright © Uniparthenope 2023</span></div>
+                </div>
+            </footer>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/KML.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        
+        var intervalId;
+
+        function checkUpdate() {
+            // If the update value is true, we call the updateProgress funct
+            if (document.getElementById("update").value==="True") {
+                console.log("starting update")
+                startUpdate()
+            } else {
+                stopUpdate()
+            }
+        }
+
+        function startUpdate() {
+            console.log("update started")
+            intervalId = setInterval(updateProgress, 1000);
+        }
+
+        function stopUpdate() {
+            clearInterval(intervalId);
+        }
+    
+        function updateProgress() {
+            // Send an AJAX request to the '/queue' route
+            fetch('/queue')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    
+                    var myTable = document.getElementById('queue-table');
+                            
+                    for (let i=0; i<data.tsize; i++) {
+                        
+                        if (data.states[i] == -1)
+                            myTable.rows[i+1].cells[1].innerHTML = 'IN ATTESA';
+                        else if (data.states[i] == 0)
+                            myTable.rows[i+1].cells[1].innerHTML = 'IN CORSO';
+                        else if (data.states[i] == 1)
+                            myTable.rows[i+1].cells[1].innerHTML = 'COMPLETATO';
+                        else if (data.states[i] == 2)
+                            myTable.rows[i+1].cells[1].innerHTML = 'ERRORE';
+                        else if (data.states[i] == 3)
+                            myTable.rows[i+1].cells[1].innerHTML = 'CANCELLATO';
+                        
+                    }
+
+                    if (data.qsize === 0) {
+                        clearInterval(intervalId);
+                    }
+                });
+        }
+    
+    </script>
+
+</body>
+
+</html>

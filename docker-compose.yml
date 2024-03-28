@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  app:
+    container_name: container_FUMI2
+    build:
+      dockerfile: Dockerfile-fumi2
+    ports:
+      - "8085:80"
+    # volumes:
+    # -  /home/d.caramiello/FUMI2/src/root:/home/fumi2/FUMI2/dati_prova
+    depends_on:
+      - db
+    networks:
+      - net_FUMI2
+
+  db:
+    container_name: container_postgres_FUMI2
+    build: 
+      dockerfile: Dockerfile-postgres
+    environment:
+      - POSTGRES_PASSWORD=S3cret
+      - POSTGRES_USER=citizix_user
+      - POSTGRES_DB=citizix_db
+    volumes:
+      - /home/d.caramiello/FUMI2-final/FUMI2.sql:/docker-entrypoint-initdb.d/FUMI2.sql
+    restart:
+      always
+    networks:
+      - net_FUMI2
+
+  #sqlite3:
+  #  container_name: container_SQLite3_FUMI2
+  #  image: nouchka/sqlite3:latest
+  #  stdin_open: true
+  #  tty: true
+  #  volumes:
+  #    - /home/d.caramiello/FUMI2/src/gdal/sqlite-autoconf-3400100/fumi2new.db:/root/db/fumi2new.db
+  #    - /home/d.caramiello/FUMI2/src/gdal/sqlite-autoconf-3400100/FUMI2.sql:/root/db/FUMI2.sql
+  #  command: [".open /root/db/fumi2new.db"]
+  #  networks:
+  #    - net_FUMI2
+
+networks:
+  net_FUMI2:
+    driver: bridge

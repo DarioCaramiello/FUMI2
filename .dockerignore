@@ -1,0 +1,11 @@
+*.log
+/tmp
+/root
+/dev
+/gdal
+/fumi2-maps
+activate
+script_docker_compose_rm.sh
+.dockerignore
+Dockerfile-fumi2
+Dockerfile-postgres

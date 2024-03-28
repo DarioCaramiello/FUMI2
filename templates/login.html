@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Login FUMI2</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/Login-Form-Basic-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/VentasPro-Login.css') }}">
+</head>
+
+<body class="bg-gradient-primary" style="background: url(&quot;static/img/regione.png&quot;) center / cover repeat-x;">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-12 col-xl-10">
+                <div class="card shadow-lg o-hidden border-0 my-5">
+                    <div class="card-body p-0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="py-4 py-xl-5">
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+                    <div class="card mb-5" style="backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);">
+                        <div class="card-body d-flex flex-column align-items-center" style="backdrop-filter: opacity(0);-webkit-backdrop-filter: opacity(0);"><img src="{{url_for('static', filename='img/Regione_Campania-logo-0A3FAC65C4-seeklogo.com.png')}}" style="width: 80px;min-width: 80px;height: 80px;margin-bottom: 10px;">
+                            <p>Inserisci le credenziali per accedere al sistem FUMI.</p>
+                            <p>{% for mesg in get_flashed_messages() %}
+                            <div class="alert alert-danger text-center">Errore: {{ mesg }}</div>
+                            {% endfor %}</p>
+                            <form class="text-center" method="post">
+                                <div class="mb-3"><input class="form-control form-control" type="username" id="user_login" name="username" placeholder="Username"></div>
+                                <div class="mb-3"><input class="form-control form-control" type="password" id="password_login" name="password" placeholder="Password"></div>
+                                <div class="mb-3"><button class="btn btn-primary d-block w-100" id="loginbutton_login" type="submit" style="backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);">Login</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+</body>
+
+</html>

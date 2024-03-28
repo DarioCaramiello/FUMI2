@@ -1,0 +1,15 @@
+FROM postgres:14.1
+
+RUN apt-get update
+
+RUN apt-get install -y postgresql-14-postgis-3
+
+RUN apt-get install -y cron
+
+RUN mkdir -p /FUMI2/backup_db_postgres && mkdir -p /FUMI2/backup 
+
+COPY backup_script.sh /FUMI2/backup_db_postgres/backup_script.sh
+
+RUN chmod +x /FUMI2/backup_db_postgres/backup_script.sh && echo "0 20 * * * /FUMI2/backup_db_postgres/backup_script.sh" | crontab -
+ 
+CMD ["/usr/local/bin/docker-entrypoint.sh","postgres"]

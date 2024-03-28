@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <!-- <title>Storico</title> --> 
+    <title>Simulazioni</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/Login-Form-Basic-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/VentasPro-Login.css') }}">
+
+    <link rel="stylesheet" href="http://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <script src="http://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+
+    <style>
+        form {
+            display: inline;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+            <div class="container-fluid d-flex flex-column p-0">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#"><img style="width: 32px;height: 33px;" src="static/img/Regione_Campania-logo-0A3FAC65C4-seeklogo.com.png">
+                    <div class="sidebar-brand-icon rotate-n-15"></div>
+                    <div class="sidebar-brand-text mx-3"><span>FUMI2</span></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazione multipla</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3);"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li>
+                    <li class="nav-item"></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button><small class="form-text fs-4 fw-semibold" style="width: 2348.234px;">Benvenuto! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <div class="d-none d-sm-block topbar-divider"></div>
+                        </ul><small class="form-text" style="margin-left: 0px;width: 450.1641px; font-weight:bold"><h4><b>{{ user }}</b></h4></small><a href="{{ url_for('logout') }}" class="btn btn-primary" style="white-space: nowrap; text-align: center;">Log Out</a>
+                    </div>
+                </nav>
+                <div class="container-fluid">
+                    <h3 class="text-dark mb-4">Storico operazioni</h3>
+                    <div class="card shadow" style="margin-right: auto;margin-left: 0px;">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="text-primary fw-bold m-0">Job Sottomessi</h6>
+                            <form method="POST">
+                                <button class="btn btn-danger" type="submit" name="hresetjob" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
+                            </form>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                    <div class="input-group">
+                                        <div class="col-sm-3">
+                                            <input class="bg-light form-control border-0 large" type="text" name="hsearchvalue" id="searchnamebar" placeholder="Cerca ...">
+                                        </div>
+                                        <button class="btn btn-primary py-0" id="searchnamebutton" name="hsearchbutton" form="searchform" type="submit"><i class="fas fa-search"></i></button>
+
+                                </form>
+                                <label class="form-label"></label>
+                                </div>
+                                <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                                    <table class="table my-0" id="dataTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Area</th>
+                                                <th>Data</th>
+                                                <th>Ora</th>
+                                                <th>Durata</th>
+                                                <th>Longitudine</th>
+                                                <th>Latitudine</th>
+                                                <th>Temperatura</th>
+                                                <th>Dati Meteo</th>
+                                                <th>ID</th>
+                                                <th>Azioni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for job in jobs %}
+                                            <tr>
+                                                <td>{{ job[0] }}</td>
+                                                <td>{{ job[1] }}</td>
+                                                <td>{{ job[2] }}</td>
+                                                <td>{{ job[3] }}</td>
+                                                <td>{{ job[4] }}</td>
+                                                <td>{{ job[5] }}</td>
+                                                <td>{{ job[6] }}</td>
+                                                <td>{{ job[7] }}</td>
+                                                <td>{{ job[8] }}</td>
+                                                <form action="{{ url_for('download') }}" method="post">
+                                                    <td>
+                                                        <button class="btn btn-success" type="submit" name="hdownloadbutton" value="{{ jobs[loop.index0][8] }}" style="margin-left: 2px;font-weight: bold;">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>
+                                                </form>
+                                                <form method="post">
+                                                    <button class="btn btn-warning" type="submit" name="hshowbutton" value="{{ jobs[loop.index0][8] }}" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
+                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" value="{{ jobs[loop.index0][8] }}" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button></td>
+    
+                                                </td>
+                                                </form>
+                                            </tr>
+                                            {% endfor %}
+                                            <tr></tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr></tr>
+                                        </tfoot>
+                                    </table>
+                                    <div class="pagination">
+                                        {{ pagination.links }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <!--
+                                    <div class="col-md-6 align-self-center">
+                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">{{ datainfo[0] }} - {{ datainfo[1] }} elementi di {{ datainfo[2] }} totali.</p>
+                                    </div>
+                                    -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row" style="margin-top: 30px;margin-right: auto;margin-left: auto;">
+                            <div class="col-lg-7 col-xl-8">
+                                <div class="card shadow mb-4" style="margin-left: 12px;">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva - ID corrente: {{ jobid }}</h6>
+
+                                        <form method="POST">
+                                            <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
+                                        </form>
+
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <div width="100%" height="400" style="height: 520px;" id="map"></div>
+                                        <input type="hidden" id="kml_file" , value="{{ kml_path }}">
+                                        <input type="hidden" id="markers" , value="{{ markers }}">
+                                        <script>
+                                            // Make basemap
+                                            const map = new L.Map('map', {
+                                                attributionControl: false,
+                                                center: new L.LatLng(40.833189, 14.298180),
+                                                zoom: 11,
+                                                dragging: true
+                                            });
+                                            const osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+                                            
+                                            const markers = {{ markers|safe }}
+                                            for (let i = 0; i < markers.length; i++) {
+                                                var m = L.marker([markers[i][1], markers[i][2]]).addTo(map);
+                                                m.bindPopup("<b>IDENTIFICATIVO</b><br> " + markers[i][0]);
+                                            }
+
+
+                                            map.addLayer(osm);
+
+                                            // Load kml file
+                                            var path = document.getElementById("kml_file").value
+                                            var tmp_path = "{{ url_for('static', filename='TMP') }}"
+                                            var filepath = tmp_path.replace('TMP', path);
+                                            fetch(filepath, {
+                                                    mode: 'cors'
+                                                })
+                                                .then(res => res.text())
+                                                .then(kmltext => {
+                                                    // Create new kml overlay
+                                                    const parser = new DOMParser();
+                                                    const kml = parser.parseFromString(kmltext, 'text/xml');
+                                                    const track = new L.KML(kml);
+                                                    map.addLayer(track);
+
+                                                    // Adjust map to show the kml
+                                                    const bounds = track.getBounds();
+                                                    //map.fitBounds(bounds);
+                                                });
+
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="bg-white sticky-footer">
+                    <div class="container my-auto">
+                        <div class="text-center my-auto copyright"><span>Copyright © Uniparthenope 2023</span></div>
+                    </div>
+                </footer>
+            </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+        </div>
+        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/KML.js') }}"></script>
+</body>
+
+</html>
