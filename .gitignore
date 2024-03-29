@@ -2,5 +2,4 @@
 /id_ecdsa.pub
 /known_hosts
 /.gitignore
-static/KML
-static/storage
+static/KML/storage/
