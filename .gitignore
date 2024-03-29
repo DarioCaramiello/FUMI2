@@ -3,4 +3,4 @@
 /known_hosts
 /.gitignore
 static/KML/storage/
-/secret
+secrets/
