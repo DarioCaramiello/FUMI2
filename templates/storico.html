@@ -153,6 +153,25 @@
                                         <input type="hidden" id="kml_file" , value="{{ kml_path }}">
                                         <input type="hidden" id="markers" , value="{{ markers }}">
                                         <script>
+                                        
+                                            var map = new ol.Map({
+                                                target: 'map',
+                                                layers: [
+                                                    new ol.layer.Tile({
+                                                        source: new ol.source.XYZ({
+                                                            // url: 'https://tile.thunderforest.com/neighbourhood/{z}/{x}/{y}.png?apikey=41243fd1949946cf82ab777c68b39278' --- thunderforest site
+                                                            // https://cloud.maptiler.com/maps/
+                                                            url: 'https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=yNolbzVOYm8BH5d911a9' 
+                                                        }),
+                                                    }),
+                                                ],
+                                                view: new ol.View({
+                                                    center: [0, 0],
+                                                    zoom: 0,
+                                                })
+                                            });
+                                            
+                                            /*
                                             // Make basemap
                                             const map = new L.Map('map', {
                                                 attributionControl: false,
@@ -190,7 +209,7 @@
                                                     const bounds = track.getBounds();
                                                     //map.fitBounds(bounds);
                                                 });
-
+                                                /*
                                         </script>
                                     </div>
                                 </div>

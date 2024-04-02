@@ -420,14 +420,9 @@ def interattivo():
     # If the request is post (user submitted options)
     if request.method == "POST":
 
-        print("[*] resquest.method : " + str(request.method), flush=True)
-        print("[*] request.form : " + str(request.form), flush=True)
+        print("[*] RequestManager.py : var request.form = " + str(request.form), flush=True)
 
-        # First case: the button pressed is the generation one, so we need to 
-        # fetch values from the textfields 
         if "generate" in request.form:
-
-            print("[*] case : GENERATE ", flush=True)
 
             # First thing, we check if a job is already running: since this is the interactive dashboard,
             # We must assert that only a job is active at a time; if the user wants to submit more than one jobs,
@@ -457,21 +452,8 @@ def interattivo():
             latit = request.form.get("lat")
             temp = request.form.get("temp")
 
-            # We first check if start+duration is major than 24 (limit hours)
-            # if int(ora)+int(durata) > 24:
-            #     flash("Non è stato possibile inserire l'operazione in coda. La durata supera le 24 ore!") 
-            #     return redirect(url_for('interattivo'))
-
-            # Formatting the parameters in a list for the request manager 
-            #<TAG> (AREA) <IDATE> (YYYYMMDD) <START HOUR> <DURATION> <LONG> <LAT> <TEMP> <TMP:DATA>
-            # NOTE: TMP:DATA will be substituted by the sbatchmanager with the datafile downloaded with 
-            # the given info. It's a placeholder needed for the manager to feed the parameters of the nc dumper.
-            # NOTE 2: We do str(int(ora)) because we fetch the hour in 00/01/02...09/10....23 format, but for the 
-            # first 10 numbers we need only the number 1,2,3..9 without the 0 near.
-
             job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, longit, latit, temp, data]
-
-            # Submit the job with the params fetched to the virtual machine
+            
             # jobid = sbatchmanager.run(user, job_info)
 
             session['durata'] = durata
@@ -491,6 +473,9 @@ def interattivo():
                 # session['kmlpath_dash'] = ""
                 session['user_dir_name'] = user_dir_name
 
+                job_info[0] = user_dir_name
+                job_info.append(str(user))
+                db.new_job(job_info)
 
                 dagonManager = DagonOnServiceManager('http://193.205.230.6:1727/list', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
 
@@ -1012,18 +997,20 @@ def storico():
         return redirect(url_for('adminpane'))
     
     user = session["user"]
-    
+
     last_access=db.get_last_access(user)
 
     # Fetch only completed jobs relative to the user
     jobs = db.fetch_jobs(user)
 
+    print("[*] RequestManager.py : var jobs = " + str(jobs), flush=True)
+
     # Create a dictionary containing the long, lat and jobid
-    # markers = []
+    markers = []
 
     # Create, for each job, an entry composed by: jobid-lat-long
-    # for job in jobs:
-    #     markers.append([job[8], job[5], job[4]])
+    for job in jobs:
+         markers.append([job[8], job[5], job[4]])
 
     # KML path: we point an empty kml initially 
     # kml_path = safe_join("KML", "dummy.kml")
@@ -1036,22 +1023,26 @@ def storico():
     # search_page = None
 
     # If a button has been pressed
-    # if request.method=="POST":  
+    if request.method=="POST":  
         
         # The first case is the search button: we need to query again the 
         # jobs specifying a particular element as query key.
-        # if "hsearchbutton" in request.form:
+        if "hsearchbutton" in request.form:
             
             # Given the search value as filter 
-            # search_filter = request.form.get("hsearchvalue").lower()
+            search_filter = request.form.get("hsearchvalue").lower()
+            
+            print("[*] RequestManager.py : var search_filter = " + str(search_filter), flush=True)
 
             # New users are the filtered match 
-            # jobs = filters(search_filter, jobs)
+            jobs = filters(search_filter, jobs)
+
+            print("[*] RequestManager.py : var jobs = " + str(jobs), flush=True)
 
             # Insert into session a value representing the actual search
-            # session["searchval"] = search_filter
+            session["searchval"] = search_filter
 
-            # search_page = 1
+            search_page = 1
 
         # The second case is the show button related to a specific KML file associated 
         # with a specific JOBID. on press, we must load that kml file into the map.

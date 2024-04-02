@@ -98,7 +98,6 @@ class SbatchManager():
         formatted_date_for_user_dir = date.strftime("%Y%m%dz%H%M%S")
         formatted_date_for_job = str(params[2]) + "Z" + str(params[3]).zfill(2)  
         
-        # subprocess.run(['cp', '{}/tmpgen_runjob.sh'.format(script_path), '{}/tmpgen_runjob_var.sh'.format(script_path)])
         subprocess.run(['cp', '{}/lunch_remote_job.sh'.format(script_path), '{}/lunch_remote_job_var.sh'.format(script_path)])
         self.substitute("{}/lunch_remote_job.sh".format(script_path), "USER", user)
         self.substitute("{}/lunch_remote_job.sh".format(script_path), "DATE", formatted_date_for_user_dir)
@@ -112,12 +111,10 @@ class SbatchManager():
 
         # questo lo devo eseguire in background 
         # subprocess.run("./tmpgen_runjob.sh", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        subprocess.run("./lunch_remote_job.sh")
-
+        # subprocess.run("./lunch_remote_job.sh")
 
         # per testare in locale decommentare la riga successiva 
         return user + "-" + formatted_date_for_user_dir + "-" + millis
-        
         
         '''
         if os.path.isdir(script_path + "/static/KML/" + user + "-" + formatted_date_for_user_dir + "-" + millis + "-out"):

@@ -312,7 +312,7 @@ class DBProxy():
                     FROM JOBINFO 
                     JOIN JOBS ON JOBINFO.JOBID=JOBS.JOBID 
                     JOIN \"USER\" ON JOBS.USERNAME=\"USER\".USERNAME 
-                    WHERE \"USER\".USERNAME='{}' 
+                    WHERE \"USER\".USERNAME=\'{}\' 
                     AND JOBINFO.COMPLETED=1;
                 '''.format(user)
         
@@ -359,13 +359,10 @@ class DBProxy():
     # Simple function that insert a new job into the database, into the JOBINFO relative table.
     def new_job(self, jobinfo):
 
-        # The jobinfo array is so composed: 
-        # jobid, area, formatdata, ora, durata, longit, latit, temp, formatfile, user. 
-        # We use those information to use the corrent index to pass into the insert value.
-        # Initially a job is always not completed. 
-
-        completed = 0
-        query_jobinfo = "INSERT INTO JOBINFO VALUES \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')".format(
+        # print("[*] DBManager.py : var jobinfo = " + str(jobinfo), flush=True)
+        # completed = 0
+        completed = 1
+        query_jobinfo = "INSERT INTO JOBINFO VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')".format(
             jobinfo[0],
             jobinfo[1],
             jobinfo[2],
@@ -378,13 +375,9 @@ class DBProxy():
             completed
         )
 
-        print(query_jobinfo, flush=True)
-        # We also create a query for the JOBS table in which we insert the jobid and the user 
-        # that made the request. 
-        query_jobs = "INSERT INTO JOBS VALUES(\'{}\', {})".format(jobinfo[0], jobinfo[9])
-        print(query_jobs)
+        # print("[*] DBManager.py : var query_jobinfo = " + query_jobinfo, flush=True)
+        query_jobs = "INSERT INTO JOBS VALUES(\'{}\', \'{}\')".format(jobinfo[0], jobinfo[9])
 
-        # Then we execute both query. 
         self.__db.update(query_jobs)
         self.__db.update(query_jobinfo)
 
