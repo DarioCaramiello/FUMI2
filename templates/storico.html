@@ -17,6 +17,19 @@
     <script src="http://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
 
     <style>
+         .bottone {
+            width: 100px;
+            height: 40px;
+            margin: 5px; /* Aggiunto un margine tra i bottoni per separarli */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px; /* Bordo arrotondato per i bottoni */
+            font-size: 13px;
+            cursor: pointer;
+            align-items: center;
+        }
+
         form {
             display: inline;
         }
@@ -35,7 +48,7 @@
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazione multipla</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3);"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li>
                     <li class="nav-item"></li>
@@ -135,12 +148,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <div class="row" style="margin-top: 30px;margin-right: auto;margin-left: auto;">
-                            <div class="col-lg-7 col-xl-8">
+
+                    <!-- <div class="col"> -->
+                        
+                        <!-- <div class="row" style="margin-top: 30px;margin-right: auto;margin-left: auto;"> --> 
+
+                            <div class="col-lg-4 col-xl-4">
+                                <!-- style="margin-left: 12px;" -->
                                 <div class="card shadow mb-4" style="margin-left: 12px;">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva - ID corrente: {{ jobid }}</h6>
+                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva</h6>
 
                                         <form method="POST">
                                             <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
@@ -149,73 +166,41 @@
                                         </button>
                                     </div>
                                     <div class="card-body">
-                                        <div width="100%" height="400" style="height: 520px;" id="map"></div>
-                                        <input type="hidden" id="kml_file" , value="{{ kml_path }}">
-                                        <input type="hidden" id="markers" , value="{{ markers }}">
-                                        <script>
-                                        
-                                            var map = new ol.Map({
-                                                target: 'map',
-                                                layers: [
-                                                    new ol.layer.Tile({
-                                                        source: new ol.source.XYZ({
-                                                            // url: 'https://tile.thunderforest.com/neighbourhood/{z}/{x}/{y}.png?apikey=41243fd1949946cf82ab777c68b39278' --- thunderforest site
-                                                            // https://cloud.maptiler.com/maps/
-                                                            url: 'https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=yNolbzVOYm8BH5d911a9' 
-                                                        }),
-                                                    }),
-                                                ],
-                                                view: new ol.View({
-                                                    center: [0, 0],
-                                                    zoom: 0,
-                                                })
-                                            });
-                                            
-                                            /*
-                                            // Make basemap
-                                            const map = new L.Map('map', {
-                                                attributionControl: false,
-                                                center: new L.LatLng(40.833189, 14.298180),
-                                                zoom: 11,
-                                                dragging: true
-                                            });
-                                            const osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-                                            
-                                            const markers = {{ markers|safe }}
-                                            for (let i = 0; i < markers.length; i++) {
-                                                var m = L.marker([markers[i][1], markers[i][2]]).addTo(map);
-                                                m.bindPopup("<b>IDENTIFICATIVO</b><br> " + markers[i][0]);
-                                            }
-
-
-                                            map.addLayer(osm);
-
-                                            // Load kml file
-                                            var path = document.getElementById("kml_file").value
-                                            var tmp_path = "{{ url_for('static', filename='TMP') }}"
-                                            var filepath = tmp_path.replace('TMP', path);
-                                            fetch(filepath, {
-                                                    mode: 'cors'
-                                                })
-                                                .then(res => res.text())
-                                                .then(kmltext => {
-                                                    // Create new kml overlay
-                                                    const parser = new DOMParser();
-                                                    const kml = parser.parseFromString(kmltext, 'text/xml');
-                                                    const track = new L.KML(kml);
-                                                    map.addLayer(track);
-
-                                                    // Adjust map to show the kml
-                                                    const bounds = track.getBounds();
-                                                    //map.fitBounds(bounds);
-                                                });
-                                                /*
-                                        </script>
+                                        <div width="100%" style="height: 520px;" id="map"></div>
+                                        <!-- <input type="hidden" id="kml_file" , value="{{ kml_path }}">
+                                        <input type="hidden" id="markers" , value="{{ markers }}"> -->
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+
+                            <div class="col-lg-4 col-xl-4" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
+
+                                <div class="card shadow mb-4" style="margin-left: 12px;">
+
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="text-primary fw-bold m-0">Gestione simulazione e visualizzazione</h6>
+                                    </div>
+                                    
+                                    <!-- <div class="row"> --> 
+                                        <div class="card-body" style="height: 50%; margin-bottom: 0px;">
+                                            <input type="range" min="0" max="120" value="0" step="5" class="slider" id="myRange" list="list_values">
+                                            <p>Ora : <span id="demo"></span></p>
+                                            <p>Data : 
+                                                <select id="days_list">
+                                                </select>
+                                            </p>
+                                        </div>
+        
+                                        <div class="card-body">
+                                            <button id="bottoneSovrapposizione" class="bottone" onclick="sovraCheck()">Sovrapposizione</button>
+                                            <button id="buffer3km" class="bottone" onclick="bufferCheck3km()">Buffer: 3km</button>
+                                            <button id="buffer500mt" class="bottone" onclick="bufferCheck500mt()">Buffer: 500mt</button>
+                                        </div>
+                                    <!-- </div> -->  
+                                </div>
+                            </div>
+                        <!-- </div> -->
+                    <!-- </div> -->
                 </div>
                 <footer class="bg-white sticky-footer">
                     <div class="container my-auto">
@@ -228,6 +213,26 @@
         <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/KML.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/source/TileWMS.js"></script>
+        <script>                     
+            var map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.XYZ({
+                            // url: 'https://tile.thunderforest.com/neighbourhood/{z}/{x}/{y}.png?apikey=41243fd1949946cf82ab777c68b39278' --- thunderforest site
+                            // https://cloud.maptiler.com/maps/
+                            url: 'https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=yNolbzVOYm8BH5d911a9' 
+                        }),
+                    }),
+                ],
+                view: new ol.View({
+                    center: [0, 0],
+                    zoom: 0,
+                })
+            });  
+        </script>
 </body>
 
 </html>

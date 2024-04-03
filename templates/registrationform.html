@@ -31,7 +31,7 @@
                     <div class="card mb-5">
                         <div class="card-body p-sm-5">
                             <h2 class="text-center mb-4">Benvenuto al sistema FUMI!</h2>
-                            <p style="text-align: center;color: rgb(52,57,59);">Inserisci una password, il tuo numero di telefono e la tua data di nascita.</p>
+                            <p style="text-align: center;color: rgb(52,57,59);">Inserisci una nuova password.</p>
                             <form method="post">
                                 <div class="mb-3">
                                     <input class="form-control" type="password" id="password_form" name="password" placeholder="Password">
@@ -39,15 +39,17 @@
                                 <div class="mb-3">
                                     <input class="form-control" type="password" id="password_form" name="password-again" placeholder="Immetti di nuovo la Password">
                                 </div>
+                                <!--
                                 <div class="mb-3">
                                     <input class="form-control" type="text" id="telephone_form" name="email" placeholder="Telefono">
                                 </div>
+                                -->
                                 <input class="form-control" name="date" id="date_form" type="date">
                                 <div class="mb-3">
 
                                 </div>
                                 <div>
-                                    <button class="btn btn-primary d-block w-100" id="registrationbutton_form" name="registrationbutton" type="submit">Registrati</button>
+                                    <button class="btn btn-primary d-block w-100" id="registrationbutton_form" name="registrationbutton" type="submit">Conferma</button>
                                 </div>
                             </form>
                             <p>{% for mesg in get_flashed_messages() %}

@@ -31,7 +31,7 @@
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazione multipla</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
                     <!-- <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3);"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li> -->
                     <li class="nav-item"></li>
@@ -150,6 +150,7 @@
                                 </div>
                             </div>
                             <div class="col">
+
                                 <div class="card shadow border-start-warning py-2" style="margin-bottom: 10px;">
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
@@ -161,7 +162,21 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="card shadow border-start-info py-2">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Codice GISA</span></div><input type="text" name="codice_gisa" id="codice_gisa" style="width: 160px;">
+                                                <div class="row g-0 align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="text-dark fw-bold h5 mb-0 me-3"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-barcode fa-2x text-gray-300"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row" style="margin-bottom: 25px;">
@@ -199,8 +214,8 @@
                                         <table class="table", id="queue-table">
                                             <thead>
                                                 <tr>
-                                                    <!-- <th>Identificativo</th> -->
-                                                    <!-- <th>Stato</th> -->
+                                                    <th>Identificativo</th>
+                                                    <th>Stato</th>
                                                     <th>Num. Simulazione</th>
                                                     <th>Area</th>
                                                     <th>Data</th>
@@ -209,33 +224,62 @@
                                                     <th>Longitudine</th>
                                                     <th>Latitudine</th>
                                                     <th>Temperatura</th>
-                                                    <th>Stato Workflow Simulazione</th>
-                                                    <!-- <th>Azioni</th> -->
+                                                    <th>Azioni</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for job in queue %}
                                                     <tr>
-                                                        <td>{{ job[7] }}</td>
-                                                        <td>{{ job[8] }}</td>
-                                                        <td>{{ job[0] }}</td>
-                                                        <td>{{ job[1] }}</td>
-                                                        <td>{{ job[2] }}</td>
-                                                        <td>{{ job[3] }}</td>
-                                                        <td>{{ job[4] }}</td>
-                                                        <td>{{ job[5] }}</td>
-                                                        <td>{{ job[6] }}</td>
+                                                        <td>75242</td>
+                                                        <td>IN CORSO</td>
+                                                        <td>Napoli</td>
+                                                        <td>19/03/2024</td>
+                                                        <td>00</td>
+                                                        <td>10</td>
+                                                        <td>14.32745</td>
+                                                        <td>40.84294</td>
+                                                        <td>1200</td>
                                                         <td>
                                                             <form method="POST">
-                                                                {% if job[9] == 0 %}
-                                                                    <button class="btn btn-danger" type="submit" name="qcancel" value="{{ datainfo[0]+loop.index0 }}" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
-                                                                {% else %}
-                                                                    <button class="btn btn-danger" type="submit" name="qcancel" style="margin-left: 2px;font-weight: bold;" disabled><i class="fas fa-trash"></i></button>
-                                                                {% endif %}
+                                                                    <button class="btn btn-danger" type="submit" name="qcancel" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
                                                             </form>
                                                         </td>
                                                     </tr>
-                                                {% endfor %}
+
+
+                                                    <tr>
+                                                        <td>73422</td>
+                                                        <td> IN ATTESA </td>
+                                                        <td>Napoli</td>
+                                                        <td>03/01/2023</td>
+                                                        <td>03</td>
+                                                        <td>3</td>
+                                                        <td>14.32745</td>
+                                                        <td>40.84294</td>
+                                                        <td>1200</td>
+                                                        
+                                                        <td>
+                                                            <form method="POST">
+                                                                    <button class="btn btn-danger" type="submit" name="qcancel"  style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>75543</td>
+                                                        <td> IN CORSO </td>
+                                                        <td>Caserta</td>
+                                                        <td>13/02/2023</td>
+                                                        <td>03</td>
+                                                        <td>30</td>
+                                                        <td>14.3311</td>
+                                                        <td>41.0723</td>
+                                                        <td>1000</td>
+                                                        <td>
+                                                            <form method="POST">
+                                                                    <button class="btn btn-danger" type="submit" name="qcancel" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
                                                 <tr></tr>
                                             </tbody>
                                             <tfoot>

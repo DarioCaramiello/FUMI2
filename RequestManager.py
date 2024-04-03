@@ -371,7 +371,8 @@ def dashboard():
     # Rendering with those info 
     return render_template("dashboard.html", user=user, last_access=last_access)
 
-@app.route('/interattivo', methods=['POST', 'GET'])
+# @app.route('/interattivo', methods=['POST', 'GET'])
+@app.route('/simulazione-singola', methods=['POST', 'GET'])
 def interattivo():
     # Redirect to login if user not in session
     if "user" not in session:
@@ -604,7 +605,8 @@ def interattivo():
                             hours=hours)
                             # kmlpath = session["kmlpath_dash"])
   
-@app.route('/coda', methods=['POST', 'GET'])
+# @app.route('/coda', methods=['POST', 'GET'])
+@app.route('/simulazioni-multiple', methods=['POST', 'GET'])
 def coda():
 
     # Redirect to login if user not in session
