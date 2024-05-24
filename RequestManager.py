@@ -24,6 +24,8 @@ from SbatchManager import SbatchManager
 from NcDumper import NCODump
 from ParserManager import Parser
 from DagonOnServiceManager import DagonOnServiceManager
+from ComuniManager import ComuniManager
+
 
 ##############
 ##  INIT   ##
@@ -55,6 +57,9 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 #app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
 mail = Mail(app)
+
+
+comuni_manager = ComuniManager('/home/fumi2/FUMI2/ArchivioComuni/centroidi_comuni.geojson')
 
 ##############
 ## HELPERS ##
@@ -286,6 +291,10 @@ def get_progress():
 ## WEBSITE ##
 #############
 
+# @app.route('/test-comuni', methods=['POST', 'GET'])
+# def test_comuni():
+#     print(str(comuni_manager.SearchDataRange(40.8, 41.5, 13.7, 15.1)), flush=True)
+
 @app.route('/', methods=['POST', 'GET'])
 def login():
 
@@ -373,7 +382,7 @@ def dashboard():
 
 # @app.route('/interattivo', methods=['POST', 'GET'])
 @app.route('/simulazione-singola', methods=['POST', 'GET'])
-def interattivo():
+def simulazione_singola():
     # Redirect to login if user not in session
     if "user" not in session:
         return redirect(url_for('login'))

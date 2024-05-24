@@ -30,6 +30,40 @@
             align-items: center;
         }
 
+        .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 15px;
+        border-radius: 5px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+        }
+
+        .slider:hover {
+        opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #04AA6D;
+        cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #04AA6D;
+        cursor: pointer;
+        }
+
         form {
             display: inline;
         }
@@ -90,42 +124,62 @@
                                     <table class="table my-0" id="dataTable">
                                         <thead>
                                             <tr>
-                                                <th>Area</th>
+                                                <th>Descrizione</th>
                                                 <th>Data</th>
                                                 <th>Ora</th>
                                                 <th>Durata</th>
                                                 <th>Longitudine</th>
                                                 <th>Latitudine</th>
                                                 <th>Temperatura</th>
-                                                <th>Dati Meteo</th>
+                                                <!-- <th>Dati Meteo</th>--> 
+                                                <th>Codice GISA</th>
                                                 <th>ID</th>
                                                 <th>Azioni</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for job in jobs %}
                                             <tr>
-                                                <td>{{ job[0] }}</td>
-                                                <td>{{ job[1] }}</td>
-                                                <td>{{ job[2] }}</td>
-                                                <td>{{ job[3] }}</td>
-                                                <td>{{ job[4] }}</td>
-                                                <td>{{ job[5] }}</td>
-                                                <td>{{ job[6] }}</td>
-                                                <td>{{ job[7] }}</td>
-                                                <td>{{ job[8] }}</td>
+                                                <td>Napoli</td>
+                                                <td>19/03/2024</td>
+                                                <td>00</td>
+                                                <td>10</td>
+                                                <td>14.32745</td>
+                                                <td>40.84294</td>
+                                                <td>1200</td>
+                                                <td> // </td>
+                                                <td>75242</td>
                                                 <form action="{{ url_for('download') }}" method="post">
                                                     <td>
-                                                        <button class="btn btn-success" type="submit" name="hdownloadbutton" value="{{ jobs[loop.index0][8] }}" style="margin-left: 2px;font-weight: bold;">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>
+                                                        <button class="btn btn-success" type="submit" name="hdownloadbutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>
                                                 </form>
                                                 <form method="post">
-                                                    <button class="btn btn-warning" type="submit" name="hshowbutton" value="{{ jobs[loop.index0][8] }}" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
-                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" value="{{ jobs[loop.index0][8] }}" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button></td>
+                                                    <button class="btn btn-warning" type="submit" name="hshowbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
+                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button></td>
     
                                                 </td>
                                                 </form>
                                             </tr>
-                                            {% endfor %}
+                                            <tr>
+                                                <td>Napoli</td>
+                                                <td>03/01/2023</td>
+                                                <td>03</td>
+                                                <td>3</td>
+                                                <td>14.32745</td>
+                                                <td>40.84294</td>
+                                                <td>1200</td>
+                                                <td>2023__001</td>
+                                                <td>73422</td>
+                                                <form action="{{ url_for('download') }}" method="post">
+                                                    <td>
+                                                        <button class="btn btn-success" type="submit" name="hdownloadbutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>
+                                                </form>
+                                                <form method="post">
+                                                    <button class="btn btn-warning" type="submit" name="hshowbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
+                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button></td>
+    
+                                                </td>
+                                                </form>
+                                            </tr>    
                                             <tr></tr>
                                         </tbody>
                                         <tfoot>
@@ -153,11 +207,12 @@
                         
                         <!-- <div class="row" style="margin-top: 30px;margin-right: auto;margin-left: auto;"> --> 
 
-                            <div class="col-lg-4 col-xl-4">
+                            <div class="col-lg-7 col-xl-7">
                                 <!-- style="margin-left: 12px;" -->
-                                <div class="card shadow mb-4" style="margin-left: 12px;">
+                                <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 20px;">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva</h6>
+                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva : 75242</h6>
+                                        
 
                                         <form method="POST">
                                             <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
@@ -173,9 +228,9 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-xl-4" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
+                            <div class="col-lg-5 col-xl-5" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
 
-                                <div class="card shadow mb-4" style="margin-left: 12px;">
+                                <div class="card shadow mb-4" style="margin-left: 8px; margin-top: 20px; margin-right: 12px;">
 
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h6 class="text-primary fw-bold m-0">Gestione simulazione e visualizzazione</h6>
@@ -184,9 +239,10 @@
                                     <!-- <div class="row"> --> 
                                         <div class="card-body" style="height: 50%; margin-bottom: 0px;">
                                             <input type="range" min="0" max="120" value="0" step="5" class="slider" id="myRange" list="list_values">
-                                            <p>Ora : <span id="demo"></span></p>
+                                            <p>Ora : <span id="demo">00</span></p>
                                             <p>Data : 
                                                 <select id="days_list">
+                                                    <option>19/03/2024</option>
                                                 </select>
                                             </p>
                                         </div>
@@ -215,7 +271,19 @@
         <script src="{{ url_for('static', filename='js/KML.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/source/TileWMS.js"></script>
-        <script>                     
+        <script>
+        
+            let url_var = '/static/KML/out_job/20240319Z00.kml';
+
+            // carica il file kml in un vector-layer
+            let targetVectorLayer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    url: url_var,
+                    format: new ol.format.KML(),
+                })
+            });
+
+
             var map = new ol.Map({
                 target: 'map',
                 layers: [
@@ -231,7 +299,9 @@
                     center: [0, 0],
                     zoom: 0,
                 })
-            });  
+            });
+
+            map.addLayer(targetVectorLayer);
         </script>
 </body>
 

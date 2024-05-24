@@ -135,7 +135,7 @@
                                             <div class="card-body">
                                                 <div class="row align-items-center no-gutters">
                                                     <div class="col me-2">
-                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>AREA</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" required>
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DESCRIZIONE</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" required>
                                                         <div class="text-dark fw-bold h5 mb-0"></div>
                                                     </div>
                                                     <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div>
@@ -223,7 +223,6 @@
 
 
                             <div class="col">
-
                                 <div class="card shadow border-start-warning py-2" style="margin-bottom: 10px; height: 100.805px;">
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
@@ -251,7 +250,25 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
+                            <div class="col">
+                                <div class="card shadow border-start-warning py-2" style="margin-bottom: 10px; height: 100.805px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                    <span style="color: var(--bs-indigo);">COMUNI</span>
+                                                </div>
+                                                <input type="text" name="comune" id="comune_label" style="width: 160px;" list="comuni_list" required>
+                                                <datalist id="comuni_list">
+                                                </datalist>
+                                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                                            </div>
+                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -508,14 +525,6 @@
                         </div>
                     </div>
                 -->
-
-              
-                       
-                 
-
-                    
-                
-                
                 </div>
             </div>
             <footer class="bg-white sticky-footer">
@@ -546,6 +555,7 @@
             ],
             view: new ol.View({
                 center: [0, 0],
+                // center: [lat_client, lon_client],
                 zoom: 0,
             })
         });
@@ -558,7 +568,9 @@
         var flag_buffer500mt = false;
         var flag_sovrapposizione = false;
         var i=0;
-
+        var lon_client;
+        var lat_client;
+        
         function changeInput() {
             console.log("cambio input slider");
 
@@ -697,8 +709,8 @@
             
                 var targetVectorLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({
-                        url: '/static/KML/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}")).toString().padStart(2, '0') + ".kml",
-                        // url: '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + data + 'Z' + (parseInt("{{ session['ora_inizio'] }}")).toString().padStart(2, '0') + '.kml',
+                        // url: '/static/KML/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}")).toString().padStart(2, '0') + ".kml",
+                        url: '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + data + 'Z' + (parseInt("{{ session['ora_inizio'] }}")).toString().padStart(2, '0') + '.kml',
                         format: new ol.format.KML()
                     })
                 });

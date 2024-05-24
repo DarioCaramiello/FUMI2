@@ -24,11 +24,10 @@ services:
       - POSTGRES_DB=citizix_db
     volumes:
       - /home/d.caramiello/FUMI2-final/FUMI2.sql:/docker-entrypoint-initdb.d/FUMI2.sql
-    restart:
-      always
+    restart: always
     networks:
       - net_FUMI2
-
+ 
   #sqlite3:
   #  container_name: container_SQLite3_FUMI2
   #  image: nouchka/sqlite3:latest

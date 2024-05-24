@@ -16,5 +16,6 @@ scratch_container_user="$home_container/scratch_user"
 # dst_dir=DSTDIR
 
 
-su fumi2 -c "ssh -o StrictHostKeyChecking=no d.caramiello@193.205.230.5 \"mkdir -p $scratch_frontend_user/USER/USER-DATE-ID/out; module load slurm; source /home/ccmmma/prometeo/apps/smoketracer/etc/profile; cd /home/ccmmma/prometeo/apps/smoketracer; ./smoketracer LON LAT DATe HOURS TEMPERATURE /scratch/d.caramiello/tmp/USER/USER-DATE-ID/out_job; \" "
+su fumi2 -c "ssh -o StrictHostKeyChecking=no d.caramiello@frontend \"export PATH=$PATH:/usr/sbin; mkdir -p $scratch_frontend_user/USER/USER-DATE-ID/out; module load slurm; source /home/ccmmma/prometeo/apps/smoketracer/etc/profile; cd /home/ccmmma/prometeo/apps/smoketracer; ./smoketracer LON LAT DATe HOURS TEMPERATURE /scratch/d.caramiello/tmp/USER/USER-DATE-ID/out_job; \" "
+# su fumi2 -c "ssh -o StrictHostKeyChecking=no d.caramiello@193.205.230.5 \"mkdir -p $scratch_frontend_user/USER/USER-DATE-ID/out; module load slurm; source /home/ccmmma/prometeo/apps/smoketracer/etc/profile; cd /home/ccmmma/prometeo/apps/smoketracer; ./smoketracer LON LAT DATe HOURS TEMPERATURE /scratch/d.caramiello/tmp/USER/USER-DATE-ID/out_job; \" "
 # su fumi2 -c "ssh -o StrictHostKeyChecking=no d.caramiello@193.205.230.5 \"mkdir $scratch_frontend_user/$user_key; module load slurm; source /home/ccmmma/prometeo/apps/smoketracer/etc/profile; cd /home/ccmmma/prometeo/apps/smoketracer; ./smoketracer LON LAT DATe HOURS TEMPERATURE /scratch/d.caramiello/tmp/USER-DATE-ID/out_job &; \" &"
