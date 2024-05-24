@@ -1,6 +1,6 @@
-# FROM python:3.9.11
+FROM python:3.9.11
 # FROM python:latest
-FROM ubuntu:latest
+# FROM ubuntu:latest
 
 # only for test .
 RUN groupadd -g 3001 ccmmma
@@ -11,13 +11,13 @@ COPY . /home/fumi2/FUMI2
 WORKDIR /home/fumi2/FUMI2
 
 
-RUN mkdir /home/fumi2/.ssh/
-RUN mv id_ecdsa /home/fumi2/.ssh/
-RUN chmod 400 /home/fumi2/.ssh/id_ecdsa
-RUN mv id_ecdsa.pub /home/fumi2/.ssh/
-RUN chmod 644 /home/fumi2/.ssh/id_ecdsa.pub
-RUN mv known_hosts /home/fumi2/.ssh/
-RUN chmod 644 /home/fumi2/.ssh/known_hosts
+# RUN mkdir /home/fumi2/.ssh/
+# RUN mv id_ecdsa /home/fumi2/.ssh/
+# RUN chmod 400 /home/fumi2/.ssh/id_ecdsa
+# RUN mv id_ecdsa.pub /home/fumi2/.ssh/
+# RUN chmod 644 /home/fumi2/.ssh/id_ecdsa.pub
+# RUN mv known_hosts /home/fumi2/.ssh/
+# RUN chmod 644 /home/fumi2/.ssh/known_hosts
 
 # RUN mv .ssh /home/fumi2
 # RUN mv .ssh/id_dsa /home/fumi2/.ssh/

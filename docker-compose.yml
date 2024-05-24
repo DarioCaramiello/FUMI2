@@ -23,7 +23,7 @@ services:
       - POSTGRES_USER=citizix_user
       - POSTGRES_DB=citizix_db
     volumes:
-      - /home/d.caramiello/FUMI2-final/FUMI2.sql:/docker-entrypoint-initdb.d/FUMI2.sql
+      - /home/d.caramiello/FUMI2/FUMI2.sql:/docker-entrypoint-initdb.d/FUMI2.sql
     restart: always
     networks:
       - net_FUMI2

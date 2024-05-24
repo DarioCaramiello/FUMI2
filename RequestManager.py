@@ -24,7 +24,7 @@ from SbatchManager import SbatchManager
 from NcDumper import NCODump
 from ParserManager import Parser
 from DagonOnServiceManager import DagonOnServiceManager
-from ComuniManager import ComuniManager
+# from ComuniManager import ComuniManager
 
 
 ##############
@@ -58,8 +58,7 @@ app.config['MAIL_USE_SSL'] = True
 #app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
 mail = Mail(app)
 
-
-comuni_manager = ComuniManager('/home/fumi2/FUMI2/ArchivioComuni/centroidi_comuni.geojson')
+# comuni_manager = ComuniManager('/home/fumi2/FUMI2/ArchivioComuni/centroidi_comuni.geojson')
 
 ##############
 ## HELPERS ##
@@ -1755,4 +1754,5 @@ if __name__ == "__main__":
     # Running app at the specified port
     #app.run(debug=True, port=port)
     # app.run(debug=True, port=port, host='0.0.0.0')
+    print("PORT : " + str(port), flush=True) 
     app.run(debug=True, host='0.0.0.0', port=port)
