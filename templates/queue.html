@@ -29,36 +29,62 @@
                 </a>
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
-                    <!-- <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3);"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li> -->
+                    <li class="nav-item"><a class="nav-link" href="dashboard">
+                        <i class="fas fa-terminal"></i>
+                        <span style="color: var(--bs-accordion-bg);">Dashboard</span></a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="simulazione-singola">
+                        <i class="fas fa-eye"></i>
+                        <span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="simulazioni-multiple">
+                        <i class="fas fa-list"></i>
+                        <span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="storico">
+                        <i class="fas fa-table"></i>
+                        <span style="color: var(--bs-accordion-bg);">Storico</span></a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="profilo">
+                        <i class="far fa-user-circle"></i>
+                        <span style="color: var(--bs-accordion-bg);">Profilo</span></a>
+                    </li>
                     <li class="nav-item"></li>
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
             </div>
         </nav>
+
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
-                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button><small class="form-text fs-4 fw-semibold" style="width: auto;height: auto;">Benvenuto! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
+                    <div class="container-fluid">
+                        <button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <small class="form-text fs-4 fw-semibold" style="width: auto;height: auto;">Benvenuto! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
                         <form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
                             <div class="input-group"></div>
                         </form>
                         <ul class="navbar-nav flex-nowrap ms-auto">
                             <div class="d-none d-sm-block topbar-divider"></div>
                         </ul>
-                        </ul><small class="form-text" style="margin-left: 0px;width: 250.1641px; font-weight:bold"><h4><b>{{ user }}</b></h4></small><a href="{{ url_for('logout') }}" class="btn btn-primary">Log Out</a>
+                        <small class="form-text" style="margin-left: 0px;width: 250.1641px; font-weight:bold">
+                            <h2><b>{{ user }}</b></h2>
+                        </small>
+                        <a href="{{ url_for('logout') }}" class="btn btn-primary">Log Out</a>
 
                     </div>
                 </nav>
+
+
                 <div class="container-fluid" style="width: auto;height: auto;">
                     <form method="POST">
                         <div class="d-sm-flex justify-content-between align-items-center mb-4" style="border-style: none;">
                             <h3 class="text-dark mb-0">Simulazioni in Coda</h3>
                         </div>
                         <div class="row">
+
                             <div class="col">
                                 <div class="row">
                                     <div class="col" style="margin-bottom: 20px;">
@@ -66,10 +92,10 @@
                                             <div class="card-body">
                                                 <div class="row align-items-center no-gutters">
                                                     <div class="col me-2">
-                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>AREA</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" value="a" required>
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DESCRIZIONE</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" required>
                                                         <div class="text-dark fw-bold h5 mb-0"></div>
                                                     </div>
-                                                    <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div>
+                                                    <!-- <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div> -->
                                                 </div>
                                             </div>
                                         </div>
@@ -78,15 +104,16 @@
                                                 <div class="row align-items-center no-gutters">
                                                     <div class="col me-2">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-purple);">Longitudine</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" value=1 required></span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" required></span></div>
                                                     </div>
-                                                    <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div>
+                                                    <!-- <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div> --> 
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col">
                                 <div class="card shadow border-start-success py-2" style="margin-bottom: 10px;height: 100.8047px;">
                                     <div class="card-body">
@@ -95,7 +122,7 @@
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>DATA</span></div>
                                                 <div class="text-dark fw-bold h5 mb-0"><span><input id="date_dash" type="date" name="data" style="width: 168px;" value="03/03/2023" required></span></div>
                                             </div>
-                                            <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -103,14 +130,15 @@
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
-                                                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" value="1" required>
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" required>
                                                 <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                             </div>
-                                            <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col">
                                 <div class="card shadow border-start-info py-2" style="margin-bottom: 10px;height: 100.805px;">
                                     <div class="card-body">
@@ -125,11 +153,9 @@
                                                         {% endfor %}
                                                     </select><br><br>
 
-
-
                                                 </div>
                                             </div>
-                                            <div class="col-auto"><i class="far fa-clock fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="far fa-clock fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -137,28 +163,28 @@
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
-                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Temperatura</span></div><input type="number" name="temp" id="temp_dash" style="width: 160px;" value=1 required>
+                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Temperatura</span></div><input type="number" name="temp" id="temp_dash" style="width: 160px;" required>
                                                 <div class="row g-0 align-items-center">
                                                     <div class="col-auto">
                                                         <div class="text-dark fw-bold h5 mb-0 me-3"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-auto"><i class="fas fa-temperature-high fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="fas fa-temperature-high fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col">
 
+                            <div class="col">
                                 <div class="card shadow border-start-warning py-2" style="margin-bottom: 10px;">
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
-                                                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" min="1" name="durata" id="duration_dash" style="width: 160px;" value=1 required>
+                                                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" name="durata" id="duration_dash" style="width: 160px;" required>
                                                 <div class="text-dark fw-bold h5 mb-0"></div>
                                             </div>
-                                            <div class="col-auto"><i class="fas fa-long-arrow-alt-right fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="fas fa-long-arrow-alt-right fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -173,11 +199,31 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-auto"><i class="fas fa-barcode fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="fas fa-barcode fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col">
+                                <div class="card shadow border-start-warning py-2" style="margin-bottom: 10px; height: 100.805px;">
+                                    <div class="card-body">
+                                        <div class="row align-items-center no-gutters">
+                                            <div class="col me-2">
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                                                    <span style="color: var(--bs-indigo);">COMUNE</span>
+                                                </div>
+                                                <input type="text" name="comune" id="comune_label" style="width: 160px;" list="comuni_list" required>
+                                                <datalist id="comuni_list">
+                                                </datalist>
+                                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                                            </div>
+                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="row" style="margin-bottom: 25px;">
                             <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;"><button class="btn btn-danger btn-lg" type="submit" style="margin-left: 5px;font-weight: bold;width: auto;height: auto;margin-right: 8px;">&nbsp;Reset&nbsp;<i class="fas fa-eraser"></i>&nbsp; &nbsp;</button>
@@ -189,6 +235,8 @@
                             <div class="alert alert-danger text-center"><b>{{ mesg }}</b></div>
                             {% endfor %}</p>
                     </div>
+
+                    <!--
                     <div class="row">
                         <div class="col">
                             <div class="row">
@@ -198,15 +246,25 @@
                             </div>
                         </div>
                     </div>
+                    -->
+
                     <div class="row">
+
                         <div class="col"></div>
+
                         <div class="col-lg-5 col-xl-4" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);width: AUTO;">
+
                             <div class="card shadow mb-4">
+
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <h6 class="text-primary fw-bold m-0">Coda Operazioni</h6>
+                                    <!-- 
                                     <form method="POST">
-                                        <button class="btn btn-danger" type="submit" name="qresetjob" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
+                                        <button class="btn btn-danger" type="submit" name="qresetjob" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
                                     </form>
+                                    -->
                                 </div>
                                 <div class="card-body">
                                     <input type="hidden" id="update" , value="{{ update }}">
@@ -225,9 +283,12 @@
                                                     <th>Latitudine</th>
                                                     <th>Temperatura</th>
                                                     <th>Codice GISA</th>
+                                                    <th>Comune</th>
                                                     <th>Azioni</th>
                                                 </tr>
                                             </thead>
+
+                                            <!--
                                             <tbody>
                                                     <tr>
                                                         <td>75242</td>
@@ -286,16 +347,20 @@
                                                     </tr>
                                                 <tr></tr>
                                             </tbody>
+                                            -->
+
                                             <tfoot>
                                                 <tr></tr>
                                             </tfoot>
                                         </table>
+
                                         <div class="pagination">
                                             {{ pagination.links }}
                                         </div>
                                     </div>
+
                                     <div class="row">
-                                        
+                        
                                         <div class="col-md-6 align-self-center">
                                             <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">{{ datainfo[0] }} - {{ datainfo[1] }} elementi di {{ datainfo[2] }} totali.</p>
                                         </div>
@@ -322,7 +387,35 @@
     <script src="{{ url_for('static', filename='js/KML.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+
+        // Funzione per popolare la datalist con i comuni
+        function populateDatalist() {
+            comuniList.innerHTML = '';  // Pulisce eventuali opzioni esistenti
+            comuni.forEach(comune => {
+                const option = document.createElement('option');
+                option.value = comune;
+                comuniList.appendChild(option);
+            });
+        }
         
+        comuni = []
+        
+        fetch('static/centroidi_comuni/centroidi_comuni.geojson')
+        .then(response => response.json())
+        .then(data => {
+            for (let feature of data.features) {
+                console.log(feature.properties.COMUNE);
+                comuni.push(feature.properties.COMUNE)
+            }
+        })
+        .catch(error => console.error('Errore durante il recupero del file:', error));
+
+        const comuniList = document.getElementById('comuni_list');
+        
+        document.getElementById('comune_label').addEventListener('click', populateDatalist);
+
+        
+        /*
         var intervalId;
 
         function checkUpdate() {
@@ -373,9 +466,9 @@
                     }
                 });
         }
+        */
     
     </script>
-
 </body>
 
 </html>

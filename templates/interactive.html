@@ -98,22 +98,35 @@
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="simulazione-singola"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="simulazioni-multiple"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba\(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3\);"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="profilo">
+                        <i class="far fa-user-circle"></i>
+                        <span style="color: var(--bs-accordion-bg);">Profilo</span></a>
+                    </li>
                     <li class="nav-item"></li>
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
             </div>
         </nav>
         <div class="d-flex flex-column" id="content-wrapper">
+
             <div id="content">
+
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
-                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button><small class="form-text fs-4 fw-semibold" style="width: 2348.234px;">Benvenuto! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
+                    <div class="container-fluid">
+                        <button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <small class="form-text fs-4 fw-semibold" style="width: 2348.234px;">Benvenuto! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
                         <ul class="navbar-nav flex-nowrap ms-auto">
                             <div class="d-none d-sm-block topbar-divider"></div>
-                        </ul><small class="form-text" style="margin-left: 0px;width: 450.1641px; font-weight:bold"><h4><b>{{ user }}</b></h4></small><a href="{{ url_for('logout') }}" class="btn btn-primary" style="white-space: nowrap; text-align: center;">Log Out</a>
+                        </ul>
+                        <small class="form-text" style="margin-left: 0px;width: 450.1641px; font-weight:bold">
+                            <h2><b>{{ user }}</b></h2>
+                        </small>
+                        <a href="{{ url_for('logout') }}" class="btn btn-primary" style="white-space: nowrap; text-align: center;">Log Out</a>
                     </div>
                 </nav>
 
@@ -126,8 +139,6 @@
                         </div>
 
                         <div class="row">
-
-
                             <div class="col">
                                 <div class="row">
                                     <div class="col" style="margin-bottom: 20px;">
@@ -138,7 +149,7 @@
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DESCRIZIONE</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" required>
                                                         <div class="text-dark fw-bold h5 mb-0"></div>
                                                     </div>
-                                                    <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div>
+                                                    <!-- <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div> --> 
                                                 </div>
                                             </div>
                                         </div>
@@ -149,7 +160,7 @@
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-purple);">Longitudine</span></div>
                                                         <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" required></span></div>
                                                     </div>
-                                                    <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div>
+                                                    <!-- <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div> --> 
                                                 </div>
                                             </div>
                                         </div>
@@ -166,7 +177,7 @@
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>DATA</span></div>
                                                 <div class="text-dark fw-bold h5 mb-0"><span><input id="date_dash" type="date" name="data" style="width: 168px;" required></span></div>
                                             </div>
-                                            <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -177,7 +188,7 @@
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" required>
                                                 <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                             </div>
-                                            <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -200,7 +211,7 @@
 
                                                 </div>
                                             </div>
-                                            <div class="col-auto"><i class="far fa-clock fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="far fa-clock fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -215,7 +226,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-auto"><i class="fas fa-temperature-high fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="fas fa-temperature-high fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -230,7 +241,7 @@
                                                 <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" min="1" name="durata" id="duration_dash" style="width: 160px;" required>
                                                 <div class="text-dark fw-bold h5 mb-0"></div>
                                             </div>
-                                            <div class="col-auto"><i class="fas fa-long-arrow-alt-right fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="fas fa-long-arrow-alt-right fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -246,7 +257,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-auto"><i class="fas fa-barcode fa-2x text-gray-300"></i></div>
+                                            <!-- <div class="col-auto"><i class="fas fa-barcode fa-2x text-gray-300"></i></div> --> 
                                         </div>
                                     </div>
                                 </div>
@@ -327,6 +338,9 @@
 
                         <div class="col-lg-12 col-xl-12">
                             <div class="card shadow mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Mappa Interattiva</h6>
+                                </div>
                                 <div class="card-body"> 
                                     <div id="map" style="height: 500px; margin: 0;"></div>
                                     <!--
@@ -410,77 +424,9 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="col-lg-7 col-xl-7" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg); visibility: hidden;" id="options_simulation">
-                            <div class="card shadow mb-4">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h6 class="text-primary fw-bold m-0">Info Operazione Sottomessa</h6>
-                                </div>
-                                <!-- 192px -->
-                                <div class="card-body" style="height: 100%; margin-bottom: 0px;">
-                                    <div class="table-responsive">
-
-                                        <table class="table", id="state-table">
-                                        
-                                            <thead>
-                                                <tr>
-                                                    <th>Identificativo</th>
-                                                    <th>Stato</th>
-                                                    <th>Azioni</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>75242</td>
-                                                    <td>TERMINATA</td>
-                                                    <td>
-                                                        <form method="POST">
-                                                                <button class="btn btn-danger" id="icancelbtn" type="submit" name="icancel" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
-                                                                <!-- <button class="btn btn-danger" id="icancelbtn" type="submit" name="icancel" style="margin-left: 2px;font-weight: bold;" disabled><i class="fas fa-trash"></i></button> -->
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                <tr></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table", id="info-table">
-                                        
-                                            <thead>
-                                            
-                                                <tr>
-                                                    <th>Area</th>
-                                                    <th>Data</th>
-                                                    <th>Ora</th>
-                                                    <th>Durata</th>
-                                                    <th>Long</th>
-                                                    <th>Lat</th>
-                                                    <th>Temp</th>
-                                                    <th>Codice GISA</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Napoli</td>
-                                                    <td>19/03/2024</td>
-                                                    <td>00</td>
-                                                    <td>10</td>
-                                                    <td>14.32745</td>
-                                                    <td>40.84294</td>
-                                                    <td>1200</td>
-                                                    <td> // </td>
-                                                </tr>
-                                                <tr></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>  
 
 
-                        <div class="col-lg-5 col-xl-5" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg); visibility: hidden;" id="options_map">
+                        <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
                             <div class="card shadow mb-4">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <h6 class="text-primary fw-bold m-0">Gestione simulazione e visualizzazione</h6>
@@ -496,15 +442,88 @@
                                 </div>
 
                                 <div class="card-body" style="height: 50%; margin-bottom: 0px;">
+                                    <button class="btn btn-primary btn-sm" id="bottoneSovrapposizione" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="sovraCheck()">Sovrapposizione</button>
+                                    <button class="btn btn-primary btn-sm" id="buffer500mt" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck500mt">Buffer 500MT</button>
+                                    <button class="btn btn-primary btn-sm" id="buffer3km" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck3km">Buffer 3KM</button>
+
+                                    <!--
                                     <button id="bottoneSovrapposizione" class="bottone" onclick="sovraCheck()">Sovrapposizione</button>
                                     <button id="buffer3km" class="bottone" onclick="bufferCheck3km()">Buffer: 3km</button>
                                     <button id="buffer500mt" class="bottone" onclick="bufferCheck500mt()">Buffer: 500mt</button>
+                                    -->
                                 </div>
                             </div>
-                        </div>
+                        </div> 
+                        
 
-                        
-                        
+                        <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_simulation">
+                            <div class="card shadow mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Info Operazione Sottomessa</h6>
+                                </div>
+                                <!-- 192px -->
+                                <div class="card-body" style="height: 100%; margin-bottom: 0px;">
+                                    <div class="table-responsive">
+                                        <table class="table", id="state-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Identificativo</th>
+                                                    <th>Stato</th>
+                                                    <th>Azioni</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!--
+                                                <tr>
+                                                    <td>75242</td>
+                                                    <td>TERMINATA</td>
+                                                    <td>
+                                                        <form method="POST">
+                                                                <button class="btn btn-danger" id="icancelbtn" type="submit" name="icancel" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
+                                                                <button class="btn btn-danger" id="icancelbtn" type="submit" name="icancel" style="margin-left: 2px;font-weight: bold;" disabled><i class="fas fa-trash"></i></button> 
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                -->
+                                                <tr></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table", id="info-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Area</th>
+                                                    <th>Data</th>
+                                                    <th>Ora</th>
+                                                    <th>Durata</th>
+                                                    <th>Lon</th>
+                                                    <th>Lat</th>
+                                                    <th>Temp</th>
+                                                    <th>Codice GISA</th>
+                                                    <th>Comune</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- 
+                                                <tr>
+                                                    <td>Napoli</td>
+                                                    <td>19/03/2024</td>
+                                                    <td>00</td>
+                                                    <td>10</td>
+                                                    <td>14.32745</td>
+                                                    <td>40.84294</td>
+                                                    <td>1200</td>
+                                                    <td> // </td>
+                                                </tr>
+                                                -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+
                         <!--
                         <div class="col-lg-5 col-xl-5" id="operations_maps">
                             <div class="col-lg-12 col-xl-12">
@@ -1042,6 +1061,36 @@
                 output.innerHTML = this.value / 5;
         }
         document.getElementById('myRange').addEventListener("input", changeInput);
+
+        // Funzione per popolare la datalist con i comuni
+        function populateDatalist() {
+            comuniList.innerHTML = '';  // Pulisce eventuali opzioni esistenti
+            comuni.forEach(comune => {
+                const option = document.createElement('option');
+                option.value = comune;
+                comuniList.appendChild(option);
+            });
+        }
+        
+        comuni = []
+        
+        fetch('static/centroidi_comuni/centroidi_comuni.geojson')
+        .then(response => response.json())
+        .then(data => {
+            for (let feature of data.features) {
+                console.log(feature.properties.COMUNE);
+                comuni.push(feature.properties.COMUNE)
+            }
+        })
+        .catch(error => console.error('Errore durante il recupero del file:', error));
+
+        // Riferimento all'elemento datalist
+        const comuniList = document.getElementById('comuni_list');
+        
+        document.getElementById('comune_label').addEventListener('click', populateDatalist);
+
+        
+        
     
     </script>       
     <!-- 

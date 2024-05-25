@@ -81,10 +81,13 @@
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="interattivo"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="coda"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="simulazione-singola"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="simulazioni-multiple"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle" style="border-color: rgba(255, 255, 255, 0.3);border-top-color: rgba(255,;border-right-color: 255,;border-bottom-color: 255,;border-left-color: 0.3);"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="profilo">
+                        <i class="far fa-user-circle"></i>
+                        <span style="color: var(--bs-accordion-bg);">Profilo</span></a>
+                    </li>
                     <li class="nav-item"></li>
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
@@ -100,7 +103,7 @@
                     </div>
                 </nav>
                 <div class="container-fluid">
-                    <h3 class="text-dark mb-4">Storico operazioni</h3>
+                    <h3 class="text-dark mb-4">Storico Simulazioni</h3>
                     <div class="card shadow" style="margin-right: auto;margin-left: 0px;">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h6 class="text-primary fw-bold m-0">Job Sottomessi</h6>
@@ -134,9 +137,12 @@
                                                 <!-- <th>Dati Meteo</th>--> 
                                                 <th>Codice GISA</th>
                                                 <th>ID</th>
+                                                <th>Comune</th>
                                                 <th>Azioni</th>
                                             </tr>
                                         </thead>
+
+                                        <!--
                                         <tbody>
                                             <tr>
                                                 <td>Napoli</td>
@@ -182,21 +188,24 @@
                                             </tr>    
                                             <tr></tr>
                                         </tbody>
+                                        -->
                                         <tfoot>
                                             <tr></tr>
                                         </tfoot>
                                     </table>
+
                                     <div class="pagination">
                                         {{ pagination.links }}
                                     </div>
+                                
                                 </div>
-                                <div class="row">
-                                    <!--
+                                
+                                <div class="row"> 
                                     <div class="col-md-6 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">{{ datainfo[0] }} - {{ datainfo[1] }} elementi di {{ datainfo[2] }} totali.</p>
                                     </div>
-                                    -->
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -204,21 +213,21 @@
                 <div class="row">
 
                     <!-- <div class="col"> -->
-                        
                         <!-- <div class="row" style="margin-top: 30px;margin-right: auto;margin-left: auto;"> --> 
 
-                            <div class="col-lg-7 col-xl-7">
+                            <!-- <div class="col-lg-7 col-xl-7"> -->
+                            <div class="col-lg-12 col-xl-12">
                                 <!-- style="margin-left: 12px;" -->
-                                <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 20px;">
+                                <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 20px; margin-right: 12px;">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva : 75242</h6>
-                                        
-
+                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva</h6>
+                                        <!--
                                         <form method="POST">
-                                            <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
+                                            <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
                                         </form>
-
-                                        </button>
+                                        -->
                                     </div>
                                     <div class="card-body">
                                         <div width="100%" style="height: 520px;" id="map"></div>
@@ -228,29 +237,32 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-5 col-xl-5" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
-
-                                <div class="card shadow mb-4" style="margin-left: 8px; margin-top: 20px; margin-right: 12px;">
-
+                            <!-- <div class="col-lg-5 col-xl-5" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map"> --> 
+                            <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
+                                <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 9px; margin-right: 12px;">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h6 class="text-primary fw-bold m-0">Gestione simulazione e visualizzazione</h6>
                                     </div>
-                                    
                                     <!-- <div class="row"> --> 
                                         <div class="card-body" style="height: 50%; margin-bottom: 0px;">
                                             <input type="range" min="0" max="120" value="0" step="5" class="slider" id="myRange" list="list_values">
-                                            <p>Ora : <span id="demo">00</span></p>
+                                            <p>Ora : <span id="demo"></span></p>
                                             <p>Data : 
                                                 <select id="days_list">
-                                                    <option>19/03/2024</option>
                                                 </select>
                                             </p>
                                         </div>
         
                                         <div class="card-body">
+                                            <button class="btn btn-primary btn-sm" id="bottoneSovrapposizione" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="sovraCheck()">Sovrapposizione</button>
+                                            <button class="btn btn-primary btn-sm" id="buffer500mt" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck500mt">Buffer 500MT</button>
+                                            <button class="btn btn-primary btn-sm" id="buffer3km" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck3km">Buffer 3KM</button>
+                                            
+                                            <!--
                                             <button id="bottoneSovrapposizione" class="bottone" onclick="sovraCheck()">Sovrapposizione</button>
                                             <button id="buffer3km" class="bottone" onclick="bufferCheck3km()">Buffer: 3km</button>
                                             <button id="buffer500mt" class="bottone" onclick="bufferCheck500mt()">Buffer: 500mt</button>
+                                            -->
                                         </div>
                                     <!-- </div> -->  
                                 </div>
