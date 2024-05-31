@@ -11,6 +11,8 @@ from timeit import default_timer as timer
 from datetime import date
 from ParserManager import Parser, JOBINFO
 from datetime import datetime
+from SpatialQueryManager import SpatialQueryManager
+from DagonOnServiceManager import DagonOnServiceManager
 
 
 # Util class that will handle the sbatch operations
@@ -36,50 +38,65 @@ class SbatchManager():
         self.job_name = job_name
     
 
-    # Function that will run the entire pipeline of the creation of the enviroinment
-    # for a given user that run a job
     def run(self, user, params=None):
+        print("[*] params : " + str(params))
+        script_path = "/home/fumi2/FUMI2"
+        scratch_path_container = script_path + "/scratch_user"
 
-        # Generating a tmp folder containing the results of the bash script
-        # jobid, tmp_path = self.tmpgen(params)
-        # jobid, tmp_path = self.tmpgen(user, params)
+        millis = str(int(round(time.time() * 1000)))
+
+        date = datetime.now()
+        formatted_date_for_user_dir = date.strftime("%Y%m%dz%H%M%S")
+        formatted_date_for_job = str(params[2]) + "Z" + str(params[3]).zfill(2)  
         
-        user_dir =  self.tmpgen(user,params)
+        subprocess.run(['cp', '{}/lunch_remote_job.sh'.format(script_path), '{}/lunch_remote_job_var.sh'.format(script_path)])
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "USER", user)
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "DATE", formatted_date_for_user_dir)
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "ID", millis)
+        
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "LON", params[6])
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "LAT", params[7])
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "TEMPERATURE", params[8])
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "DATe", formatted_date_for_job)
+        self.substitute("{}/lunch_remote_job.sh".format(script_path), "HOURS", params[4])
+        subprocess.run(['mkdir', '{}/tmp_{}'.format(script_path, user)])
+        subprocess.run(['touch', '{}/tmp_{}/out_from_job_running.txt'.format(script_path, user)])
 
-        if user_dir:
-            return user_dir
+        str("[*] out pwd : " + str(subprocess.check_output("pwd")))
+        subprocess.run("nohup ./lunch_remote_job.sh > /home/fumi2/FUMI2/tmp_{}/out_from_job_running.txt 2>&1 &".format(script_path, user))
+
+
+        dagonManager = DagonOnServiceManager('http://193.205.230.6:1727/list', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
+        print("[*] Out DagOn Request : " + str(dagonManager.get_request()), flush=True)
+
+        # return null
+        
+        # user_dir =  self.tmpgen(user,params)
+        # if user_dir:
+            # return user_dir
             # thread che effettua delle continue richieste al container dagon per capire lo stato
-            # t1 = threading.Thread(target=self.check_outputs, args=(tmp_path, dest_path, user, jobid))
+            # t1 = threadinclearg.Thread(target=self.check_outputs, args=(tmp_path, dest_path, user, jobid))
             # t1.start()
-
             #t2 = threading.Thread(target=self.check_progress, args=(tmp_path, jobid))
             #t2.start()
-
-
         # We check if jobid is equal to 0 (job not submitted)
-        # or to error codes: -1 date error, -2 download error
-        
+        # or to error codes: -1 date error, -2 download error        
         # if jobid == 0 or jobid == -1 or jobid == -2:
             # In this case, we simply return since we can't do anything else
         #    return jobid
-
         # With the result given, create a folder into the storage path
         # to store the script output
-        
         #dest_path = self.outgen(user, jobid, tmp_path)
-
         # We then start the thread waiting for the script output
         # to be completed after creating the output folder, we almost start istantly
         # a thread that will check when the output of the scripts are finished.
         # So we can continue our execution in the code
         #t1 = threading.Thread(target=self.check_outputs, args=(tmp_path, dest_path, user, jobid))
         #t1.start()
-
         # We also create another thread to keep track of the progress of the script.
         # This will be needed for the progress bar to fill up
         #t2 = threading.Thread(target=self.check_progress, args=(tmp_path, jobid))
         #t2.start()
-
         # After that, we return the ID of the submitted job to be handled
         # in other modules (such as the DB one)
         #return jobid
@@ -112,10 +129,9 @@ class SbatchManager():
         # questo lo devo eseguire in background 
         # subprocess.run("./tmpgen_runjob.sh", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         # subprocess.run("./lunch_remote_job.sh")
-
         # per testare in locale decommentare la riga successiva 
-        return user + "-" + formatted_date_for_user_dir + "-" + millis
-        
+        # return user + "-" + formatted_date_for_user_dir + "-" + millis
+
         '''
         if os.path.isdir(script_path + "/static/KML/" + user + "-" + formatted_date_for_user_dir + "-" + millis + "-out"):
             # print("[*] [check dir scratch user] : found", flush=True)
@@ -132,6 +148,56 @@ class SbatchManager():
             print("----- [check dir scratch user] : not found", flush=True)
             return False
         '''
+
+        # -- test spatial query con un punto 
+        result_query_point = postgresql_query_handler.spatial_query_point(14.2681, 40.8518)
+
+        print("[*] point spatial query : ")
+        for i in result_query_point:
+            print("Common : " + str(i))
+        
+
+        # -- test spatial query con un bounding box 
+        port_of_naples_bbox = [
+            [14.235, 40.8245],
+            [14.293, 40.8245],
+            [14.293, 40.8525],
+            [14.235, 40.8525],
+            [14.235, 40.8245]
+        ]
+
+        campania_bbox = [
+            [13.5, 40.6],
+            [15.2, 40.6],
+            [15.2, 41.3],
+            [13.5, 41.3],
+            [13.5, 40.6]
+        ]
+
+        postgresql_query_handler = SpatialQueryManager()
+
+        result_query_box = postgresql_query_handler.spazial_query_box(port_of_naples_bbox)
+        print("[*] box spatial query - port of naples: ", flush=True)
+        for i in result_query_box:
+            print("Common : " + str(i[1]), flush=True)
+
+        print("[----------------------------------------------]")
+
+        result_query_box2 = postgresql_query_handler.spazial_query_box(campania_bbox)
+        print("[*] box spatial query - campania :", flush=True)
+        for i in result_query_box2:
+            print("Common : " + str(i[1]), flush=True)
+
+        # -- test spatial query con un bounding box letto da un file .kml 
+        # result_linestring = read_polygon_from_kml('/mydata.kml')
+        # print(result_linestring)
+        # print(str(type(result_linestring)))
+
+        # query_result = postgresql_query_handler.spazial_query_box(result_linestring[-1])
+
+        # for i in query_result:
+        #    print("Common : " + str(i[1]))
+        
         
              
         # We first create the path for the enviroinment used to store the middle steps of our
@@ -702,3 +768,33 @@ class SbatchManager():
 
         # Return a string containing the result of the operation.
         return result, jobid
+
+    def read_polygon_from_kml(name_file):
+        namespace = {"ns": nsmap[None]}
+        coordinates_list_out = []
+        coordinates_list_out2 = []
+
+        with open(name_file) as f:
+            root = parser.parse(f).getroot()
+            pms = root.xpath(".//ns:Placemark[.//ns:LineString]",   namespaces=namespace)
+
+            for pm in pms:
+
+                string_coordinates = pm.LineString.coordinates
+
+                '''
+                print("[*] LineString ------------------------- ")
+                print(string_coordinates)
+                print("[*] LineString ------------------------- ")
+                '''
+
+                coordinates_list = str(string_coordinates).split()
+                # Itera attraverso le coppie di coordinate e aggiungi all'array
+                for coordinate_pair in coordinates_list:
+                    lon, lat = coordinate_pair.split(',')
+                    coordinates_list_out.append([float(lon), float(lat)])
+
+                coordinates_list_out2.append(coordinates_list_out)
+                # print("Array di coordinate:")
+                # print(coordinates_array)
+        return coordinates_list_out2

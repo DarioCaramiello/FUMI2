@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"pos":"2dsphere"},"name":"pos_2dsphere","2dsphereIndexVersion":{"$numberInt":"3"}}],"uuid":"8934f40058be49a8b076c9b1685b5fb8","collectionName":"places"}

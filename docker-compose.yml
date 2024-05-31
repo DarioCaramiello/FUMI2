@@ -11,6 +11,7 @@ services:
     # -  /home/d.caramiello/FUMI2/src/root:/home/fumi2/FUMI2/dati_prova
     depends_on:
       - db
+    #  - db_mongo
     networks:
       - net_FUMI2
 
@@ -27,6 +28,16 @@ services:
     restart: always
     networks:
       - net_FUMI2
+    
+  #db_mongo:
+  #  container_name: container_mongodb_FUMI2
+  #  build:
+  #    dockerfile: Dockerfile-mongodb
+  #  volumes:
+  #    - /home/d.caramiello/FUMI2/ccmmma-database/:/ccmmma-database
+  #  restart: always
+  #  networks:
+  #    - net_FUMI2
  
   #sqlite3:
   #  container_name: container_SQLite3_FUMI2

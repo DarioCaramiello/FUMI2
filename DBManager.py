@@ -280,18 +280,10 @@ class DBProxy():
 
     # Simple function that will insert a tuple into the database representing a new user 
     def add_user(self, username, firstname, lastname, email, struttura, ruolo):
-
-        # Using the specific function for some columns of the manager 
-        # Packing values 
         values = [username, firstname, lastname, email, struttura, ruolo]
-        print(values)
-        # We append active = 0 and role = 0 (inactive, normal user)
         values.append(0)
         values.append(0)
-        print(values)
-        # query = "INSERT INTO \"USER\" (USERNAME, FIRSTNAME, LASTNAME, EMAIL, ACTIVE, \"ROLE\") VALUES (?,?,?,?,?,?)"
         query = "INSERT INTO \"USER\" (USERNAME, FIRSTNAME, LASTNAME, EMAIL, STRUTTURA, RUOLOTEC,  ACTIVE, \"ROLE\") VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        
         self.__db.update(query, values)
 
     # Simple function that delete an user given his name
@@ -358,26 +350,23 @@ class DBProxy():
 
     # Simple function that insert a new job into the database, into the JOBINFO relative table.
     def new_job(self, jobinfo):
-
-        # print("[*] DBManager.py : var jobinfo = " + str(jobinfo), flush=True)
-        # completed = 0
-        completed = 1
-        query_jobinfo = "INSERT INTO JOBINFO VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')".format(
-            jobinfo[0],
-            jobinfo[1],
-            jobinfo[2],
-            jobinfo[3],
-            jobinfo[4],
-            jobinfo[5],
-            jobinfo[6],
-            jobinfo[7],
-            jobinfo[8], 
-            completed
+        completed = 0
+        query_jobinfo = "INSERT INTO JOBINFO VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')".format(
+            jobinfo[0], # job_id
+            jobinfo[1], # name_simul
+            jobinfo[2], # date
+            jobinfo[3], # ora
+            jobinfo[4], # durata
+            jobinfo[5], # comuni
+            jobinfo[6], # lon
+            jobinfo[7], # lat
+            jobinfo[8], # temp
+            jobinfo[9], # codice_GISA
+            completed 
         )
-
-        # print("[*] DBManager.py : var query_jobinfo = " + query_jobinfo, flush=True)
-        query_jobs = "INSERT INTO JOBS VALUES(\'{}\', \'{}\')".format(jobinfo[0], jobinfo[9])
-
+        # print("[*] DBManager.py -- query_jobinfo = " + query_jobinfo, flush=True)
+        query_jobs = "INSERT INTO JOBS VALUES(\'{}\', \'{}\')".format(jobinfo[0], jobinfo[10])
+        # print("[*] DBManager -- query_job = " clear+ query_jobs, flush=True)
         self.__db.update(query_jobs)
         self.__db.update(query_jobinfo)
 

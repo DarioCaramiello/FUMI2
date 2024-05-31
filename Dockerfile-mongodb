@@ -1,0 +1,13 @@
+FROM mongo:latest
+
+COPY ccmmma-database/places.bson /data/ccmmma-database/places.bson
+COPY ccmmma-database/places.metadata.json /data/ccmmma-database/places.metadata.json
+COPY extraction_from_bbox/requirements.txt /app_extraction/requirements.txt
+COPY extraction_from_bbox/python_script_mongo.py /app_extraction/python_script_mongo.py
+# COPY mydata.kml mydata.kml
+RUN apt-get update && apt-get install -y python3 python3-pip && apt-get install -y vim && pip install --no-cache-dir -r /app_extraction/requirements.txt 
+# RUN pip3 install -r /app_extraction/requirements.txt
+EXPOSE 27017
+
+CMD ["mongod"]
+

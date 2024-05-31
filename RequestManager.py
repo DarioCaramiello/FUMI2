@@ -17,6 +17,7 @@ import re
 import os
 import hmac
 import requests
+import random
 
 # Custom Import
 from DBManager import DBProxy, DBManager
@@ -43,10 +44,10 @@ sbatchmanager = SbatchManager(os.getenv('SCRATCH_PATH'),
                               os.getenv('SBATCH_TEMPLATE'), 
                               os.getenv('PROJECT_NAME'))
 port = os.getenv('PROJECT_PORT')
+
 queue_lock = Lock()
 parser = Parser()
 ncdump = NCODump()
-
 
 ### Configuring SMTP data and info to send mails
 app.config['MAIL_SERVER']= os.getenv('MAIL_SERVER')
@@ -57,8 +58,6 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 #app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
 mail = Mail(app)
-
-# comuni_manager = ComuniManager('/home/fumi2/FUMI2/ArchivioComuni/centroidi_comuni.geojson')
 
 ##############
 ## HELPERS ##
@@ -382,15 +381,12 @@ def dashboard():
 # @app.route('/interattivo', methods=['POST', 'GET'])
 @app.route('/simulazione-singola', methods=['POST', 'GET'])
 def simulazione_singola():
-    # Redirect to login if user not in session
+
+    db = DBProxy()
+
     if "user" not in session:
         return redirect(url_for('login'))
 
-    # Istanciate a db object to perform queries
-    db = DBProxy()
-
-    # If the user is an admin trying to accessing the other routes pages, redirect him
-    # to the adminpane
     if db.is_admin(session["user"]):
         return redirect(url_for('adminpane'))
 
@@ -428,42 +424,36 @@ def simulazione_singola():
 
     # If the request is post (user submitted options)
     if request.method == "POST":
-
-        print("[*] RequestManager.py : var request.form = " + str(request.form), flush=True)
-
+        # print("[*] RequestManager.py : var request.form = " + str(request.form), flush=True)
         if "generate" in request.form:
 
             # First thing, we check if a job is already running: since this is the interactive dashboard,
             # We must assert that only a job is active at a time; if the user wants to submit more than one jobs,
             # He should go to the approppriate queue dashboard section.
-
             # if len(session["jobstate_interactive"]) > 0:
             #    flash("Un'operazione è attualmente in atto. Aspettare che finisca o sottometterne di nuove nella dashboard per le code.") 
             #    return redirect(url_for('interattivo'))
             # else: 
-                
                 # If the len of jobstate is 0, that means two things: we're submitting a job
                 # for the first time, or a job has been completed and resetted into the progress route.
                 # In each case, we reset the jobinfo_interactive array to submit a new one.
                 # session["jobinfo_interactive"] = []
-
            
             area = request.form.get("area")
-
             if not validate_string(area, "[a-zA-Z]"):
                 flash("Area inserita non valida. Unici caratteri consentiti: Lettere [a-z e A-Z]. Riprovare!")
-                return redirect(url_for('interattivo'))
+                return redirect(url_for('simulazione-singola'))
 
             data = request.form.get("data")
             ora = request.form.get("hours")
             durata = request.form.get("durata")
+            comune = request.form.get("comune")
             longit = request.form.get("long")
             latit = request.form.get("lat")
             temp = request.form.get("temp")
+            codice_GISA = request.form.get("codice_gisa")
 
-            job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, longit, latit, temp, data]
-            
-            # jobid = sbatchmanager.run(user, job_info)
+            # job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, comune, longit, latit, temp, codice_GISA, data]
 
             session['durata'] = durata
             session['data'] = "".join(data.split('-'))
@@ -471,8 +461,17 @@ def simulazione_singola():
             session['lon'] = str(longit)
             session['lat'] = str(latit)
 
-            user_dir_name = sbatchmanager.run(user, job_info)
+            job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, comune, longit, latit, temp, codice_GISA]
+            # job_info[0] = user_dir_name
+            # job_info[0] = "not yet present"
+            job_info[0] = random.randint(1,100)
+            job_info.append(str(user))
+            db.new_job(job_info)      
 
+            job_id, user_dir_name = sbatchmanager.run(user, job_info)
+
+
+            '''
             if user_dir_name is False:
                 # session['kmlpath_dash'] = ""
                 session['user_dir_name'] = ""
@@ -481,13 +480,11 @@ def simulazione_singola():
             else:
                 # session['kmlpath_dash'] = ""
                 session['user_dir_name'] = user_dir_name
-
                 job_info[0] = user_dir_name
                 job_info.append(str(user))
                 db.new_job(job_info)
 
-                dagonManager = DagonOnServiceManager('http://193.205.230.6:1727/list', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
-
+            '''
 
 
             # if kml_path == False:
