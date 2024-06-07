@@ -2,7 +2,7 @@ import os
 import time
 import subprocess
 import threading
-
+import re
 
 from werkzeug.security import safe_join
 from shutil import copyfile, copytree, rmtree
@@ -12,14 +12,10 @@ from datetime import date
 from ParserManager import Parser, JOBINFO
 from datetime import datetime
 from SpatialQueryManager import SpatialQueryManager
-from DagonOnServiceManager import DagonOnServiceManager
 
 
-# Util class that will handle the sbatch operations
 class SbatchManager():
 
-    # Root path in which the enviroinment will be created
-    # and root template sbatch file
     scratch_path = None
     storage_path = None
     model_path = None
@@ -28,7 +24,6 @@ class SbatchManager():
     job_name = None
     db = None
 
-    # default constructor
     def __init__(self, scratch_path, storage_path, model_path, root_path, sbatch_file, job_name):
         self.scratch_path = scratch_path
         self.storage_path = storage_path
@@ -39,12 +34,10 @@ class SbatchManager():
     
 
     def run(self, user, params=None):
-        print("[*] params : " + str(params))
+        # print("[*] params : " + str(params))
         script_path = "/home/fumi2/FUMI2"
         scratch_path_container = script_path + "/scratch_user"
-
         millis = str(int(round(time.time() * 1000)))
-
         date = datetime.now()
         formatted_date_for_user_dir = date.strftime("%Y%m%dz%H%M%S")
         formatted_date_for_job = str(params[2]) + "Z" + str(params[3]).zfill(2)  
@@ -59,17 +52,41 @@ class SbatchManager():
         self.substitute("{}/lunch_remote_job.sh".format(script_path), "TEMPERATURE", params[8])
         self.substitute("{}/lunch_remote_job.sh".format(script_path), "DATe", formatted_date_for_job)
         self.substitute("{}/lunch_remote_job.sh".format(script_path), "HOURS", params[4])
-        subprocess.run(['mkdir', '{}/tmp_{}'.format(script_path, user)])
-        subprocess.run(['touch', '{}/tmp_{}/out_from_job_running.txt'.format(script_path, user)])
+        subprocess.run(['mkdir', '{}/tmp'.format(script_path,)])
+        subprocess.run(['mkdir', '{}/tmp/{}'.format(script_path, user)])
 
-        str("[*] out pwd : " + str(subprocess.check_output("pwd")))
-        subprocess.run("nohup ./lunch_remote_job.sh > /home/fumi2/FUMI2/tmp_{}/out_from_job_running.txt 2>&1 &".format(script_path, user))
+        var_millis = millis
+        
+        with open('tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis), 'w') as f:
+            subprocess.Popen(
+                './lunch_remote_job.sh',
+                stdout=f,
+                stderr=f,
+                start_new_session=True
+            )
 
+        time.sleep(10)
+        
+        with open('tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis), 'r') as f:
+            file_tmp = f.read()
+            
+        line_match = re.search(r'.*Workflow registration success id = \w+.*', file_tmp)
+        if line_match:
+            line = line_match.group(0)
+            id_match = re.search(r'id = (\w+)', line)
+            if id_match:
+                id_value = id_match.group(1)
+                print(f'ID estratto: {id_value}', flush=True)
+                subprocess.run(['rm', 'tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis)])
+                return id_value
+        else:
+            print('ID non trovato nel file.', flush=True)
+            return None
+        
+        # subprocess.run(['nohup', './lunch_remote_job.sh', '>', 'tmp/out_from_job_{}_runcmd.txt'.format(user), '2>&1', '&'])
+        #subprocess.run(['./lunch_remote_job.sh', '>', 'tmp/out_from_job_{}_runcmd.txt'.format(user), '2>&1', '&'], shell=True)
 
-        dagonManager = DagonOnServiceManager('http://193.205.230.6:1727/list', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
-        print("[*] Out DagOn Request : " + str(dagonManager.get_request()), flush=True)
-
-        # return null
+        # print("[*] Out DagOn Request : " + str(dagonManager.get_request()), flush=True)
         
         # user_dir =  self.tmpgen(user,params)
         # if user_dir:
@@ -114,7 +131,6 @@ class SbatchManager():
         date = datetime.now()
         formatted_date_for_user_dir = date.strftime("%Y%m%dz%H%M%S")
         formatted_date_for_job = str(params[2]) + "Z" + str(params[3]).zfill(2)  
-        
         subprocess.run(['cp', '{}/lunch_remote_job.sh'.format(script_path), '{}/lunch_remote_job_var.sh'.format(script_path)])
         self.substitute("{}/lunch_remote_job.sh".format(script_path), "USER", user)
         self.substitute("{}/lunch_remote_job.sh".format(script_path), "DATE", formatted_date_for_user_dir)

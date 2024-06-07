@@ -18,6 +18,7 @@ import os
 import hmac
 import requests
 import random
+import time
 
 # Custom Import
 from DBManager import DBProxy, DBManager
@@ -25,7 +26,7 @@ from SbatchManager import SbatchManager
 from NcDumper import NCODump
 from ParserManager import Parser
 from DagonOnServiceManager import DagonOnServiceManager
-# from ComuniManager import ComuniManager
+
 
 
 ##############
@@ -289,9 +290,12 @@ def get_progress():
 ## WEBSITE ##
 #############
 
-# @app.route('/test-comuni', methods=['POST', 'GET'])
-# def test_comuni():
-#     print(str(comuni_manager.SearchDataRange(40.8, 41.5, 13.7, 15.1)), flush=True)
+@app.route('/get-status-workflow/<id>', methods=['GET'])
+def workflowStatus(id):
+
+    dagonManager = DagonOnServiceManager('http://193.205.230.6:1727', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
+    workflow_status = dagonManager.getStatusByID(id)
+    return workflow_status
 
 @app.route('/', methods=['POST', 'GET'])
 def login():
@@ -325,6 +329,7 @@ def login():
                 session["user"] = username
                 # session["jobinfo_interactive"] = []
                 session["jobinfo_queue"] = []
+                session["job_sim_singola"] = False
                 # session["jobstate_interactive"] = []
                 # session["kmlpath_dash"] = ""
                 # session["searchval"] = ""
@@ -390,28 +395,6 @@ def simulazione_singola():
     if db.is_admin(session["user"]):
         return redirect(url_for('adminpane'))
 
-    # Assign values to jobstate (interactive): if present, we assign that very array, empty if not 
-    # session["jobstate_interactive"] = check_session("jobstate_interactive", len(session["jobstate_interactive"])>0, session["jobstate_interactive"], [])
-
-    # INFO STR says info about which job is being executed. Obviously, null
-    # at start if no jobid is currently active, the current jobid else.
-    # We need to check if the len is major than 0 first because we'll access the first element 
-    # causing an error if not.
-    # info_str = " "
-    # if len(session["jobstate_interactive"]) > 0:
-    #    info_str = check_session("jobstate_interactive", True, "ID: {}".format(session["jobstate_interactive"][0][0]), " ")
-    
-    # The update value is passed inside an hidden input and later checked by a JS function: 
-    # If the value is true, we must call the update function to update the progress bar (a job 
-    # is being executed) and the KML map if the job has been completed.
-    # update = check_session("jobstate_interactive", len(session["jobstate_interactive"])>0, True, False)
-
-    # We do the same for the job info values. If a job has been submitted, we want to assign to the 
-    # job_info array his previous values. As before, this can be useful to check if a job has been 
-    # submitted, switching page and coming back; we need to get his values again.
-    # session["jobinfo_interactive"] = check_session("jobinfo_interactive", len(session["jobinfo_interactive"])>0, session["jobinfo_interactive"], [])
-
-    # Fetch username and last access
     user = session["user"]
 
     # Reset searchval for other pages (if we change page we must reset the value searched)
@@ -426,18 +409,12 @@ def simulazione_singola():
     if request.method == "POST":
         # print("[*] RequestManager.py : var request.form = " + str(request.form), flush=True)
         if "generate" in request.form:
-
-            # First thing, we check if a job is already running: since this is the interactive dashboard,
-            # We must assert that only a job is active at a time; if the user wants to submit more than one jobs,
-            # He should go to the approppriate queue dashboard section.
-            # if len(session["jobstate_interactive"]) > 0:
-            #    flash("Un'operazione è attualmente in atto. Aspettare che finisca o sottometterne di nuove nella dashboard per le code.") 
-            #    return redirect(url_for('interattivo'))
-            # else: 
-                # If the len of jobstate is 0, that means two things: we're submitting a job
-                # for the first time, or a job has been completed and resetted into the progress route.
-                # In each case, we reset the jobinfo_interactive array to submit a new one.
-                # session["jobinfo_interactive"] = []
+            
+            if session['job_sim_singola'] != False:
+                flash("Un'operazione è attualmente in atto. Aspettare che finisca o sottometterne di nuove nella dashboard per le code.") 
+                return redirect(url_for('interattivo'))
+            else:
+                session['job_sim_singola'] = True
            
             area = request.form.get("area")
             if not validate_string(area, "[a-zA-Z]"):
@@ -455,11 +432,19 @@ def simulazione_singola():
 
             # job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, comune, longit, latit, temp, codice_GISA, data]
 
+            session['area'] = area
+            session['data'] = data
+            session['ora'] = ora
             session['durata'] = durata
-            session['data'] = "".join(data.split('-'))
+            session['comune'] = comune
+            session['lon'] = longit
+            session['lat'] = latit
+            session['temp'] = temp
+            session['codice_GISA'] = codice_GISA
+
+            session['data2'] = "".join(data.split('-'))
             session['ora_inizio'] = str(int(ora))
-            session['lon'] = str(longit)
-            session['lat'] = str(latit)
+            
 
             job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, comune, longit, latit, temp, codice_GISA]
             # job_info[0] = user_dir_name
@@ -468,8 +453,16 @@ def simulazione_singola():
             job_info.append(str(user))
             db.new_job(job_info)      
 
-            job_id, user_dir_name = sbatchmanager.run(user, job_info)
+            id_workflow = sbatchmanager.run(user, job_info)
 
+            if id_workflow is not None:
+                session['workflow_id'] = id_workflow
+            else:
+                session['workflow_id'] = ""
+
+            # TODO : aggiornare l'id del job nel database. 
+
+            
 
             '''
             if user_dir_name is False:

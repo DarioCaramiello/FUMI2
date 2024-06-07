@@ -36,7 +36,7 @@
     .bottone:hover {
         background-color: #ffcc00; 
     }
-
+ 
     .bottone:active {
         background-color: #ffea00; 
     }
@@ -132,7 +132,7 @@
 
                 <div class="container-fluid" style="width: auto;height: auto;">
 
-                    <form method="POST" novalidate>
+                    <form method="POST" id="form_sim" novalidate>
 
                         <div class="d-sm-flex justify-content-between align-items-center mb-4" style="border-style: none;">
                             <h3 class="text-dark mb-0">Nuova Simulazione</h3>
@@ -149,7 +149,6 @@
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DESCRIZIONE</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" value="test" required>
                                                         <div class="text-dark fw-bold h5 mb-0"></div>
                                                     </div>
-                                                    <!-- <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div> --> 
                                                 </div>
                                             </div>
                                         </div>
@@ -160,7 +159,6 @@
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-purple);">Longitudine</span></div>
                                                         <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" value="54.4"></span></div>
                                                     </div>
-                                                    <!-- <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div> --> 
                                                 </div>
                                             </div>
                                         </div>
@@ -177,7 +175,6 @@
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>DATA</span></div>
                                                 <div class="text-dark fw-bold h5 mb-0"><span><input id="date_dash" type="date" name="data" style="width: 168px;" required></span></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -188,7 +185,6 @@
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" value="34.4" required>
                                                 <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -211,7 +207,6 @@
 
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="far fa-clock fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -226,7 +221,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="fas fa-temperature-high fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -241,7 +235,6 @@
                                                 <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" min="1" name="durata" id="duration_dash" style="width: 160px;" value="1" required>
                                                 <div class="text-dark fw-bold h5 mb-0"></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="fas fa-long-arrow-alt-right fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -257,7 +250,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="fas fa-barcode fa-2x text-gray-300"></i></div> --> 
                                         </div>
                                     </div>
                                 </div>
@@ -269,28 +261,23 @@
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1">
-                                                    <span style="color: var(--bs-indigo);">COMUNI</span>
+                                                    <span style="color: var(--bs-indigo);">COMUNE</span>
                                                 </div>
                                                 <input type="text" name="comune" id="comune_label" style="width: 160px;" list="comuni_list" required>
                                                 <datalist id="comuni_list">
                                                 </datalist>
                                                 <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
-                        </div>  <!-- end row -->
+                        </div> 
 
 
                         <div class="row" style="margin-bottom: 25px;">
                             <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
-                                <button class="btn btn-danger btn-lg" type="submit" name="dresetmap" style="margin-left: 5px;font-weight: bold;width: auto;height: auto;margin-right: 8px;">
-                                    &nbsp;Reset&nbsp; <i class="fas fa-eraser"></i> &nbsp; &nbsp;
-                                </button>
+                                <button class="btn btn-danger btn-lg" type="submit" name="dresetmap" id="restart-button" style="margin-left: 5px;font-weight: bold;width: auto;height: auto;margin-right: 8px;">&nbsp;Reset&nbsp; <i class="fas fa-eraser"></i> &nbsp; &nbsp;</button>
                                 <button class="btn btn-success btn-lg" type="submit" name="generate" id="start-button" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Genera&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
                             </div>
                         </div>
@@ -335,7 +322,6 @@
                     -->
                    
                     <div class="row">
-
                         <div class="col-lg-12 col-xl-12">
                             <div class="card shadow mb-4">
                                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -459,9 +445,8 @@
                         <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_simulation">
                             <div class="card shadow mb-4">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h6 class="text-primary fw-bold m-0">Info Operazione Sottomessa</h6>
+                                    <h6 class="text-primary fw-bold m-0">Info Job</h6>
                                 </div>
-                                <!-- 192px -->
                                 <div class="card-body" style="height: 100%; margin-bottom: 0px;">
                                     <div class="table-responsive">
                                         <table class="table", id="state-table">
@@ -469,26 +454,43 @@
                                                 <tr>
                                                     <th>Identificativo</th>
                                                     <th>Stato</th>
-                                                    <th>Azioni</th>
+                                                    <th>calmet</th>
+                                                    <th>calpost</th>
+                                                    <th>calpufff</th>
+                                                    <th>calwrff</th>
+                                                    <th>ctgproc</th>
+                                                    <th>dst</th>
+                                                    <th>lnd2</th>
+                                                    <th>makegeo</th>
+                                                    <th>terrel</th>
+                                                    <th>wrf2calwrf</th>
+                                                    <th>www</th>
+                                                    <!-- <th>Azioni</th> -->
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <!--
-                                                <tr>
-                                                    <td>75242</td>
-                                                    <td>TERMINATA</td>
+                                                <tr> 
                                                     <td>
                                                         <form method="POST">
-                                                                <button class="btn btn-danger" id="icancelbtn" type="submit" name="icancel" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
                                                                 <button class="btn btn-danger" id="icancelbtn" type="submit" name="icancel" style="margin-left: 2px;font-weight: bold;" disabled><i class="fas fa-trash"></i></button> 
                                                         </form>
                                                     </td>
                                                 </tr>
                                                 -->
-                                                <tr></tr>
                                             </tbody>
                                         </table>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_simulation">
+                            <div class="card shadow mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Info Simulazione Sottomessa</h6>
+                                </div>
+                                <div class="card-body" style="height: 100%; margin-bottom: 0px;">
                                     <div class="table-responsive">
                                         <table class="table", id="info-table">
                                             <thead>
@@ -505,54 +507,25 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <!-- 
-                                                <tr>
-                                                    <td>Napoli</td>
-                                                    <td>19/03/2024</td>
-                                                    <td>00</td>
-                                                    <td>10</td>
-                                                    <td>14.32745</td>
-                                                    <td>40.84294</td>
-                                                    <td>1200</td>
-                                                    <td> // </td>
-                                                </tr>
-                                                -->
+
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>  
-
-                        <!--
-                        <div class="col-lg-5 col-xl-5" id="operations_maps">
-                            <div class="col-lg-12 col-xl-12">
-                                <div class="card shadow mb-4">
-                                     <div class="slidecontainer" id="div_slider">  
-                                    <input type="range" min="0" max="120" value="0" step="5" class="slider" id="myRange" list="list_values">
-                                    <p>Ora : <span id="demo"></span></p>
-                                    <p>Data : 
-                                        <select id="days_list">
-                                        </select>
-                                    </p>
-                                     </div>
-                                    <button id="bottoneSovrapposizione" class="bottone" onclick="sovraCheck()">Sovrapposizione</button>
-                                    <button id="buffer3km" class="bottone" onclick="bufferCheck3km()">Buffer 3km</button>
-                                    <button id="buffer500mt" class="bottone" onclick="bufferCheck500mt()">Buffer 500mt</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                -->
                 </div>
-            </div>
+
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
                     <div class="text-center my-auto copyright"><span>Copyright © Uniparthenope 2023</span></div>
                 </div>
             </footer>
+
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
+
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
@@ -589,6 +562,18 @@
         var i=0;
         var lon_client;
         var lat_client;
+        const comuniList = document.getElementById('comuni_list');
+        var comuni = []
+
+        document.getElementById('comune_label').addEventListener('click', populateDatalist);
+        document.getElementById('myRange').addEventListener("input", changeInput);
+        // per il progress del job sul frontend 
+        // window.addEventListener('load', checkProgressWorkflow);
+        window.addEventListener('load', checkID)
+        window.addEventListener('load', checkInfoTable)
+        document.getElementById('restart-button').addEventListener('click', clearTableInfoSim)
+
+        setInterval(checkProgressWorkflow, 7000);
         
         function changeInput() {
             console.log("cambio input slider");
@@ -712,7 +697,6 @@
             map.addLayer(targetVectorLayer); 
         }
 
-
         function controlKmlOnLoad(){
             if("{{session['user_dir_name']}}"==""){
                 console.log("[CHECK] session[kmlpath_dash] : empty");
@@ -769,7 +753,7 @@
                 }
             }
         }
-/* 
+
         function nextKML(){
 
             if( i > parseInt("{{session['durata']}}")) {
@@ -1010,7 +994,6 @@
             console.log("Ora successiva - load kml path : ", '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}") + i ).toString().padStart(2, '0') + ".kml");
 
         }
-*/
 
         function sovraCheck() {
             attivo = !attivo;
@@ -1038,7 +1021,6 @@
                 console.log("BUFFER [3km] : attivato");
                 flag_buffer3km = true;
             }
-            
         }
 
         function bufferCheck500mt() {
@@ -1053,16 +1035,8 @@
                 console.log("BUFFER [500mt]: attivato");
                 flag_buffer500mt = true;
             }
-            
         }
 
-        output.innerHTML = slider.value;
-        slider.oninput = function() {
-                output.innerHTML = this.value / 5;
-        }
-        document.getElementById('myRange').addEventListener("input", changeInput);
-
-        // Funzione per popolare la datalist con i comuni
         function populateDatalist() {
             comuniList.innerHTML = '';  // Pulisce eventuali opzioni esistenti
             comuni.forEach(comune => {
@@ -1072,88 +1046,165 @@
             });
         }
         
-        comuni = []
+        function checkID() {
+            if("{{session['workflow_id']}}" != "") {
+                console.log("[*] workflow id  : ", "{{session['workflow_id']}}");
+                var table = document.getElementById('state-table').getElementsByTagName('tbody')[0];
+                var newRow = table.insertRow();
+                var idJobCell = newRow.insertCell(0)
+                idJobCell.textContent = "{{session['workflow_id']}}";
+            }
+        }
+        
+        function checkInfoTable(){
+            if("{{session['area']}}" != "") {
+                var table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
+                var newRow = table.insertRow();
+
+                var descCell = newRow.insertCell(0);
+                var dateCell = newRow.insertCell(1);
+                var oraCell = newRow.insertCell(2);
+                var durataCell = newRow.insertCell(3);
+                var lonCell = newRow.insertCell(4);
+                var latCell = newRow.insertCell(5);
+                var tempCell = newRow.insertCell(6);
+                var codiceGisaCell = newRow.insertCell(7);
+                var comuneCell = newRow.insertCell(8);
+
+                descCell.textContent = "{{session['area']}}";
+                dateCell.textContent = "{{session['data']}}";
+                oraCell.textContent = "{{session['ora']}}"
+                durataCell.textContent = "{{session['durata']}}"
+                lonCell.textContent = "{{session['lon']}}"
+                latCell.textContent = "{{session['lat']}}"
+                tempCell.textContent = "{{session['temp']}}"
+                codiceGisaCell.textContent = "{{session['codice_GISA']}}"
+                comuneCell.textContent = "{{session['comune']}}"
+            }
+        }
+
+        function clearTableInfoSim() {
+            var body_table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
+            if(body_table) {
+                table.removeChild(tbody);
+            }
+        }
+        
+        function checkProgressWorkflow() {
+            if("{{session['workflow_id']}}" != "") {
+
+                var url = '/get-status-workflow/' + "{{session['workflow_id']}}"; 
+
+                fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data); 
+                    
+                    var table_body = document.getElementById('state-table').getElementsByTagName('tbody')[0];
+
+                    if(table_body.rows.length > 0) {
+
+                        
+                        var first_row = table_body.rows[0];
+                        /*
+                        console.log("first_row[0] : ", first_row.cells[0].textContent);
+                        console.log("data[calmet] : ", data['calmet']);
+
+                        first_row.insertCell(1).textContent = data['calmet'];
+                        first_row.insertCell(2).textContent = data['calpost'];
+                        first_row.insertCell(3).textContent = data['calpufff'];
+                        first_row.insertCell(4).textContent = data['calwrff'];
+                        first_row.insertCell(5).textContent = data['ctgproc'];
+                        first_row.insertCell(6).textContent = data['dst'];
+                        first_row.insertCell(7).textContent = data['lnd2'];
+                        first_row.insertCell(8).textContent = data['makegeo'];
+                        first_row.insertCell(9).textContent = data['terrel'];
+                        first_row.insertCell(10).textContent = data['wrf2calwrf'];
+                        first_row.insertCell(11).textContent = data['www'];
+                        */
+
+                        workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
+
+                        for(let i=1; i<12; i++) {
+                            if(!first_row.cells[i]){
+                                first_row.insertCell(i).textContent = data[workflow[i]];
+                            } else {
+                                first_row.cells[i].textContent = data[workflow[i]];
+                            }
+                        }
+
+                        /*
+                        first_row.cells[1].textContent = data['calmet'];
+                        first_row.cells[2].textContent = data['calpost'];
+                        first_row.cells[3].textContent = data['calpufff'];
+                        first_row.cells[4].textContent = data['calwrff'];
+                        first_row.cells[5].textContent = data['ctgproc'];
+                        first_row.cells[6].textContent = data['dst'];
+                        first_row.cells[7].textContent = data['lnd2'];
+                        first_row.cells[8].textContent = data['makegeo'];
+                        first_row.cells[9].textContent = data['terrel'];
+                        first_row.cells[10].textContent = data['wrf2calwrf'];
+                        first_row.cells[11].textContent = data['www'];
+                        */
+                    }
+
+                })
+                .catch(error => {
+                    console.error('C\'è stato un problema con la tua richiesta:', error);
+                });
+
+                
+                /* else {
+                    var newRow = table.insertRow();
+                    newRow.insertCell(0).textContent = "{{session['calmet']}}"
+                    newRow.insertCell(1).textContent = "{{session['calpost']}}"
+                    newRow.insertCell(2).textContent = "{{session['calpufff']}}"
+                    newRow.insertCell(3).textContent = "{{session['calwrff']}}"
+                    newRow.insertCell(4).textContent = "{{session['ctgproc']}}"
+                    newRow.insertCell(5).textContent = "{{session['dst']}}"
+                    newRow.insertCell(6).textContent = "{{session['lnd2']}}"
+                    newRow.insertCell(7).textContent = "{{session['makegeo']}}"
+                    newRow.insertCell(8).textContent = "{{session['terrel']}}"
+                    newRow.insertCell(9).textContent = "{{session['wrf2calwrf']}}"
+                    newRow.insertCell(10).textContent = "{{session['www']}}"
+                }
+                */
+
+            /*
+            console.log('calmet', "{{session['calmet']}}");
+            console.log('calmet', "{{session['calpost']}}");
+            console.log('calmet', "{{session['calpufff']}}");
+            console.log('calmet', "{{session['calwrff']}}");
+            console.log('calmet', "{{session['ctgproc']}}");
+            console.log('calmet', "{{session['dst']}}");
+            console.log('calmet', "{{session['lnd2']}}");
+            console.log('calmet', "{{session['makegeo']}}");
+            console.log('calmet', "{{session['terrel']}}");
+            console.log('calmet', "{{session['wrf2calwrf']}}");
+            console.log('calmet', "{{session['www']}}");
+            */
+           }
+        }
+
+        output.innerHTML = slider.value;
+        slider.oninput = function() {
+                output.innerHTML = this.value / 5;
+        }
         
         fetch('static/centroidi_comuni/centroidi_comuni.geojson')
         .then(response => response.json())
         .then(data => {
             for (let feature of data.features) {
-                console.log(feature.properties.COMUNE);
+                // console.log(feature.properties.COMUNE);
                 comuni.push(feature.properties.COMUNE)
             }
         })
         .catch(error => console.error('Errore durante il recupero del file:', error));
-
-        // Riferimento all'elemento datalist
-        const comuniList = document.getElementById('comuni_list');
-        
-        document.getElementById('comune_label').addEventListener('click', populateDatalist);
-
-        
-        
-    
     </script>       
-    <!-- 
-    <script src="{{ url_for('static', filename='js/KML.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <script>    
-        var intervalId;
-
-        function startUpdate() {
-            console.log("update started")
-            intervalId = setInterval(updateProgress, 1000);
-        } 
-
-        function stopUpdate() {
-            clearInterval(intervalId);
-        }
-    
-        function updateProgress() {
-            // Send an AJAX request to the '/progress' route
-            fetch('/progress')
-                .then(response => response.json())
-                .then(data => {
-                    console.log("updating")
-
-                    // Update the progress bar with the new progress
-                    const progressBar = document.querySelector('.progress-bar');
-                    progressBar.style.width = Math.round(data.progress) + '%';
-                    progressBar.textContent = Math.round(data.progress) + '%';
-
-                    console.log(console.log(data.progress))
-                    // Stop checking for progress when maximum files is reached
-                    if (data.progress === 100) {
-
-                        if (data.state === 1) {
-                            var myTable = document.getElementById('state-table');
-                            myTable.rows[1].cells[1].innerHTML = 'COMPLETATO';
-                        }
-
-                        if (data.state === 2 || data.state === -1) {
-                            var myTable = document.getElementById('state-table');
-                            document.getElementById("icancelbtn").disabled = true; 
-                            myTable.rows[1].cells[1].innerHTML = 'ERRORE';
-                        }
-
-
-                        if (data.state === 3) {
-                            var myTable = document.getElementById('state-table');
-                            myTable.rows[1].cells[1].innerHTML = 'CANCELLATO';
-                        }
-
-                        console.log(console.log(data.progress === 100))
-                        console.log("finally updating")
-                        var s = document.getElementById("update");
-                        s.value = "False";
-                        document.getElementById("progressbar").className = "progress-bar";
-                        loadKmlToMap(data.kmlpath);
-                        clearInterval(intervalId);      
-                    }
-                });
-        }
-    </script>
-    -->
-
 </body>
 </html>
