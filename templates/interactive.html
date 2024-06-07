@@ -1049,42 +1049,32 @@
         function checkID() {
             if("{{session['workflow_id']}}" != "") {
                 console.log("[*] workflow id  : ", "{{session['workflow_id']}}");
-                var table = document.getElementById('state-table').getElementsByTagName('tbody')[0];
-                var newRow = table.insertRow();
-                var idJobCell = newRow.insertCell(0)
+                let table = document.getElementById('state-table').getElementsByTagName('tbody')[0];
+                let newRow = table.insertRow();
+                let idJobCell = newRow.insertCell(0)
                 idJobCell.textContent = "{{session['workflow_id']}}";
             }
         }
         
         function checkInfoTable(){
             if("{{session['area']}}" != "") {
-                var table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
-                var newRow = table.insertRow();
+                let table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
+                let newRow = table.insertRow();
 
-                var descCell = newRow.insertCell(0);
-                var dateCell = newRow.insertCell(1);
-                var oraCell = newRow.insertCell(2);
-                var durataCell = newRow.insertCell(3);
-                var lonCell = newRow.insertCell(4);
-                var latCell = newRow.insertCell(5);
-                var tempCell = newRow.insertCell(6);
-                var codiceGisaCell = newRow.insertCell(7);
-                var comuneCell = newRow.insertCell(8);
-
-                descCell.textContent = "{{session['area']}}";
-                dateCell.textContent = "{{session['data']}}";
-                oraCell.textContent = "{{session['ora']}}"
-                durataCell.textContent = "{{session['durata']}}"
-                lonCell.textContent = "{{session['lon']}}"
-                latCell.textContent = "{{session['lat']}}"
-                tempCell.textContent = "{{session['temp']}}"
-                codiceGisaCell.textContent = "{{session['codice_GISA']}}"
-                comuneCell.textContent = "{{session['comune']}}"
+                newRow.insertCell(0).textContent = "{{session['area']}}";
+                newRow.insertCell(1).textContent = "{{session['data']}}";
+                newRow.insertCell(2).textContent = "{{session['ora']}}"
+                newRow.insertCell(3).textContent = "{{session['durata']}}"
+                newRow.insertCell(4).textContent = "{{session['lon']}}"
+                newRow.insertCell(5).textContent = "{{session['lat']}}"
+                newRow.insertCell(6).textContent = "{{session['temp']}}"
+                newRow.insertCell(7).textContent = "{{session['codice_GISA']}}"
+                newRow.insertCell(8).textContent = "{{session['comune']}}"
             }
         }
 
         function clearTableInfoSim() {
-            var body_table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
+            let body_table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
             if(body_table) {
                 table.removeChild(tbody);
             }
@@ -1093,7 +1083,7 @@
         function checkProgressWorkflow() {
             if("{{session['workflow_id']}}" != "") {
 
-                var url = '/get-status-workflow/' + "{{session['workflow_id']}}"; 
+                let url = '/get-status-workflow/' + "{{session['workflow_id']}}"; 
 
                 fetch(url)
                 .then(response => {
@@ -1103,33 +1093,13 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data); 
+
+                    let table_body = document.getElementById('state-table').getElementsByTagName('tbody')[0];
                     
-                    var table_body = document.getElementById('state-table').getElementsByTagName('tbody')[0];
-
-                    if(table_body.rows.length > 0) {
-
+                    if(table_body.rows.length > 0) {  
+                        let first_row = table_body.rows[0];
+                        let workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
                         
-                        var first_row = table_body.rows[0];
-                        /*
-                        console.log("first_row[0] : ", first_row.cells[0].textContent);
-                        console.log("data[calmet] : ", data['calmet']);
-
-                        first_row.insertCell(1).textContent = data['calmet'];
-                        first_row.insertCell(2).textContent = data['calpost'];
-                        first_row.insertCell(3).textContent = data['calpufff'];
-                        first_row.insertCell(4).textContent = data['calwrff'];
-                        first_row.insertCell(5).textContent = data['ctgproc'];
-                        first_row.insertCell(6).textContent = data['dst'];
-                        first_row.insertCell(7).textContent = data['lnd2'];
-                        first_row.insertCell(8).textContent = data['makegeo'];
-                        first_row.insertCell(9).textContent = data['terrel'];
-                        first_row.insertCell(10).textContent = data['wrf2calwrf'];
-                        first_row.insertCell(11).textContent = data['www'];
-                        */
-
-                        workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
-
                         for(let i=1; i<12; i++) {
                             if(!first_row.cells[i]){
                                 first_row.insertCell(i).textContent = data[workflow[i]];
@@ -1137,57 +1107,11 @@
                                 first_row.cells[i].textContent = data[workflow[i]];
                             }
                         }
-
-                        /*
-                        first_row.cells[1].textContent = data['calmet'];
-                        first_row.cells[2].textContent = data['calpost'];
-                        first_row.cells[3].textContent = data['calpufff'];
-                        first_row.cells[4].textContent = data['calwrff'];
-                        first_row.cells[5].textContent = data['ctgproc'];
-                        first_row.cells[6].textContent = data['dst'];
-                        first_row.cells[7].textContent = data['lnd2'];
-                        first_row.cells[8].textContent = data['makegeo'];
-                        first_row.cells[9].textContent = data['terrel'];
-                        first_row.cells[10].textContent = data['wrf2calwrf'];
-                        first_row.cells[11].textContent = data['www'];
-                        */
                     }
-
                 })
                 .catch(error => {
                     console.error('C\'è stato un problema con la tua richiesta:', error);
                 });
-
-                
-                /* else {
-                    var newRow = table.insertRow();
-                    newRow.insertCell(0).textContent = "{{session['calmet']}}"
-                    newRow.insertCell(1).textContent = "{{session['calpost']}}"
-                    newRow.insertCell(2).textContent = "{{session['calpufff']}}"
-                    newRow.insertCell(3).textContent = "{{session['calwrff']}}"
-                    newRow.insertCell(4).textContent = "{{session['ctgproc']}}"
-                    newRow.insertCell(5).textContent = "{{session['dst']}}"
-                    newRow.insertCell(6).textContent = "{{session['lnd2']}}"
-                    newRow.insertCell(7).textContent = "{{session['makegeo']}}"
-                    newRow.insertCell(8).textContent = "{{session['terrel']}}"
-                    newRow.insertCell(9).textContent = "{{session['wrf2calwrf']}}"
-                    newRow.insertCell(10).textContent = "{{session['www']}}"
-                }
-                */
-
-            /*
-            console.log('calmet', "{{session['calmet']}}");
-            console.log('calmet', "{{session['calpost']}}");
-            console.log('calmet', "{{session['calpufff']}}");
-            console.log('calmet', "{{session['calwrff']}}");
-            console.log('calmet', "{{session['ctgproc']}}");
-            console.log('calmet', "{{session['dst']}}");
-            console.log('calmet', "{{session['lnd2']}}");
-            console.log('calmet', "{{session['makegeo']}}");
-            console.log('calmet', "{{session['terrel']}}");
-            console.log('calmet', "{{session['wrf2calwrf']}}");
-            console.log('calmet', "{{session['www']}}");
-            */
            }
         }
 
@@ -1200,7 +1124,6 @@
         .then(response => response.json())
         .then(data => {
             for (let feature of data.features) {
-                // console.log(feature.properties.COMUNE);
                 comuni.push(feature.properties.COMUNE)
             }
         })
