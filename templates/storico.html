@@ -131,17 +131,48 @@
                                                 <th>Data</th>
                                                 <th>Ora</th>
                                                 <th>Durata</th>
+                                                <th>Comune</th>
                                                 <th>Longitudine</th>
                                                 <th>Latitudine</th>
                                                 <th>Temperatura</th>
                                                 <!-- <th>Dati Meteo</th>--> 
                                                 <th>Codice GISA</th>
                                                 <th>ID</th>
-                                                <th>Comune</th>
                                                 <th>Azioni</th>
                                             </tr>
                                         </thead>
-
+                                        <tbody>
+                                            {% for job in jobs %}
+                                            <tr>
+                                                <td>{{ job[0] }}</td>
+                                                <td>{{ job[1] }}</td>
+                                                <td>{{ job[2] }}</td>
+                                                <td>{{ job[3] }}</td>
+                                                <td>{{ job[4] }}</td>
+                                                <td>{{ job[5] }}</td>
+                                                <td>{{ job[6] }}</td>
+                                                <td>{{ job[7] }}</td>
+                                                <td>{{ job[8] }}</td>
+                                                <td>{{ job[9] }}</td>
+                                                <!-- <form action="{{ url_for('download') }}" method="post"> -->
+                                                <td>
+                                                    <form method="post">
+                                                        <button class="btn btn-success" type="submit" name="hdownloadbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>   
+                                                    </form>
+                                                </td>
+                                                <td>
+                                                    <form method="post">
+                                                        <button class="btn btn-warning" type="submit" name="hshowbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
+                                                    </form> 
+                                                </td>
+                                                <td>
+                                                    <form method="post">
+                                                        <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
                                         <!--
                                         <tbody>
                                             <tr>
@@ -193,90 +224,66 @@
                                             <tr></tr>
                                         </tfoot>
                                     </table>
-
                                     <div class="pagination">
                                         {{ pagination.links }}
                                     </div>
-                                
                                 </div>
-                                
                                 <div class="row"> 
                                     <div class="col-md-6 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">{{ datainfo[0] }} - {{ datainfo[1] }} elementi di {{ datainfo[2] }} totali.</p>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-
-                    <!-- <div class="col"> -->
-                        <!-- <div class="row" style="margin-top: 30px;margin-right: auto;margin-left: auto;"> --> 
-
-                            <!-- <div class="col-lg-7 col-xl-7"> -->
-                            <div class="col-lg-12 col-xl-12">
-                                <!-- style="margin-left: 12px;" -->
-                                <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 20px; margin-right: 12px;">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h6 class="text-primary fw-bold m-0">Mappa interattiva</h6>
-                                        <!--
-                                        <form method="POST">
-                                            <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);">
-                                                <i class="fas fa-undo"></i>
-                                            </button>
-                                        </form>
-                                        -->
-                                    </div>
-                                    <div class="card-body">
-                                        <div width="100%" style="height: 520px;" id="map"></div>
-                                        <!-- <input type="hidden" id="kml_file" , value="{{ kml_path }}">
-                                        <input type="hidden" id="markers" , value="{{ markers }}"> -->
-                                    </div>
+                    <div class="col-lg-12 col-xl-12">
+                         <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 20px; margin-right: 12px;">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="text-primary fw-bold m-0">Mappa interattiva</h6>
+                                    <!--
+                                    <form method="POST">
+                                        <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </form>
+                                    -->
+                                </div>
+                                <div class="card-body">
+                                    <div width="100%" style="height: 520px;" id="map"></div>
                                 </div>
                             </div>
-
-                            <!-- <div class="col-lg-5 col-xl-5" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map"> --> 
-                            <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
-                                <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 9px; margin-right: 12px;">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h6 class="text-primary fw-bold m-0">Gestione simulazione e visualizzazione</h6>
-                                    </div>
-                                    <!-- <div class="row"> --> 
-                                        <div class="card-body" style="height: 50%; margin-bottom: 0px;">
-                                            <input type="range" min="0" max="120" value="0" step="5" class="slider" id="myRange" list="list_values">
-                                            <p>Ora : <span id="demo"></span></p>
-                                            <p>Data : 
-                                                <select id="days_list">
-                                                </select>
-                                            </p>
-                                        </div>
+                        </div>
+                        <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_map">
+                            <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 9px; margin-right: 12px;">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Gestione simulazione e visualizzazione</h6>
+                                </div>
+                                <div class="card-body" style="height: 50%; margin-bottom: 0px;">
+                                    <input type="range" min="0" max="120" value="0" step="5" class="slider" id="myRange" list="list_values">
+                                    <p>Ora : <span id="demo"></span></p>
+                                    <p>Data : 
+                                        <select id="days_list">
+                                        </select>
+                                    </p>
+                                </div>
         
-                                        <div class="card-body">
-                                            <button class="btn btn-primary btn-sm" id="bottoneSovrapposizione" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="sovraCheck()">Sovrapposizione</button>
-                                            <button class="btn btn-primary btn-sm" id="buffer500mt" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck500mt">Buffer 500MT</button>
-                                            <button class="btn btn-primary btn-sm" id="buffer3km" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck3km">Buffer 3KM</button>
-                                            
-                                            <!--
-                                            <button id="bottoneSovrapposizione" class="bottone" onclick="sovraCheck()">Sovrapposizione</button>
-                                            <button id="buffer3km" class="bottone" onclick="bufferCheck3km()">Buffer: 3km</button>
-                                            <button id="buffer500mt" class="bottone" onclick="bufferCheck500mt()">Buffer: 500mt</button>
-                                            -->
-                                        </div>
-                                    <!-- </div> -->  
-                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-primary btn-sm" id="bottoneSovrapposizione" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="sovraCheck()">Sovrapposizione</button>
+                                    <button class="btn btn-primary btn-sm" id="buffer500mt" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck500mt">Buffer 500MT</button>
+                                    <button class="btn btn-primary btn-sm" id="buffer3km" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck3km">Buffer 3KM</button>
+                                </div> 
                             </div>
-                        <!-- </div> -->
-                    <!-- </div> -->
-                </div>
-                <footer class="bg-white sticky-footer">
-                    <div class="container my-auto">
-                        <div class="text-center my-auto copyright"><span>Copyright © Uniparthenope 2023</span></div>
+                        </div>
                     </div>
-                </footer>
-            </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
-        </div>
+                    <footer class="bg-white sticky-footer">
+                        <div class="container my-auto">
+                            <div class="text-center my-auto copyright"><span>Copyright © Uniparthenope 2023</span></div>
+                        </div>
+                    </footer>
+                </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+            </div>
         <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
@@ -284,25 +291,11 @@
         <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/source/TileWMS.js"></script>
         <script>
-        
-            let url_var = '/static/KML/out_job/20240319Z00.kml';
-
-            // carica il file kml in un vector-layer
-            let targetVectorLayer = new ol.layer.Vector({
-                source: new ol.source.Vector({
-                    url: url_var,
-                    format: new ol.format.KML(),
-                })
-            });
-
-
             var map = new ol.Map({
                 target: 'map',
                 layers: [
                     new ol.layer.Tile({
                         source: new ol.source.XYZ({
-                            // url: 'https://tile.thunderforest.com/neighbourhood/{z}/{x}/{y}.png?apikey=41243fd1949946cf82ab777c68b39278' --- thunderforest site
-                            // https://cloud.maptiler.com/maps/
                             url: 'https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=yNolbzVOYm8BH5d911a9' 
                         }),
                     }),
@@ -312,8 +305,6 @@
                     zoom: 0,
                 })
             });
-
-            map.addLayer(targetVectorLayer);
         </script>
 </body>
 

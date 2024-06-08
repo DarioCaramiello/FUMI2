@@ -15,19 +15,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> <!-- utile per la gestione della data per i file kml -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"></script> <!-- libreria utile per la generazione di un colore randomico in esadecimale -->
-    <!-- <link rel="stylesheet" href="http://unpkg.com/leaflet@1.4.0/dist/leaflet.css" /> -->
-    <!-- <script src="http://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script> -->
+
     
     <style>
 
     .bottone {
         width: 100px;
         height: 40px;
-        margin: 5px; /* Aggiunto un margine tra i bottoni per separarli */
+        margin: 5px; 
         background-color: #007bff;
         color: white;
         border: none;
-        border-radius: 5px; /* Bordo arrotondato per i bottoni */
+        border-radius: 5px; 
         font-size: 13px;
         cursor: pointer;
         align-items: center;
@@ -283,44 +282,6 @@
                         </div>
                     </form>
 
-                    <!--
-                    <div class="row">
-                        <p>{% for mesg in get_flashed_messages() %}
-                            <div class="alert alert-danger text-center"><b>{{ mesg }}</b></div>
-                            {% endfor %}</p>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col">
-                            <div class="row">
-                                <div class="col"><small class="form-text" style="font-weight: bold;">{{ info_str }}</small>
-                                    <div class="progress" style="margin-bottom: 25px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressbar" role="progressbar" style="width: \{\{ progress }\}\;\" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" >{{ progress }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-12 col-xl-12">
-                            
-                            <table class="table">
-                                <tr>
-                                    <th>DATA</th>
-                                    <th>ORA INIZIO SIMULAZIONE</th>
-                                    <th>PROGRESSO/ORA SIMULAZIONE</th>
-                                </tr>
-                                <tr>
-                                    <td id="data_data"></td>
-                                    <td id="data_ora_inizio"></td>
-                                    <td id="data_ora"></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    -->
-                   
                     <div class="row">
                         <div class="col-lg-12 col-xl-12">
                             <div class="card shadow mb-4">
@@ -329,84 +290,6 @@
                                 </div>
                                 <div class="card-body"> 
                                     <div id="map" style="height: 500px; margin: 0;"></div>
-                                    <!--
-                                    <div class="slidecontainer" id="div_slider" style="visibility: hidden;">
-                                        <input type="range" min="0" max="120" value="0" step="5" class="slider" id="myRange" list="list_values">
-                                        <p>Ora : <span id="demo"></span></p>
-                                        <p>Data : 
-                                            <select id="days_list">
-                                            </select>
-                                        </p>
-                                    </div>
-                                    <button id="bottoneSovrapposizione" class="bottone" onclick="sovraCheck()">Sovrapposizione</button>
-                                    <button id="buffer3km" class="bottone" onclick="bufferCheck3km()">Buffer 3km</button>
-                                    <button id="buffer500mt" class="bottone" onclick="bufferCheck500mt()">Buffer 500mt</button>
-                                    -->
-                                    <!--
-                                    <div width="100%" height="400" style="height: 520px;" id="map"></div>
-                                    <input type="hidden" id="update" , value="{{ update }}">
-                                    <input type="hidden" id="kmlpath" , value="{{ kmlpath }}">
-
-                                    <script>
-                                        function loadKmlToMap(kmlFilePath) {
-
-                                            // If the update value is true, we call the updateProgress funct
-                                            if (document.getElementById("update").value==="True") {
-                                                console.log("starting update")
-                                                startUpdate()
-                                            } else {
-                                                stopUpdate()
-                                            }
-
-                                            // IF kmlFilePath is undefined
-                                            if (kmlFilePath == null) {
-                                                // display the kml path fetched froom a cookie
-                                                kmlFilePath = document.getElementById("kmlpath").value
-                                            }
-
-                                            var container = L.DomUtil.get('map');
-                                            if(container != null){
-                                                container._leaflet_id = null;
-                                            }
-
-                                            // Create new Leaflet map
-                                            const map = new L.Map('map', {
-                                              attributionControl: false,
-                                              center: new L.LatLng(40.833189, 14.298180),
-                                              zoom: 11,
-                                              dragging: true
-                                            });
-                                          
-                                            // Add OpenStreetMap tile layer to map
-                                            const osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-                                            map.addLayer(osm);
-                                          
-                                            // Construct file path
-                                            const tmp_path = "{{ url_for('static', filename='TMP') }}";
-                                            const filepath = tmp_path.replace('TMP', kmlFilePath);
-                                          
-                                            // Fetch KML file
-                                            return fetch(filepath, { mode: 'cors' })
-                                              .then(res => res.text())
-                                              .then(kmltext => {
-                                                // Create new KML overlay
-                                                const parser = new DOMParser();
-                                                const kml = parser.parseFromString(kmltext, 'text/xml');
-                                                const track = new L.KML(kml);
-                                          
-                                                // Add KML overlay to map
-                                                map.addLayer(track);
-                                          
-                                                // Fit map bounds to KML overlay
-                                                const bounds = track.getBounds();
-                                                map.fitBounds(bounds);
-                                          
-                                                // Resolve with loaded KML data
-                                                return kml;
-                                              });
-                                          }
-                                    </script>
-                                -->
                                 </div>
                             </div>
                         </div>
@@ -431,17 +314,10 @@
                                     <button class="btn btn-primary btn-sm" id="bottoneSovrapposizione" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="sovraCheck()">Sovrapposizione</button>
                                     <button class="btn btn-primary btn-sm" id="buffer500mt" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck500mt">Buffer 500MT</button>
                                     <button class="btn btn-primary btn-sm" id="buffer3km" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck3km">Buffer 3KM</button>
-
-                                    <!--
-                                    <button id="bottoneSovrapposizione" class="bottone" onclick="sovraCheck()">Sovrapposizione</button>
-                                    <button id="buffer3km" class="bottone" onclick="bufferCheck3km()">Buffer: 3km</button>
-                                    <button id="buffer500mt" class="bottone" onclick="bufferCheck500mt()">Buffer: 500mt</button>
-                                    -->
                                 </div>
                             </div>
                         </div> 
-                        
-
+            
                         <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_simulation">
                             <div class="card shadow mb-4">
                                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -453,7 +329,6 @@
                                             <thead>
                                                 <tr>
                                                     <th>Identificativo</th>
-                                                    <th>Stato</th>
                                                     <th>calmet</th>
                                                     <th>calpost</th>
                                                     <th>calpufff</th>
@@ -567,8 +442,6 @@
 
         document.getElementById('comune_label').addEventListener('click', populateDatalist);
         document.getElementById('myRange').addEventListener("input", changeInput);
-        // per il progress del job sul frontend 
-        // window.addEventListener('load', checkProgressWorkflow);
         window.addEventListener('load', checkID)
         window.addEventListener('load', checkInfoTable)
         document.getElementById('restart-button').addEventListener('click', clearTableInfoSim)
@@ -1094,6 +967,8 @@
                 })
                 .then(data => {
 
+                    console.log("data from Dagon : " , data);
+
                     let table_body = document.getElementById('state-table').getElementsByTagName('tbody')[0];
                     
                     if(table_body.rows.length > 0) {  
@@ -1102,9 +977,9 @@
                         
                         for(let i=1; i<12; i++) {
                             if(!first_row.cells[i]){
-                                first_row.insertCell(i).textContent = data[workflow[i]];
+                                first_row.insertCell(i).textContent = data[workflow[i-1]];
                             } else {
-                                first_row.cells[i].textContent = data[workflow[i]];
+                                first_row.cells[i].textContent = data[workflow[i-1]];
                             }
                         }
                     }

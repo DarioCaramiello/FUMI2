@@ -157,8 +157,6 @@ class DBManager():
             self.__connection.close()
 
 
-
-
 # Class that wraps methods and logic of the database usage 
 class DBProxy():
     
@@ -299,14 +297,23 @@ class DBProxy():
     # Simple function that will returns all the completed jobs given an user 
     def fetch_jobs(self, user):
 
-        
-        query = '''SELECT AREA,\"DATE\",\"TIME\",DURATION,LONG,LAT,TEMPERATURE,METEODATA,JOBINFO.JOBID
+
+        query = '''SELECT NAME_SIM,\"DATE\",\"TIME\",DURATION,COMMON,LONG,LAT,TEMPERATURE,CODICE_GISA,JOBINFO.JOBID
                     FROM JOBINFO 
                     JOIN JOBS ON JOBINFO.JOBID=JOBS.JOBID 
                     JOIN \"USER\" ON JOBS.USERNAME=\"USER\".USERNAME 
                     WHERE \"USER\".USERNAME=\'{}\' 
-                    AND JOBINFO.COMPLETED=1;
                 '''.format(user)
+
+        
+        #query = '''SELECT NAME_SIM,\"DATE\",\"TIME\",DURATION,LONG,LAT,TEMPERATURE,CODICE_GISA,JOBINFO.JOBID
+        #            FROM JOBINFO 
+        #            JOIN JOBS ON JOBINFO.JOBID=JOBS.JOBID 
+        #            JOIN \"USER\" ON JOBS.USERNAME=\"USER\".USERNAME 
+        #            WHERE \"USER\".USERNAME=\'{}\' 
+        #            AND JOBINFO.COMPLETED=1;
+        #        '''.format(user)
+        
         
         # returns values
         return self.__db.execute(query)

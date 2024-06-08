@@ -7,7 +7,8 @@ services:
       dockerfile: Dockerfile-fumi2
     ports:
       - "8085:80"
-    # volumes:
+    volumes:
+      - /storage/ccmmma/prometeo/data/opendap/pippo/smoketracer:/home/fumi2/FUMI2/static/smoketracer
     # -  /home/d.caramiello/FUMI2/src/root:/home/fumi2/FUMI2/dati_prova
     depends_on:
       - db

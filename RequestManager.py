@@ -300,58 +300,49 @@ def workflowStatus(id):
 @app.route('/', methods=['POST', 'GET'])
 def login():
 
-    # If the user is alrady authenticated, we redirect it to the appropriate 
-    # dashboard using the flask_login module functionalities, based on his role.
     if "user" in session:   
         return redirect_to_dashboard(session["user"])
-
-
-    # If we press the login button 
+ 
     if request.method == "POST":
 
-        # Istanciate a db object to perform queries
         db = DBProxy()
 
-        # Get user and password
         username = request.form.get("username")
         password = request.form.get("password")
 
-        # Check if present on the DB and is active
         exists = db.user_exists(username, password)
         is_active = db.user_active(username)
 
-        # If the user does exists, redirect us to the appropriate dashboard
         if exists:
             
             if is_active:
-
-                # We update the session values
                 session["user"] = username
-                # session["jobinfo_interactive"] = []
                 session["jobinfo_queue"] = []
                 session["job_sim_singola"] = False
+                # tiene traccia dei dati sottomessi per la simulazione singola 
+                session["info_single_job"] = []
+                session["jobs_queue"] = []
+                # tiene traccia dei dati sottomessi per le simulazioni nella queue
+                session["info_jobs_queue"] = []
+
+                db.update_access(session["user"])
+                session["access"] = db.get_last_access(session["user"])
+                return redirect_to_dashboard(session["user"])
+
+                # session["jobinfo_interactive"] = []
                 # session["jobstate_interactive"] = []
                 # session["kmlpath_dash"] = ""
                 # session["searchval"] = ""
                 # session["category"] = ""
                 # session["queue_ops_in_act"] = False
-
-                db.update_access(session["user"])
-                session["access"] = db.get_last_access(session["user"])
-
-                return redirect_to_dashboard(session["user"])
-        
             
             else:
-                
-                # If the user is not active, we redirect to login flashing the message
-                # Else, username or password not correct: flash a message and redirect to login
+ 
                 flash("Utente non attivo. Richiederne l'attivazione!")
                 return redirect(url_for('login'))
 
         else:
-            
-            # Else, username or password not correct: flash a message and redirect to login
+
             flash("Username o Password non corrette.")
             return redirect(url_for('login'))
 
@@ -387,27 +378,20 @@ def dashboard():
 @app.route('/simulazione-singola', methods=['POST', 'GET'])
 def simulazione_singola():
 
-    db = DBProxy()
-
     if "user" not in session:
         return redirect(url_for('login'))
 
+    db = DBProxy()
+    
     if db.is_admin(session["user"]):
         return redirect(url_for('adminpane'))
 
     user = session["user"]
-
-    # Reset searchval for other pages (if we change page we must reset the value searched)
-    # session["searchval"] = ""
-
-    # Fetch last access knowing the user
     last_access= session["access"]
 
     hours = [f"0{i}" if i < 10 else f"{i}" for i in range(24)]
 
-    # If the request is post (user submitted options)
     if request.method == "POST":
-        # print("[*] RequestManager.py : var request.form = " + str(request.form), flush=True)
         if "generate" in request.form:
             
             if session['job_sim_singola'] != False:
@@ -430,8 +414,6 @@ def simulazione_singola():
             temp = request.form.get("temp")
             codice_GISA = request.form.get("codice_gisa")
 
-            # job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, comune, longit, latit, temp, codice_GISA, data]
-
             session['area'] = area
             session['data'] = data
             session['ora'] = ora
@@ -441,158 +423,42 @@ def simulazione_singola():
             session['lat'] = latit
             session['temp'] = temp
             session['codice_GISA'] = codice_GISA
-
             session['data2'] = "".join(data.split('-'))
             session['ora_inizio'] = str(int(ora))
             
-
             job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, comune, longit, latit, temp, codice_GISA]
-            # job_info[0] = user_dir_name
-            # job_info[0] = "not yet present"
-            job_info[0] = random.randint(1,100)
             job_info.append(str(user))
-            db.new_job(job_info)      
-
+            
             id_workflow = sbatchmanager.run(user, job_info)
 
             if id_workflow is not None:
+                job_info[0] = id_workflow
+                db.new_job(job_info)
                 session['workflow_id'] = id_workflow
             else:
                 session['workflow_id'] = ""
+                flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
+                return redirect(url_for('interattivo'))
 
-            # TODO : aggiornare l'id del job nel database. 
-
-            
-
-            '''
-            if user_dir_name is False:
-                # session['kmlpath_dash'] = ""
-                session['user_dir_name'] = ""
-                flash("Errore esecuzione job simulazione")
-                return redirect(url_for('dashboard'))
-            else:
-                # session['kmlpath_dash'] = ""
-                session['user_dir_name'] = user_dir_name
-                job_info[0] = user_dir_name
-                job_info.append(str(user))
-                db.new_job(job_info)
-
-            '''
-
-
-            # if kml_path == False:
-            #     session["kmlpath_dash"] = ""
-            # else: 
-            #     session["kmlpath_dash"] = kml_path
-            #     size_flag = int(durata)
-            #     session["flag_map_kml"] = [0] * size_flag
-
-            # If the returned jobid is 0, that means sbatch could not submit a new job
-            # we inform the user and redirect to the page again.
-            # Same for nc dumper error
-            
-            # if jobid == 0:
-            #    flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
-            #    return redirect(url_for('interattivo'))
-            
-            # Check dump info 
-            # dumpstate = ncdump.dump(data, str(int(ora)), durata)
-
-            # If dumpstate is -1, we surpassed the meteo prevision limit, flash the message
-            # if dumpstate == -1:
-            #    flash("Non è stato possibile inserire l'operazione in coda. Non esistono valori meteo per quella data.") 
-            #    return redirect(url_for('interattivo'))
-
-            # Create a new job entry in the database for the given user. 
-            # Since we do not need the earlier jobinfo structure anymore, we change few things: 
-            # - the first element with the jobid (was the name of the script before)
-            # - append a last element representing the user (we need to insert info related to the user)
-            
-            # job_info[0] = jobid
-            # job_info.append(user)
-            # db.new_job(job_info)
-
-
-            '''
-            # TEST: checking for the submitted id
-            print("submitted id {}".format(jobid), flush=True)
-
-            # We update the jobid into the jobstate dash variable: 
-            # This var is composed by [jobid, state, scratch_path] variable.
-            # Note: scratch_path variable is updated by the get_progress function.
-            session["jobstate_interactive"].append([jobid, "IN CORSO", ""])
-
-            # We set the update variable to true, so we can start updating the page checking for
-            # progress to update the progress bar
-            update = True
-
-            # We reset the kml path if something present (ie: a job already finished and we 
-            # want to clear the map)
-            session["kmlpath_dash"] = ""
-
-            # We create the execute string (we fetch the jobid from the first element)
-            info_str = "ID: {}".format(session["jobstate_interactive"][0][0])
-
-            # Before leaving, we remove the unnecessary elements from jobinfo, and assigning the 
-            # entry to the relative session value 
-            session["jobinfo_interactive"] = job_info[1:8] 
-
-            # We then append three elements: jobid, current string state and current int state.
-            # NOTE: "IN CORSO" = 0, "COMPLETO" = 1, "ERRORE" = 2, "CANCELLATO" = 3
-            session["jobinfo_interactive"].append(jobid)
-            session["jobinfo_interactive"].append("IN CORSO")
-            session["jobinfo_interactive"].append(0)
-
-            print("job value {}".format(session["jobstate_interactive"][0][0]), flush=True)
-            print(session["jobinfo_interactive"], flush=True)
-        '''
-        # Second case: we want to reset the map at the original position
+    
         elif "dresetmap" in request.form:
-
-            # We reset the kml path, simply reloading the page. 
-            # We set update to False because we do not want to trigger the update map 
-            # function.
-            # update = False
             session['user_dir_name'] = ""
 
-        # Third case: the user want to cancel the job
         elif "icancel":
-            
             try: 
-
-                # Before trying to eliminate the job, we check if the sbatch manager has finalized
-                # the routine for the starting of a new job: to do so, we just check if the jobstate
-                # scratch path is different than the "" default init string. If so, the job has been finalized
-                # in the sbatch manager functions, and we can safely remove it without breaking anythign
                 if not safe_str_cmp(session["jobstate_interactive"][0][2], ""):
-
-                    # We submit the scancel [jobid] command
                     try: 
                         sbatchmanager.cancel_job(session["jobinfo_interactive"][7])
                     except:
                         flash("Errore nella cancellazione dell'operazione. Riprovare!")
-
-                    # We update the state int
                     session["jobinfo_interactive"][9] = 3
-                
                 else:
-
-                    # We flash a message 
                     flash("Operazione in finalizzazione. Riprovare tra qualche secondo.")
             except:
-
                 pass
     else: 
         print("no post method")
-        # If the refreshing isn't triggered by the post button, we face two cases: 
-        # The first is simply a page switch, in which we shouldn't to nothing. 
-        # The second is that the function get_progress finished successfully a job 
-        # and routed to the dashboard function.
-        # When the progress function redirect here, we face two cases: we got jobs in the 
-        # queue and we dont. We check this 
 
-    
-    # interactive.html
     return render_template('interactive.html',
                             user=user, 
                             last_access=last_access, 
@@ -603,72 +469,27 @@ def simulazione_singola():
                             hours=hours)
                             # kmlpath = session["kmlpath_dash"])
   
-# @app.route('/coda', methods=['POST', 'GET'])
 @app.route('/simulazioni-multiple', methods=['POST', 'GET'])
 def coda():
 
-    # Redirect to login if user not in session
     if "user" not in session:
         return redirect(url_for('login'))
 
-    # Istanciate a db object to perform queries
     db = DBProxy()
 
-    # If the user is an admin trying to accessing the other routes pages, redirect him
-    # to the adminpane
     if db.is_admin(session["user"]):
         return redirect(url_for('adminpane'))
 
-    # As the interactive route, we init some session variables to remember what´s happening wheen 
-    # switching pages. THE ONLY DIFFERENCE is that in the interactive page we can have an UNIQUE
-    # job per time, here we can have multiple running.
-    # Assign values to jobstate (queue): if present, we assign that very array, empty if not 
-
-    # The update value is passed inside an hidden input and later checked by a JS function: 
-    # If the value is true, we must call the update function to update the progress bar (a job 
-    # is being executed) and the KML map if the job has been completed.
-    # update = check_session("jobinfo_queue", len(session["jobinfo_queue"])>0, True, False)
-
-    # Fetch username and last access
     user = session["user"]
-
-    # Fetch a local structure of jobinfo queue
-    # queue_lock.acquire()
-    # jobinfo_queue = session["jobinfo_queue"]
-    # queue_lock.release()
-
-    # Reset searchval for other pages (if we change page we must reset the value searched)
-    # session["searchval"] = ""
-
-    # Fetch last access knowing the user
     last_access = session["access"]
 
-    # Creating the hour list: 24 hours UTC. (00, 01, 02...23)
     hours = [f"0{i}" if i < 10 else f"{i}" for i in range(24)]
 
-    # If the request is post (user submitted options)
     if request.method == "POST":
 
-        # First case: the button pressed is the generation one, so we need to 
-        # fetch values from the textfields 
         if "generate" in request.form:
 
-            # First thing, we check if a job is already running: since this is the interactive dashboard,
-            # We must assert that only a job is active at a time; if the user wants to submit more than one jobs,
-            # He should go to the approppriate queue dashboard section.
-            # We get number of active jobs (jobs which are still active (>0))
-            
-            # jobs = get_slurm_queue("g.hauber")
-
-            # if len(jobs) >= 10:
-            #    flash("Massimo tetto di operazioni raggiunte. Cancellarne qualcuna o aspettare che finiscano per immetterne di nuove!") 
-            #    return redirect(url_for('coda'))
-
-            # Getting all the parameters for the script 
-            # from the relatives fields
             area = request.form.get("area")
-
-            # Since area is the only alphabetical textfield, we need to check if its valid: 
             if not validate_string(area, "[a-zA-Z]"):
                 flash("Area inserita non valida. Unici caratteri consentiti: Lettere [a-z e A-Z]. Riprovare!")
                 return redirect(url_for('coda'))
@@ -676,29 +497,37 @@ def coda():
             data = request.form.get("data")
             ora = request.form.get("hours")
             durata = request.form.get("durata")
+            comune = request.form.get("comune")
             longit = request.form.get("long")
             latit = request.form.get("lat")
             temp = request.form.get("temp")
+            codice_GISA = request.form.get("codice_gisa")
+
+            job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, comune, longit, latit, temp, codice_GISA]
+            job_info.append(str(user))
             
-            # We first check if start+duration is major than 24 (limit hours)
-            # if int(ora)+int(durata) > 24:
-            #    flash("Non è stato possibile inserire l'operazione in coda. La durata supera le 24 ore!") 
-            #    return redirect(url_for('interattivo'))
+            id_workflow = sbatchmanager.run(user, job_info)
 
-            job_info = ["./EmsSmoke.sh", area, "".join(data.split('-')), str(int(ora)), durata, longit, latit, temp, data]
+            if id_workflow is not None:
+                job_info[0] = id_workflow
+                db.new_job(job_info)
+                session['jobs_queue'].append(id_workflow)
+                var_info = []
+                var_info.extend([data, ora, durata, comune, longit, latit, temp, codice_GISA])
+                session["info_jobs_queue"].append(var_info)
+            else:
+                flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
+                return redirect(url_for('interattivo'))
 
-            jobid = sbatchmanager.run(user, job_info)
-
-            db_manager = DBManager()
-
-            ora_int = int(ora)
-            ora_module = datetime.strptime(str(ora_int % 24), "%H")
-            ora_formattata = ora_module.strftime("%H:%M:%S")
+        
+            # ora_int = int(ora)
+            # ora_module = datetime.strptime(str(ora_int % 24), "%H")
+            # ora_formattata = ora_module.strftime("%H:%M:%S")
             # db_manager.execute('INSERT INTO SIMULAZIONE (AREA, "DATE", ORAINIZIO, TEMPERATURA, LONGITUDINE, LATITUDINE, DURATA, USERUSERNAME, STATOFINALE) VALUES (''Area di simulazione'', ''2024-03-06'', ''12:00:00'', 25.50, 10.123456, 45.678901, ''2 hours'', ''nome_utente'', TRUE);')
-            query = 'INSERT INTO SIMULAZIONE (AREA, "DATE", ORAINIZIO, TEMPERATURA, LONGITUDINE, LATITUDINE, DURATA, USERSIM, STATOFINALE) VALUES (\'{}\', \'{}\', \'{}\', {}, {}, {}, \'{}\', \'{}\', {});'.format(area, data, ora_formattata, temp, longit, latit, durata, user, 'NULL')
+            # query = 'INSERT INTO SIMULAZIONE (AREA, "DATE", ORAINIZIO, TEMPERATURA, LONGITUDINE, LATITUDINE, DURATA, USERSIM, STATOFINALE) VALUES (\'{}\', \'{}\', \'{}\', {}, {}, {}, \'{}\', \'{}\', {});'.format(area, data, ora_formattata, temp, longit, latit, durata, user, 'NULL')
 
             # db_manager.execute(query)
-            db_manager.update(query)
+            # db_manager.update(query)
 
             # print("----------- INSERTED NEW JOB: {}".format(jobid))
             # If the returned jobid is 0, that means sbatch could not submit a new job
@@ -720,17 +549,17 @@ def coda():
             # Since we do not need the earlier jobinfo structure anymore, we change few things: 
             # - the first element with the jobid (was the name of the script before)
             # - append a last element representing the user (we need to insert info related to the user)
-            job_info[0] = jobid
-            job_info.append(user)
+            #job_info[0] = jobid
+            #job_info.append(user)
 
             # Try inserting the new job into the databse
-            try:
-                db.new_job(job_info)
+            #try:
+            #    db.new_job(job_info)
 
-            except:
+            #except:
                 # Delete from the queue if unsuccessful
                 # sbatchmanager.cancel_job(jobid)
-                flash("Non è stato possibile inserire l'operazione in coda. Riprovare!") 
+            #    flash("Non è stato possibile inserire l'operazione in coda. Riprovare!") 
                 # return redirect(url_for('coda'))
               
 
@@ -856,19 +685,8 @@ def coda():
             # print("RESET JOB")
 
     
-    # Since the user can submit more than a few jobs, we need to pagine the results into
-    # responsive pages. How do we do that? -> pagination!
-    # Set up pagination -----------
-    # We get the first page to show 
     page = int(request.args.get('page', 1))
-
-    # Then we init a per-page elements value
     per_page = 10
-
-    # The offset represent the number of the element currently showed. 
-    # For example, given per_page being 10 (10 elements showed per page): 
-    # Page 1: 1-1 (0) * 10 -> 0
-    # Page 2: 2-1 (1) * 10 -> 10 etc
     offset = (page - 1) * per_page
 
     # Then we paginate the data: this is just showing a portion of the total data each time 
@@ -984,69 +802,51 @@ def profilo(alert_category=""):
 @app.route('/storico', methods=['POST', 'GET'])
 def storico():
 
-    # If the user did not authenticate, redirect it to the login page
     if "user" not in session:
         return redirect(url_for('login'))
 
-    # Istanciate a db object to perform queries
     db = DBProxy()
 
-    # If the user is an admin trying to accessing the other routes pages, redirect him
-    # to the adminpane
     if db.is_admin(session["user"]):
         return redirect(url_for('adminpane'))
     
     user = session["user"]
-
     last_access=db.get_last_access(user)
-
-    # Fetch only completed jobs relative to the user
     jobs = db.fetch_jobs(user)
 
-    print("[*] RequestManager.py : var jobs = " + str(jobs), flush=True)
-
     # Create a dictionary containing the long, lat and jobid
-    markers = []
-
+    # markers = []
     # Create, for each job, an entry composed by: jobid-lat-long
-    for job in jobs:
-         markers.append([job[8], job[5], job[4]])
-
+    # for job in jobs:
+    #     markers.append([job[8], job[5], job[4]])
     # KML path: we point an empty kml initially 
     # kml_path = safe_join("KML", "dummy.kml")
-
     # JOBID selected at start is none. We'll show that in the historical pane map
     # jobid = "Nessuno"
-
     # Setup an empty searchpage, to reset the page pointer to the first page if the user 
     # does search something
     # search_page = None
 
-    # If a button has been pressed
+
     if request.method=="POST":  
         
-        # The first case is the search button: we need to query again the 
-        # jobs specifying a particular element as query key.
         if "hsearchbutton" in request.form:
+            print("[*] Search Button - coda", flush=True)
             
             # Given the search value as filter 
-            search_filter = request.form.get("hsearchvalue").lower()
-            
-            print("[*] RequestManager.py : var search_filter = " + str(search_filter), flush=True)
-
+            # search_filter = request.form.get("hsearchvalue").lower()
+            # print("[*] RequestManager.py : var search_filter = " + str(search_filter), flush=True)
             # New users are the filtered match 
-            jobs = filters(search_filter, jobs)
-
-            print("[*] RequestManager.py : var jobs = " + str(jobs), flush=True)
-
+            # jobs = filters(search_filter, jobs)
+            # print("[*] RequestManager.py : var jobs = " + str(jobs), flush=True)
             # Insert into session a value representing the actual search
-            session["searchval"] = search_filter
-
-            search_page = 1
+            # session["searchval"] = search_filter
+            # search_page = 1
 
         # The second case is the show button related to a specific KML file associated 
         # with a specific JOBID. on press, we must load that kml file into the map.
-        # elif "hshowbutton" in request.form:
+        elif "hshowbutton" in request.form:
+            print("[*] Show Button - coda", flush=True)
 
             # We get the jobid in which the button has been pressed
             # jobid = int(request.form['hshowbutton'])
@@ -1059,7 +859,8 @@ def storico():
 
         # The third case is related to the user pressing the delete button. If so, we need to extract 
         # The jobid from the request and perform deletion on both database/folders of that specific job.
-        # elif "hdeletebutton" in request.form:
+        elif "hdeletebutton" in request.form:
+            print("[*] Delete Button - coda", flush=True)
 
             # We get the jobid in which the button has been pressed
             # jobid = int(request.form['hdeletebutton'])
@@ -1085,17 +886,21 @@ def storico():
 
         # The third case is when the user press the reset button on the map. 
         # In that case, we reset the KML layer. 
-        # elif "hresetmap" in request.form:
-            
+        elif "hresetmap" in request.form:
+            print("[*] Reset Button - coda", flush=True)
             # Reset info
             # jobid="Nessuno"
             # kml_path = safe_join("KML", "dummy.kml")
 
         # The last case is when the user want to reset the search.
-        # elif "hresetjob" in request.form:
+        elif "hresetjob" in request.form:
+            print("[*]  Button - coda", flush=True)
 
             # We just put the search val to empty 
             # session["searchval"] = ""
+
+        elif "hdownloadbutton" in request.form:
+            return redirect(url_for('download'))
 
     # else: 
     #     pass       

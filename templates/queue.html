@@ -95,7 +95,6 @@
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DESCRIZIONE</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" required>
                                                         <div class="text-dark fw-bold h5 mb-0"></div>
                                                     </div>
-                                                    <!-- <div class="col-auto"><i class="fas fa-chart-area fa-2x text-gray-300"></i></div> -->
                                                 </div>
                                             </div>
                                         </div>
@@ -106,7 +105,6 @@
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-purple);">Longitudine</span></div>
                                                         <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" required></span></div>
                                                     </div>
-                                                    <!-- <div class="col-auto"><i class="icon ion-ios-world-outline fa-2x text-gray-300"></i></div> --> 
                                                 </div>
                                             </div>
                                         </div>
@@ -122,7 +120,6 @@
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>DATA</span></div>
                                                 <div class="text-dark fw-bold h5 mb-0"><span><input id="date_dash" type="date" name="data" style="width: 168px;" value="03/03/2023" required></span></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="far fa-calendar-alt fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -133,7 +130,6 @@
                                                 <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" required>
                                                 <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -152,10 +148,8 @@
                                                         <option value="{{ hour }}">{{ hour }}</option>
                                                         {% endfor %}
                                                     </select><br><br>
-
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="far fa-clock fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -170,7 +164,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="fas fa-temperature-high fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -184,7 +177,6 @@
                                                 <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" name="durata" id="duration_dash" style="width: 160px;" required>
                                                 <div class="text-dark fw-bold h5 mb-0"></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="fas fa-long-arrow-alt-right fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -199,7 +191,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="fas fa-barcode fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -218,7 +209,6 @@
                                                 </datalist>
                                                 <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                             </div>
-                                            <!-- <div class="col-auto"><i class="icon ion-ios-world fa-2x text-gray-300"></i></div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -236,141 +226,52 @@
                             {% endfor %}</p>
                     </div>
 
-                    <!--
-                    <div class="row">
-                        <div class="col">
-                            <div class="row">
-                                    <div class="progress" style="margin-bottom: 25px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100" ></div>
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
-                    -->
-
                     <div class="row">
 
-                        <div class="col"></div>
+                        <!-- <div class="col"></div> --> 
 
-                        <div class="col-lg-5 col-xl-4" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);width: AUTO;">
-
-                            <div class="card shadow mb-4">
-
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h6 class="text-primary fw-bold m-0">Coda Operazioni</h6>
-                                    <!-- 
-                                    <form method="POST">
-                                        <button class="btn btn-danger" type="submit" name="qresetjob" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);">
-                                            <i class="fas fa-undo"></i>
-                                        </button>
-                                    </form>
-                                    -->
-                                </div>
-                                <div class="card-body">
-                                    <input type="hidden" id="update" , value="{{ update }}">
-                                    <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
-                                        <table class="table", id="queue-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Identificativo</th>
-                                                    <th>Stato</th>
-                                                    <!-- <th>Num. Simulazione</th> --> 
-                                                    <th>Descrizione</th>
-                                                    <th>Data</th>
-                                                    <th>Ora</th>
-                                                    <th>Durata</th>
-                                                    <th>Longitudine</th>
-                                                    <th>Latitudine</th>
-                                                    <th>Temperatura</th>
-                                                    <th>Codice GISA</th>
-                                                    <th>Comune</th>
-                                                    <th>Azioni</th>
-                                                </tr>
-                                            </thead>
-
-                                            <!--
-                                            <tbody>
-                                                    <tr>
-                                                        <td>75242</td>
-                                                        <td>IN CORSO</td>
-                                                        <td>Napoli</td>
-                                                        <td>19/03/2024</td>
-                                                        <td>00</td>
-                                                        <td>10</td>
-                                                        <td>14.32745</td>
-                                                        <td>40.84294</td>
-                                                        <td>1200</td>
-                                                        <td>//</td>
-                                                        <td>
-                                                            <form method="POST">
-                                                                    <button class="btn btn-danger" type="submit" name="qcancel" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td>73422</td>
-                                                        <td> IN ATTESA </td>
-                                                        <td>Napoli</td>
-                                                        <td>03/01/2023</td>
-                                                        <td>03</td>
-                                                        <td>3</td>
-                                                        <td>14.32745</td>
-                                                        <td>40.84294</td>
-                                                        <td>1200</td>
-                                                        <td>2023__001</td>
-                                                        
-                                                        <td>
-                                                            <form method="POST">
-                                                                    <button class="btn btn-danger" type="submit" name="qcancel"  style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td>75543</td>
-                                                        <td> IN CORSO </td>
-                                                        <td>Caserta</td>
-                                                        <td>13/02/2023</td>
-                                                        <td>03</td>
-                                                        <td>30</td>
-                                                        <td>14.3311</td>
-                                                        <td>41.0723</td>
-                                                        <td>1000</td>
-                                                        <td>//</td>
-                                                        <td>
-                                                            <form method="POST">
-                                                                    <button class="btn btn-danger" type="submit" name="qcancel" style="margin-left: 2px;font-weight: bold;"><i class="fas fa-trash"></i></button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                <tr></tr>
-                                            </tbody>
-                                            -->
-
-                                            <tfoot>
-                                                <tr></tr>
-                                            </tfoot>
-                                        </table>
-
-                                        <div class="pagination">
-                                            {{ pagination.links }}
-                                        </div>
+                            <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_simulation">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="text-primary fw-bold m-0">Coda Operazioni</h6>
                                     </div>
-
-                                    <div class="row">
-                        
-                                        <div class="col-md-6 align-self-center">
-                                            <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">{{ datainfo[0] }} - {{ datainfo[1] }} elementi di {{ datainfo[2] }} totali.</p>
+                                    <div class="card-body" style="height: 100%; margin-bottom: 0px;">
+                                        <div class="table-responsive">
+                                            <table class="table", id="info-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Area</th>
+                                                        <th>Data</th>
+                                                        <th>Ora</th>
+                                                        <th>Durata</th>
+                                                        <th>Lon</th>
+                                                        <th>Lat</th>
+                                                        <th>Temp</th>
+                                                        <th>Codice GISA</th>
+                                                        <th>Comune</th>
+                                                        <th>Stato</th>
+                                                        <th>calmet</th>
+                                                        <th>calpost</th>
+                                                        <th>calpufff</th>
+                                                        <th>calwrff</th>
+                                                        <th>ctgproc</th>
+                                                        <th>dst</th>
+                                                        <th>lnd2</th>
+                                                        <th>makegeo</th>
+                                                        <th>terrel</th>
+                                                        <th>wrf2calwrf</th>
+                                                        <th>www</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        
-                                        
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    
+                        <!-- </div> -->
                         <div class="col"></div>
                     </div>
                 </div>
@@ -388,6 +289,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
 
+
         // Funzione per popolare la datalist con i comuni
         function populateDatalist() {
             comuniList.innerHTML = '';  // Pulisce eventuali opzioni esistenti
@@ -396,6 +298,21 @@
                 option.value = comune;
                 comuniList.appendChild(option);
             });
+        }
+
+        function newJobs() {
+            let table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
+            let newRow = table.insertRow();
+
+            // controlla quante rige ci sono 
+            let index_new_job = table.rows.length - 1;
+
+            // si va a scrivere le info per quel job da session["info_jobs_queue"][index_new_job]['field']
+
+            // estrae l'id del workflow 
+
+            // request continue a dagon con quell'id del workflow
+            
         }
         
         comuni = []
@@ -413,6 +330,8 @@
         const comuniList = document.getElementById('comuni_list');
         
         document.getElementById('comune_label').addEventListener('click', populateDatalist);
+
+        document.getElementById('start-button').addEventListener('click', newJobs);
 
         
         /*

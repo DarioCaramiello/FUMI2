@@ -76,11 +76,11 @@ class SbatchManager():
             id_match = re.search(r'id = (\w+)', line)
             if id_match:
                 id_value = id_match.group(1)
-                print(f'ID estratto: {id_value}', flush=True)
+                print(f'[*] ID estratto: {id_value}', flush=True)
                 subprocess.run(['rm', 'tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis)])
                 return id_value
         else:
-            print('ID non trovato nel file.', flush=True)
+            print('[*] ID non trovato nel file.', flush=True)
             return None
         
         # subprocess.run(['nohup', './lunch_remote_job.sh', '>', 'tmp/out_from_job_{}_runcmd.txt'.format(user), '2>&1', '&'])
