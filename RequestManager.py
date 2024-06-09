@@ -19,6 +19,7 @@ import hmac
 import requests
 import random
 import time
+import json
 
 # Custom Import
 from DBManager import DBProxy, DBManager
@@ -321,7 +322,7 @@ def login():
                 session["job_sim_singola"] = False
                 # tiene traccia dei dati sottomessi per la simulazione singola 
                 session["info_single_job"] = []
-                session["jobs_queue"] = []
+                session["tot_jobs_queue"] = 0
                 # tiene traccia dei dati sottomessi per le simulazioni nella queue
                 session["info_jobs_queue"] = []
 
@@ -469,6 +470,11 @@ def simulazione_singola():
                             hours=hours)
                             # kmlpath = session["kmlpath_dash"])
   
+@app.route('/getJobsQueue', methods=['POST', 'GET'])
+def getJobsQueue():
+    return jsonify(session["info_jobs_queue"])
+
+
 @app.route('/simulazioni-multiple', methods=['POST', 'GET'])
 def coda():
 
@@ -488,6 +494,8 @@ def coda():
     if request.method == "POST":
 
         if "generate" in request.form:
+
+            session["tot_jobs_queue"] += 1
 
             area = request.form.get("area")
             if not validate_string(area, "[a-zA-Z]"):
@@ -511,10 +519,9 @@ def coda():
             if id_workflow is not None:
                 job_info[0] = id_workflow
                 db.new_job(job_info)
-                session['jobs_queue'].append(id_workflow)
-                var_info = []
-                var_info.extend([data, ora, durata, comune, longit, latit, temp, codice_GISA])
+                var_info = [id_workflow, area, data, ora, durata, longit, latit, temp, codice_GISA, comune]
                 session["info_jobs_queue"].append(var_info)
+                # print("[*] session[info_jobs_queue]" + str(session['info_jobs_queue']), flush=True)
             else:
                 flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
                 return redirect(url_for('interattivo'))
@@ -702,14 +709,11 @@ def coda():
     # print (len(pagination_data), len(session["jobinfo_queue"]))
     # print(len(pagination_data) == 0 and len(session["jobinfo_queue"]) != 0)
     # print("--------")
-
     
     if len(pagination_data) == 0 and len(session["jobinfo_queue"]) != 0: 
-        
         # We subtract a page then doing the offset calculation again
         page -= 1
         offset = (page - 1) * per_page
-
         # We do assign the new pagination data belonging to the previous page, only if 
         # the lenght of the jobinfo queue is diff than 0 (still job in queue)
         pagination_data = session["jobinfo_queue"][offset: offset + per_page]
@@ -732,7 +736,8 @@ def coda():
                            queue=pagination_data,
                            pagination=pagination, 
                            datainfo=datainfo,
-                           hours=hours
+                           hours=hours,
+                           info_jobs = session["info_jobs_queue"]
                         )
 
 @app.route('/profilo', methods=['POST', 'GET'])
@@ -945,7 +950,6 @@ def adminpane():
     user = session["user"] 
     last_access=db.get_last_access(user)
     users = db.fetch_users()
-
 
     # If a button has been pressed
     if request.method=="POST":  

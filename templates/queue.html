@@ -19,7 +19,7 @@
 
 </head>
 
-<body id="page-top" onload="checkUpdate()">
+<body id="page-top">
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
@@ -92,7 +92,7 @@
                                             <div class="card-body">
                                                 <div class="row align-items-center no-gutters">
                                                     <div class="col me-2">
-                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DESCRIZIONE</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" required>
+                                                        <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DESCRIZIONE</span></div><input type="text" name="area" id="area_dash" style="width: 162px;" value="test" required>
                                                         <div class="text-dark fw-bold h5 mb-0"></div>
                                                     </div>
                                                 </div>
@@ -103,7 +103,7 @@
                                                 <div class="row align-items-center no-gutters">
                                                     <div class="col me-2">
                                                         <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span style="color: var(--bs-purple);">Longitudine</span></div>
-                                                        <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" required></span></div>
+                                                        <div class="text-dark fw-bold h5 mb-0"><span><input type="number" name="long" step="any" id="long_dash" style="width: 160px;" value="54.4" required></span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -127,7 +127,7 @@
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
-                                                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" required>
+                                                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="color: var(--bs-indigo);">latitudine</span></div><input type="number" step="any" name="lat" id="lat_dash" style="width: 160px;" value="34.4" required>
                                                 <div class="text-dark fw-bold h5 mb-0"><span></span></div>
                                             </div>
                                         </div>
@@ -157,7 +157,7 @@
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
-                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Temperatura</span></div><input type="number" name="temp" id="temp_dash" style="width: 160px;" required>
+                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Temperatura</span></div><input type="number" name="temp" id="temp_dash" style="width: 160px;" value="200" required>
                                                 <div class="row g-0 align-items-center">
                                                     <div class="col-auto">
                                                         <div class="text-dark fw-bold h5 mb-0 me-3"></div>
@@ -174,7 +174,7 @@
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
-                                                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" name="durata" id="duration_dash" style="width: 160px;" required>
+                                                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>DURATA</span></div><input type="number" name="durata" id="duration_dash" style="width: 160px;" value="1" required>
                                                 <div class="text-dark fw-bold h5 mb-0"></div>
                                             </div>
                                         </div>
@@ -184,7 +184,7 @@
                                     <div class="card-body">
                                         <div class="row align-items-center no-gutters">
                                             <div class="col me-2">
-                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Codice GISA</span></div><input type="text" name="codice_gisa" id="codice_gisa" style="width: 160px;">
+                                                <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="color: var(--bs-code-color);">Codice GISA</span></div><input type="text" name="codice_gisa" id="codice_gisa" style="width: 160px;" value="Codice_Na23">
                                                 <div class="row g-0 align-items-center">
                                                     <div class="col-auto">
                                                         <div class="text-dark fw-bold h5 mb-0 me-3"></div>
@@ -289,7 +289,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
 
-
         // Funzione per popolare la datalist con i comuni
         function populateDatalist() {
             comuniList.innerHTML = '';  // Pulisce eventuali opzioni esistenti
@@ -300,92 +299,41 @@
             });
         }
 
-        function newJobs() {
-            let table = document.getElementById('info-table').getElementsByTagName('tbody')[0];
-            let newRow = table.insertRow();
-
-            // controlla quante rige ci sono 
-            let index_new_job = table.rows.length - 1;
-
-            // si va a scrivere le info per quel job da session["info_jobs_queue"][index_new_job]['field']
-
-            // estrae l'id del workflow 
-
-            // request continue a dagon con quell'id del workflow
-            
+        function cotrolJobsQueue() {
+            fetch('/getJobsQueue')
+            .then(response => response.json())
+            .then(data => {
+               
+                let tbody = document.getElementById("info-table").getElementsByTagName("tbody")[0];
+                let rowCount = tbody.rows.length;
+                let tot_jobs = parseInt("{{session['tot_jobs_queue']}}");   
+                
+                if(rowCount==0) {
+                    for(let i=0; i<tot_jobs; i++) {           
+                        let new_row = tbody.insertRow();
+                        for(let j=0; j<10; j++) {
+                            new_row.insertCell().textContent = data[i][j];
+                        }
+                    }
+                }
+            })
+            .catch(error => console.error('Errore durante il recupero del file:', error));            
         }
         
-        comuni = []
+        let comuni = []
+        let comuniList = document.getElementById('comuni_list');
         
         fetch('static/centroidi_comuni/centroidi_comuni.geojson')
         .then(response => response.json())
         .then(data => {
             for (let feature of data.features) {
-                console.log(feature.properties.COMUNE);
                 comuni.push(feature.properties.COMUNE)
             }
         })
         .catch(error => console.error('Errore durante il recupero del file:', error));
 
-        const comuniList = document.getElementById('comuni_list');
-        
         document.getElementById('comune_label').addEventListener('click', populateDatalist);
-
-        document.getElementById('start-button').addEventListener('click', newJobs);
-
-        
-        /*
-        var intervalId;
-
-        function checkUpdate() {
-            // If the update value is true, we call the updateProgress funct
-            if (document.getElementById("update").value==="True") {
-                console.log("starting update")
-                startUpdate()
-            } else {
-                stopUpdate()
-            }
-        }
-
-        function startUpdate() {
-            console.log("update started")
-            intervalId = setInterval(updateProgress, 1000);
-        }
-
-        function stopUpdate() {
-            clearInterval(intervalId);
-        }
-    
-        function updateProgress() {
-            // Send an AJAX request to the '/queue' route
-            fetch('/queue')
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    
-                    var myTable = document.getElementById('queue-table');
-                            
-                    for (let i=0; i<data.tsize; i++) {
-                        
-                        if (data.states[i] == -1)
-                            myTable.rows[i+1].cells[1].innerHTML = 'IN ATTESA';
-                        else if (data.states[i] == 0)
-                            myTable.rows[i+1].cells[1].innerHTML = 'IN CORSO';
-                        else if (data.states[i] == 1)
-                            myTable.rows[i+1].cells[1].innerHTML = 'COMPLETATO';
-                        else if (data.states[i] == 2)
-                            myTable.rows[i+1].cells[1].innerHTML = 'ERRORE';
-                        else if (data.states[i] == 3)
-                            myTable.rows[i+1].cells[1].innerHTML = 'CANCELLATO';
-                        
-                    }
-
-                    if (data.qsize === 0) {
-                        clearInterval(intervalId);
-                    }
-                });
-        }
-        */
+        window.addEventListener('load', cotrolJobsQueue)
     
     </script>
 </body>
