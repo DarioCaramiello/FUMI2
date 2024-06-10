@@ -40,18 +40,19 @@ class SbatchManager():
         millis = str(int(round(time.time() * 1000)))
         date = datetime.now()
         formatted_date_for_user_dir = date.strftime("%Y%m%dz%H%M%S")
-        formatted_date_for_job = str(params[2]) + "Z" + str(params[3]).zfill(2)  
+        formatted_date_for_job = str(params[2]) + "Z" + str(params[3]).zfill(2) 
+
         
-        subprocess.run(['cp', '{}/lunch_remote_job.sh'.format(script_path), '{}/lunch_remote_job_var.sh'.format(script_path)])
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "USER", user)
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "DATE", formatted_date_for_user_dir)
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "ID", millis)
-        
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "LON", params[6])
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "LAT", params[7])
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "TEMPERATURE", params[8])
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "DATe", formatted_date_for_job)
-        self.substitute("{}/lunch_remote_job.sh".format(script_path), "HOURS", params[4])
+        subprocess.run(['mkdir', '{}/tmp_script_lunch'.format(script_path)])
+        subprocess.run(['cp', '{}/lunch_remote_job.sh'.format(script_path), '{}/tmp_script_lunch/lunch_remote_job_{}.sh'.format(script_path, millis)])
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "USER", user)
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "DATE", formatted_date_for_user_dir)
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "ID", millis)
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "LON", params[6])
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "LAT", params[7])
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "TEMPERATURE", params[8])
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "DATe", formatted_date_for_job)
+        self.substitute("{}/tmp_script_lunch/lunch_remote_job_{}.sh".format(script_path, millis), "HOURS", params[4])
         subprocess.run(['mkdir', '{}/tmp'.format(script_path,)])
         subprocess.run(['mkdir', '{}/tmp/{}'.format(script_path, user)])
 
@@ -59,13 +60,14 @@ class SbatchManager():
         
         with open('tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis), 'w') as f:
             subprocess.Popen(
-                './lunch_remote_job.sh',
+                './tmp_script_lunch/lunch_remote_job_{}.sh'.format(millis),
                 stdout=f,
                 stderr=f,
                 start_new_session=True
             )
 
-        time.sleep(10)
+        subprocess.run([])
+        time.sleep(5)
         
         with open('tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis), 'r') as f:
             file_tmp = f.read()

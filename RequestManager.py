@@ -118,182 +118,13 @@ def generate_unique_link(username, route):
 
     # we return the link
     return link
-
-# Simple function that given a search filter and a list to filt, will return a
-# list containing only the filtered values 
-def filters(search_filter, searchlist):
-
-    # Initiate an empty list
-    filter_list = []
-
-    # For each row
-    for row in searchlist:
-        
-        # Substitute None with an empty string 
-        row = ['None' if item == None else str(item) for item in row]
-
-        # Flattenize as string 
-        query = ' '.join(row).lower()
-
-        # Search key in token: if present, we have a match
-        if search_filter in query: filter_list.append(row)
-
-    # return the filtered list 
-    return filter_list
-
-# Simple function that returns a job queue based on an username
-def get_slurm_queue(user): 
-
-    squeue_list = parser.dictionarize("squeue")
-    jobs = {}
-    for key in squeue_list: 
-        if safe_str_cmp(squeue_list[key]["USER"], user):
-            jobs[key] = squeue_list[key]["ST"]
-    return jobs
-
-# Simple function that assert if a folder exists before deleting it, to 
-# avoid errors
-def safe_rmdir(dirname): 
-
-    # We check for exsistence
-    if os.path.exists(dirname) and os.path.isdir(dirname):
-                        
-        # Remove if exists
-        rmtree(dirname)
-    
-# Simple function that copy the content of a KML file from a storage folder to the serve 
-# folder in the static one.
-def serve_kml(jobid, db):
-
-    # Istanciate a db object to perform queries
-    db = DBProxy()
-
-    # Using that id, we'll query the database to retrieve the storage path in 
-    # which the KML file is containeed, without specifying the root; only the storage
-    # is returned.
-    kml_path = db.get_KML_path(jobid)
-
-    # Check if a file do not exists in the static folder: 
-    if not os.path.exists(safe_join('static', kml_path)):
-        
-        # If so, we need to create a file:
-        # Since the storage path is different than the static one, we need to serve 
-        # the file in the static folder. We simply copy the file into a similar 
-        # tree structure
-        static_serve_path = safe_join('static', os.path.dirname(kml_path))
-        os.makedirs(static_serve_path, exist_ok=True)
-
-        # We then copy the file inside it, ready to be served
-        copyfile(safe_join('root', kml_path), safe_join('static', kml_path))
-    
-    # return the path 
-    return kml_path
-
-# Simple function that will check if a given key is in the session dictionary. 
-# If it is, it returns lvalue, if not it returns rvalue.
-def check_session(key, condition, lvalue, rvalue):
-
-    # If the key is in the session
-    if key in session:
-
-        # If additional condition (specified by the user, i.e: lenght of session['jobid'] > 0)
-        if condition:   
-
-            # We return the left value
-            return lvalue
-        
-        else: 
-
-            # Else, we return the other
-            return rvalue
-
-# Simple function that check a folder containing files to update the progress bar 
-# in the dashboard.
-def get_progress():
-
-    # Istanciate a db object to perform queries
-    db = DBProxy()
-
-    # Before anything, we need to store into a session var the number of files currently 
-    # fetched if not present. We check it 
-    if "numfiles" not in session: 
-
-        # And if not in session, we assing 0 (starting progress)
-        session["numfiles"] = 0
-
-    # First: we check if a scatch directory has been created given the submitted jobid
-    # To do so, we check in the session storage.
-    # Bascially what we want to do is assign a path from the session if already created, 
-    # fetch one if not.
-    scratch_path = ""
-    
-    if session["jobstate_interactive"][0][2] != "":
-        scratch_path = session["jobstate_interactive"][0][2]
-    else: 
-        scratch_path = db.specific_select("JOBIDENTIFIER", "PATH", "JOBID", session["jobstate_interactive"][0][0])
-        session["jobstate_interactive"][0][2] = scratch_path
-
-    print("Scratch path is: {}".format(scratch_path))
-
-    # Before proceding, we check if the job has been completed with an error
-    state = db.specific_select("JOBINFO", "COMPLETED", "JOBID",session["jobstate_interactive"][0][0])
-
-    # If there is an error (code 2 or 3) we return the 100% to indicate that the job has been 
-    # finished.
-    print("state is {}".format(state))
-    if state == 2 or state == 3:
-        return [10 / 10.0 * 100, "", state]
-
-    # If scratch path has been defined
-    if scratch_path is not None:
-
-        # Then we check if the progress bar has been created
-        if (os.path.exists(safe_join(scratch_path, "progress"))):
-            
-            # We fetch the names of files in the progress folder
-            files = os.listdir(safe_join(scratch_path, "progress"))
-
-            # We fetch the num files in the progress folder
-            num_files = min(len(files), 10)
-
-            # Then we store it into the session vars
-            session["numfiles"] = num_files
-
-            print("Num files are: {}".format(num_files))
-
-            # If the num files are equal 9 (the maximum creable files in the progress folder) 
-            if num_files == 9:
-
-                # We check if the job has been completed 
-                completed = db.specific_select("JOBINFO", "COMPLETED", "JOBID", session["jobstate_interactive"][0][0])
-
-                print("Is completed?: {}".format(completed))
-
-                # If the job has been completed 
-                if completed == 1: 
-                    
-                    # We serve the kml file into the static path and retrieve it
-                    kml_path = serve_kml(session["jobstate_interactive"][0][0], db)
-
-                    print("KML PATH: {}".format(kml_path))
-
-                    # Increase by one the num_files: we have finished 
-                    num_files += 1
-
-                    # We then pass the stored kml path in the return function 
-                    return [num_files / 10.0 * 100, kml_path, completed]
-
-    # Else, we simply return the current files with a dummy empty kml file
-    return [session["numfiles"] / 10.0 * 100, "", -1]
-        
-
+   
 #############
 ## WEBSITE ##
 #############
 
 @app.route('/get-status-workflow/<id>', methods=['GET'])
 def workflowStatus(id):
-
     dagonManager = DagonOnServiceManager('http://193.205.230.6:1727', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
     workflow_status = dagonManager.getStatusByID(id)
     return workflow_status
@@ -329,16 +160,7 @@ def login():
                 db.update_access(session["user"])
                 session["access"] = db.get_last_access(session["user"])
                 return redirect_to_dashboard(session["user"])
-
-                # session["jobinfo_interactive"] = []
-                # session["jobstate_interactive"] = []
-                # session["kmlpath_dash"] = ""
-                # session["searchval"] = ""
-                # session["category"] = ""
-                # session["queue_ops_in_act"] = False
-            
             else:
- 
                 flash("Utente non attivo. Richiederne l'attivazione!")
                 return redirect(url_for('login'))
 
@@ -469,15 +291,31 @@ def simulazione_singola():
                             # info=session["jobinfo_interactive"], 
                             hours=hours)
                             # kmlpath = session["kmlpath_dash"])
-  
-@app.route('/getJobsQueue', methods=['POST', 'GET'])
-def getJobsQueue():
-    return jsonify(session["info_jobs_queue"])
 
+
+@app.route('/getInfoJobsQueue')
+def getInfoJobsQueue():
+    return jsonify(session['info_jobs_queue'])
+
+
+@app.route('/getStatusJobsQueue', methods=['POST', 'GET'])
+def getStatusJobsQueue():
+    out_states = []
+    dagonManager = DagonOnServiceManager('http://193.205.230.6:1727', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
+    print("-----------------------------------------------------------------------------------------", flush=True)
+    for job in session['info_jobs_queue']:
+        print("[from getStatusJobsQueue] session[info_jobs_queue] : " + str(session['info_jobs_queue']), flush=True)
+        print("[from getStatusJobsQueue] job id : " + str(job[0]), flush=True)
+        response_dagon = dagonManager.getStatusByID(str(job[0]))
+        print("[from getStatusJobsQueue] response Dagon : " + str(response_dagon), flush=True)
+        out_states.append([response_dagon])
+    print("[from getStatusJobsQueue] out_states : " + str(out_states), flush=True)
+    print("-----------------------------------------------------------------------------------------", flush=True)
+    return jsonify(out_states)
 
 @app.route('/simulazioni-multiple', methods=['POST', 'GET'])
 def coda():
-
+    
     if "user" not in session:
         return redirect(url_for('login'))
 
@@ -492,11 +330,8 @@ def coda():
     hours = [f"0{i}" if i < 10 else f"{i}" for i in range(24)]
 
     if request.method == "POST":
-
         if "generate" in request.form:
-
             session["tot_jobs_queue"] += 1
-
             area = request.form.get("area")
             if not validate_string(area, "[a-zA-Z]"):
                 flash("Area inserita non valida. Unici caratteri consentiti: Lettere [a-z e A-Z]. Riprovare!")
@@ -521,91 +356,10 @@ def coda():
                 db.new_job(job_info)
                 var_info = [id_workflow, area, data, ora, durata, longit, latit, temp, codice_GISA, comune]
                 session["info_jobs_queue"].append(var_info)
-                # print("[*] session[info_jobs_queue]" + str(session['info_jobs_queue']), flush=True)
+                # print("[*][from coda] session[info_jobs_queue] : " + str(session['info_jobs_queue']), flush=True)
             else:
                 flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
                 return redirect(url_for('interattivo'))
-
-        
-            # ora_int = int(ora)
-            # ora_module = datetime.strptime(str(ora_int % 24), "%H")
-            # ora_formattata = ora_module.strftime("%H:%M:%S")
-            # db_manager.execute('INSERT INTO SIMULAZIONE (AREA, "DATE", ORAINIZIO, TEMPERATURA, LONGITUDINE, LATITUDINE, DURATA, USERUSERNAME, STATOFINALE) VALUES (''Area di simulazione'', ''2024-03-06'', ''12:00:00'', 25.50, 10.123456, 45.678901, ''2 hours'', ''nome_utente'', TRUE);')
-            # query = 'INSERT INTO SIMULAZIONE (AREA, "DATE", ORAINIZIO, TEMPERATURA, LONGITUDINE, LATITUDINE, DURATA, USERSIM, STATOFINALE) VALUES (\'{}\', \'{}\', \'{}\', {}, {}, {}, \'{}\', \'{}\', {});'.format(area, data, ora_formattata, temp, longit, latit, durata, user, 'NULL')
-
-            # db_manager.execute(query)
-            # db_manager.update(query)
-
-            # print("----------- INSERTED NEW JOB: {}".format(jobid))
-            # If the returned jobid is 0, that means sbatch could not submit a new job
-            # we inform the user and redirect to the page again.
-            # Same for nc dumper error
-            # if jobid == 0:
-            #     flash("Non è stato possibile inserire l'operazione in coda. Riprovare!") 
-            #     return redirect(url_for('coda'))
-            
-            # Check dump info 
-            # dumpstate = ncdump.dump(data, str(int(ora)), durata)
-
-            # If dumpstate is -1, we surpassed the meteo prevision limit, flash the message
-            # if dumpstate == -1:
-            #    flash("Non è stato possibile inserire l'operazione in coda. Non esistono valori meteo per quella data.") 
-            #    return redirect(url_for('coda'))
-
-            # Create a new job entry in the database for the given user. 
-            # Since we do not need the earlier jobinfo structure anymore, we change few things: 
-            # - the first element with the jobid (was the name of the script before)
-            # - append a last element representing the user (we need to insert info related to the user)
-            #job_info[0] = jobid
-            #job_info.append(user)
-
-            # Try inserting the new job into the databse
-            #try:
-            #    db.new_job(job_info)
-
-            #except:
-                # Delete from the queue if unsuccessful
-                # sbatchmanager.cancel_job(jobid)
-            #    flash("Non è stato possibile inserire l'operazione in coda. Riprovare!") 
-                # return redirect(url_for('coda'))
-              
-
-            # TEST: checking for the submitted id
-            # print("submitted id {}".format(jobid))
-
-            # We set the update variable to true, so we can start updating the page checking for
-            # progress to update the progress bar
-            # update = True
-
-            # Before leaving, we remove the unnecessary elements from jobinfo (first), and assigning the 
-            # entry to a new submitted job list
-            # submitted_job = job_info[1:8]
-
-            # We then append three elements: jobid, current string state and current int state.
-            # NOTE: "SOTTOMESSO/IN CORSO" = 0, "COMPLETO" = 1, "ERRORE" = 2, "CANCELLATO" = 3
-            # submitted_job.append(jobid)
-            # submitted_job.append("SOTTOMESSO")
-            # submitted_job.append(0)
-
-            # We append the job to the local structure 
-            # jobinfo_queue.append(submitted_job)
-
-            # At last, we update both the state dictionary and the info array in a lock
-            # We update the jobid into the jobstate dash variable: 
-            # This var is composed by [jobid, state, scratch_path] variable.
-            # Note: scratch_path variable is updated by the get_progress function.
-            # queue_lock.acquire()
-
-            # session["jobinfo_queue"] = jobinfo_queue
-            # queue_lock.release()
-
-            # Set modified to true
-            # session.modified = True
-
-            # print("INSERTING NEW JOB DONE --------------------")
-
-            # print(session["jobinfo_queue"]) 
-            # print("-------------------------------------------")
         
         # Second case: the user want to cancel the job
         # elif "qcancel" in request.form:

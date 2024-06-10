@@ -289,6 +289,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
 
+        let id_workflow_jobs_queue = [];
+        let comuni = [];
+        let comuniList = document.getElementById('comuni_list');
+        document.getElementById('comune_label').addEventListener('click', populateDatalist);
+        //window.addEventListener('load', cotrolJobsQueue);
+        //setInterval(checkStatusJobsQueue, 5000);
+
         // Funzione per popolare la datalist con i comuni
         function populateDatalist() {
             comuniList.innerHTML = '';  // Pulisce eventuali opzioni esistenti
@@ -299,42 +306,69 @@
             });
         }
 
-        function cotrolJobsQueue() {
-            fetch('/getJobsQueue')
-            .then(response => response.json())
-            .then(data => {
-               
-                let tbody = document.getElementById("info-table").getElementsByTagName("tbody")[0];
-                let rowCount = tbody.rows.length;
-                let tot_jobs = parseInt("{{session['tot_jobs_queue']}}");   
+        function checkStatusJobsQueue() {
+
+            if( parseInt("{{session['tot_jobs_queue']}}") > 0 ) {
                 
-                if(rowCount==0) {
-                    for(let i=0; i<tot_jobs; i++) {           
-                        let new_row = tbody.insertRow();
-                        for(let j=0; j<10; j++) {
-                            new_row.insertCell().textContent = data[i][j];
+                let tbody = document.getElementById("info-table").getElementsByTagName("tbody")[0];
+                let tot_jobs = parseInt("{{session['tot_jobs_queue']}}");
+
+                if(tot_jobs > 0) {
+
+                    fetch('/getInfoJobsQueue')
+                    .then(response => response.json())
+                    .then(data =>{
+                        if(tbody.rows.length < tot_jobs) {
+                            console.log("rows : " , tbody.rows.length);
+                            console.log("tot_jobs : ", tot_jobs);
+                            for(let i=0; i<tot_jobs; i++) {
+                                if(!tbody.rows[i]){
+                                    let new_row = tbody.insertRow();
+                                    for(let j=0; j<10; j++) {
+                                        new_row.insertCell().textContent = data[i][j];
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
-            })
-            .catch(error => console.error('Errore durante il recupero del file:', error));            
+                    })
+                    .catch(error => console.error('Errore durante il recupero del file:', error));           
+                    
+                    
+                    fetch('/getStatusJobsQueue')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("data completo : ", data);
+                        console.log("data 0 : ", data[0]);
+                        console.log("data 0 0 : " , data[0][0]['calmet']);
+                        for(let i=0; i<tot_jobs; i++) {
+                            let selected_row = tbody.rows[i];
+                            let workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
+
+                            for(let j=10; j<22; j++) {
+                                if(!selected_row.cells[j]){
+                                    selected_row.insertCell().textContent = data[0][i][workflow[j-10]];
+                                } else {
+                                    selected_row.cells[j].textContent = data[0][i][workflow[j-10]];
+                                }
+
+                            }
+                            
+                           
+                        }
+                    })
+                    .catch(error => console.error('Errore durante il recupero del file:', error));
+                }      
+            }
         }
-        
-        let comuni = []
-        let comuniList = document.getElementById('comuni_list');
         
         fetch('static/centroidi_comuni/centroidi_comuni.geojson')
         .then(response => response.json())
         .then(data => {
             for (let feature of data.features) {
-                comuni.push(feature.properties.COMUNE)
+                comuni.push(feature.properties.COMUNE);
             }
         })
         .catch(error => console.error('Errore durante il recupero del file:', error));
-
-        document.getElementById('comune_label').addEventListener('click', populateDatalist);
-        window.addEventListener('load', cotrolJobsQueue)
-    
     </script>
 </body>
 
