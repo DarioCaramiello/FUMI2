@@ -66,7 +66,6 @@ class SbatchManager():
                 start_new_session=True
             )
 
-        subprocess.run([])
         time.sleep(5)
         
         with open('tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis), 'r') as f:
@@ -79,6 +78,7 @@ class SbatchManager():
             if id_match:
                 id_value = id_match.group(1)
                 print(f'[*] ID estratto: {id_value}', flush=True)
+                
                 subprocess.run(['rm', 'tmp/{}/out_from_job_{}_runcmd_{}.txt'.format(user, user, var_millis)])
                 return id_value
         else:

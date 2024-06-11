@@ -226,7 +226,7 @@ def simulazione_singola():
             area = request.form.get("area")
             if not validate_string(area, "[a-zA-Z]"):
                 flash("Area inserita non valida. Unici caratteri consentiti: Lettere [a-z e A-Z]. Riprovare!")
-                return redirect(url_for('simulazione-singola'))
+                return redirect(url_for('simulazione_singola'))
 
             data = request.form.get("data")
             ora = request.form.get("hours")
@@ -266,19 +266,19 @@ def simulazione_singola():
     
         elif "dresetmap" in request.form:
             session['user_dir_name'] = ""
-
-        elif "icancel":
-            try: 
-                if not safe_str_cmp(session["jobstate_interactive"][0][2], ""):
-                    try: 
-                        sbatchmanager.cancel_job(session["jobinfo_interactive"][7])
-                    except:
-                        flash("Errore nella cancellazione dell'operazione. Riprovare!")
-                    session["jobinfo_interactive"][9] = 3
-                else:
-                    flash("Operazione in finalizzazione. Riprovare tra qualche secondo.")
-            except:
-                pass
+            session['workflow_id'] = ""
+            session['area'] = ""
+            session['data'] = ""
+            session['ora'] = ""
+            session['durata'] = ""
+            session['comune'] = ""
+            session['lon'] = ""
+            session['lat'] = ""
+            session['temp'] = ""
+            session['codice_GISA'] = ""
+            session['data2'] = ""
+            session['ora_inizio'] = ""
+            session['job_sim_singola'] = False
     else: 
         print("no post method")
 
@@ -292,25 +292,17 @@ def simulazione_singola():
                             hours=hours)
                             # kmlpath = session["kmlpath_dash"])
 
-
 @app.route('/getInfoJobsQueue')
 def getInfoJobsQueue():
     return jsonify(session['info_jobs_queue'])
-
 
 @app.route('/getStatusJobsQueue', methods=['POST', 'GET'])
 def getStatusJobsQueue():
     out_states = []
     dagonManager = DagonOnServiceManager('http://193.205.230.6:1727', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
-    print("-----------------------------------------------------------------------------------------", flush=True)
     for job in session['info_jobs_queue']:
-        print("[from getStatusJobsQueue] session[info_jobs_queue] : " + str(session['info_jobs_queue']), flush=True)
-        print("[from getStatusJobsQueue] job id : " + str(job[0]), flush=True)
         response_dagon = dagonManager.getStatusByID(str(job[0]))
-        print("[from getStatusJobsQueue] response Dagon : " + str(response_dagon), flush=True)
         out_states.append([response_dagon])
-    print("[from getStatusJobsQueue] out_states : " + str(out_states), flush=True)
-    print("-----------------------------------------------------------------------------------------", flush=True)
     return jsonify(out_states)
 
 @app.route('/simulazioni-multiple', methods=['POST', 'GET'])
@@ -497,47 +489,33 @@ def coda():
 @app.route('/profilo', methods=['POST', 'GET'])
 def profilo(alert_category=""):
 
-
-    # If the user did not authenticate, redirect it to the login page
     if "user" not in session:
         return redirect(url_for('login'))
 
-    # Istanciate a db object to perform queries
     db = DBProxy()
 
-    # If the user is an admin trying to accessing the other routes pages, redirect him
-    # to the adminpane
     if db.is_admin(session["user"]):
         return redirect(url_for('adminpane'))
 
-    # Fetch username
     user = session["user"]
-
-    # Reset searchval for other pages (if we change page we must reset the value searched)
-    session["searchval"] = ""
+    # session["searchval"] = ""
     
-    # Fetch last access knowing the user
     last_access=db.get_last_access(user)
-
-    # Fetch profile elements
     profile=db.get_profile(user)
 
     # We init the alert category to the input 
     category = alert_category
 
-    # If we user submit a change 
+  
     if request.method == "POST":
 
-        # We do fetch the element of the text fields changed
         firstname = request.form.get("firstname")
         lastname = request.form.get("lastname")
         password = request.form.get("password")
         telephone = request.form.get("telephone")
 
-        # We hash the pass
         hashed_password = generate_password_hash(password)
 
-        # Update the values if different than the empty string
         try:
             db.update_profile(user, firstname, lastname, hashed_password, telephone)
         except Exception as E:
@@ -546,12 +524,9 @@ def profilo(alert_category=""):
             return redirect(url_for('profilo', alert_category=category))
 
 
-        # Flash a confirmation message
         category = "alert-success"
         flash("Impostazioni salvate correttamente!")
 
-        # Set the profile to empty strings if no user input else existing string
-        # to let the user reload the page and see the changes
         profile=[firstname if firstname!="" else profile[0], 
                 lastname if lastname!="" else profile[1], 
                 telephone if telephone!="" else profile[2]]
@@ -573,90 +548,27 @@ def storico():
     last_access=db.get_last_access(user)
     jobs = db.fetch_jobs(user)
 
-    # Create a dictionary containing the long, lat and jobid
-    # markers = []
-    # Create, for each job, an entry composed by: jobid-lat-long
-    # for job in jobs:
-    #     markers.append([job[8], job[5], job[4]])
-    # KML path: we point an empty kml initially 
-    # kml_path = safe_join("KML", "dummy.kml")
-    # JOBID selected at start is none. We'll show that in the historical pane map
-    # jobid = "Nessuno"
-    # Setup an empty searchpage, to reset the page pointer to the first page if the user 
-    # does search something
-    # search_page = None
-
 
     if request.method=="POST":  
         
         if "hsearchbutton" in request.form:
             print("[*] Search Button - coda", flush=True)
-            
-            # Given the search value as filter 
-            # search_filter = request.form.get("hsearchvalue").lower()
-            # print("[*] RequestManager.py : var search_filter = " + str(search_filter), flush=True)
-            # New users are the filtered match 
-            # jobs = filters(search_filter, jobs)
-            # print("[*] RequestManager.py : var jobs = " + str(jobs), flush=True)
-            # Insert into session a value representing the actual search
-            # session["searchval"] = search_filter
-            # search_page = 1
-
-        # The second case is the show button related to a specific KML file associated 
-        # with a specific JOBID. on press, we must load that kml file into the map.
+ 
+        
         elif "hshowbutton" in request.form:
             print("[*] Show Button - coda", flush=True)
 
-            # We get the jobid in which the button has been pressed
-            # jobid = int(request.form['hshowbutton'])
-            
-            # We then serve the file in the static folder if it hasn't yet and return the kml path
-            # kml_path = serve_kml(jobid, db)
-
-            # Reset marker array, we don't want to show them while showing a kml file
-            # markers = []
-
-        # The third case is related to the user pressing the delete button. If so, we need to extract 
-        # The jobid from the request and perform deletion on both database/folders of that specific job.
+        
         elif "hdeletebutton" in request.form:
             print("[*] Delete Button - coda", flush=True)
 
-            # We get the jobid in which the button has been pressed
-            # jobid = int(request.form['hdeletebutton'])
-
-            # We delete the entry relative to: JOBS, JOBINFO and JOBIDENTIFIER
-            # db.delete_row("JOBS", "JOBID", jobid)
-            # db.delete_row("JOBINFO", "JOBID", jobid)
-            # db.delete_row("JOBIDENTIFIER", "JOBID", jobid)
-
-            # We then proceed to remove the directories
-            # data_path = safe_join("root/storage/fumi2/{}".format(session["user"]), str(jobid))
-            # kml_path = safe_join("static/storage/fumi2/{}".format(session["user"]), str(jobid))
-
-            # Using safe remove
-            # safe_rmdir(data_path)
-            # safe_rmdir(kml_path)
-
-            # Delete the job from the job array 
-            # for i, job in enumerate(jobs):
-            #    if job[8] == jobid:
-            #         del jobs[i]   
-
-
-        # The third case is when the user press the reset button on the map. 
-        # In that case, we reset the KML layer. 
+          
         elif "hresetmap" in request.form:
             print("[*] Reset Button - coda", flush=True)
-            # Reset info
-            # jobid="Nessuno"
-            # kml_path = safe_join("KML", "dummy.kml")
+            
 
-        # The last case is when the user want to reset the search.
         elif "hresetjob" in request.form:
             print("[*]  Button - coda", flush=True)
-
-            # We just put the search val to empty 
-            # session["searchval"] = ""
 
         elif "hdownloadbutton" in request.form:
             return redirect(url_for('download'))
@@ -1163,6 +1075,7 @@ def download():
         response.headers.set('Content-Disposition', 'attachment', filename="{}.zip".format(jobid))
         return response
 
+'''
 @app.route('/progress')
 def progress():
     
@@ -1297,6 +1210,7 @@ def queue():
 
     # We return the data array 
     return jsonify(data)
+'''
 
 if __name__ == "__main__":
     

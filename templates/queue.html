@@ -241,7 +241,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
-                                                        <th>Area</th>
+                                                        <th>Descrizione</th>
                                                         <th>Data</th>
                                                         <th>Ora</th>
                                                         <th>Durata</th>
@@ -250,7 +250,6 @@
                                                         <th>Temp</th>
                                                         <th>Codice GISA</th>
                                                         <th>Comune</th>
-                                                        <th>Stato</th>
                                                         <th>calmet</th>
                                                         <th>calpost</th>
                                                         <th>calpufff</th>
@@ -294,7 +293,7 @@
         let comuniList = document.getElementById('comuni_list');
         document.getElementById('comune_label').addEventListener('click', populateDatalist);
         //window.addEventListener('load', cotrolJobsQueue);
-        //setInterval(checkStatusJobsQueue, 5000);
+        setInterval(checkStatusJobsQueue, 5000);
 
         // Funzione per popolare la datalist con i comuni
         function populateDatalist() {
@@ -308,28 +307,27 @@
 
         function checkStatusJobsQueue() {
 
-            if( parseInt("{{session['tot_jobs_queue']}}") > 0 ) {
+            let tot_jobs = parseInt("{{session['tot_jobs_queue']}}");
+
+            if( parseInt(tot_jobs) > 0 ) {
                 
                 let tbody = document.getElementById("info-table").getElementsByTagName("tbody")[0];
-                let tot_jobs = parseInt("{{session['tot_jobs_queue']}}");
 
                 if(tot_jobs > 0) {
 
                     fetch('/getInfoJobsQueue')
                     .then(response => response.json())
                     .then(data =>{
-                        if(tbody.rows.length < tot_jobs) {
-                            console.log("rows : " , tbody.rows.length);
-                            console.log("tot_jobs : ", tot_jobs);
-                            for(let i=0; i<tot_jobs; i++) {
-                                if(!tbody.rows[i]){
-                                    let new_row = tbody.insertRow();
-                                    for(let j=0; j<10; j++) {
-                                        new_row.insertCell().textContent = data[i][j];
-                                    }
+                        for(let i=0; i<tot_jobs; i++) {
+                            if(!tbody.rows[i]){
+                                let new_row = tbody.insertRow();
+                                for(let j=0; j<10; j++) {
+                                    new_row.insertCell().textContent = data[i][j];
                                 }
                             }
                         }
+                        console.log("rows : " , tbody.rows.length);
+                        console.log("tot_jobs : ", tot_jobs);
                     })
                     .catch(error => console.error('Errore durante il recupero del file:', error));           
                     
@@ -338,22 +336,33 @@
                     .then(response => response.json())
                     .then(data => {
                         console.log("data completo : ", data);
-                        console.log("data 0 : ", data[0]);
-                        console.log("data 0 0 : " , data[0][0]['calmet']);
+        
+                        /*
+                        let workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
+                        for(let i=0; i<tot_jobs; i++) {
+                            console.log("----------------------" + " JOB : " + i + "-----------------------------");                            
+                            let job = data[i]
+                            console.log("job :", job);
+                            for(let j=0; j<11; j++){
+                                console.log("value data[i][j]["+ workflow[j] +"] : ", job[0][workflow[j]]);
+                            }
+                            console.log("---------------------------------------------------------------------------------");
+                            
+                        }
+                        */
+
                         for(let i=0; i<tot_jobs; i++) {
                             let selected_row = tbody.rows[i];
                             let workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
 
-                            for(let j=10; j<22; j++) {
+                            for(let j=10; j<21; j++) {
                                 if(!selected_row.cells[j]){
-                                    selected_row.insertCell().textContent = data[0][i][workflow[j-10]];
+                                    // selected_row.insertCell(j).textContent = data[0][i][workflow[j-10]];
+                                    selected_row.insertCell(j).textContent = data[i][0][workflow[j-10]]
                                 } else {
-                                    selected_row.cells[j].textContent = data[0][i][workflow[j-10]];
+                                    selected_row.cells[j].textContent = data[i][0][workflow[j-10]];
                                 }
-
-                            }
-                            
-                           
+                            } 
                         }
                     })
                     .catch(error => console.error('Errore durante il recupero del file:', error));

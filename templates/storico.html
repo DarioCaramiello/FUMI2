@@ -17,7 +17,11 @@
     <script src="http://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
 
     <style>
-         .bottone {
+        .evidenziato {
+            background-color: yellow !important;
+        }
+
+        .bottone {
             width: 100px;
             height: 40px;
             margin: 5px; /* Aggiunto un margine tra i bottoni per separarli */
@@ -113,14 +117,15 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <!-- <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search"> -->
                                     <div class="input-group">
                                         <div class="col-sm-3">
-                                            <input class="bg-light form-control border-0 large" type="text" name="hsearchvalue" id="searchnamebar" placeholder="Cerca ...">
+                                            <input class="bg-light form-control border-0 large" type="text" name="hsearchvalue" id="searchnamebar" placeholder="Cerca : nome-campo=valore">
                                         </div>
-                                        <button class="btn btn-primary py-0" id="searchnamebutton" name="hsearchbutton" form="searchform" type="submit"><i class="fas fa-search"></i></button>
+                                        <!-- sotto staba in button anche : type="submit" form="searchform" -->
+                                        <button class="btn btn-primary py-0" id="searchnamebutton" name="hsearchbutton" onclick="search()"><i class="fas fa-search"></i></button>
 
-                                </form>
+                                <!-- </form> -->
                                 <label class="form-label"></label>
                                 </div>
                                 <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
@@ -305,6 +310,79 @@
                     zoom: 0,
                 })
             });
+
+            function search() {
+                let text_input_search = document.getElementById('searchnamebar').value;
+                const regex = /^([^=]+)=(.*)$/;
+                let matches = text_input_search.match(regex);
+
+                console.log("text_input : ", text_input_search);
+
+                if (matches) {
+                    const nomeCampo = matches[1];
+                    const valore = matches[2];
+                    
+                    console.log("Nome del campo:", nomeCampo);
+                    console.log("Valore:", valore);
+
+                    let tbody = document.getElementById("dataTable").getElementsByTagName("tbody")[0];
+                    if(tbody.rows.length > 0) {
+
+                        var thead = document.querySelector('#dataTable thead');
+                        // var rows_thead = thead.querySelectorAll('tr');  
+                        var cells_th = thead.querySelectorAll('th');        
+                        var valori = [];
+
+                        cells_th.forEach(function(cella) {
+                            valori.push(cella.textContent);
+                        });
+
+                        console.log("valori thead : ", valori);
+                        let index_thead = -1;
+                        let rows_match = []
+
+
+                        for(var i=0; i<valori.length; i++) {
+                            console.log("valore th : ", valori[i]);
+                            console.log("valore campo input : ", nomeCampo);
+                            if(valori[i] == nomeCampo) {
+                                console.log("trovata corrispondenza con th");
+                                index_thead = i;
+                                break;
+                            }
+                        }
+
+                        console.log("index_thead : ", index_thead);
+                        console.log("num_rows : ", tbody.rows.length);
+                        
+                        if(index_thead!=-1) {
+                            for(let j=0; j<tbody.rows.length; j++) {
+                                console.log("value cell : " , tbody.rows[j].cells[index_thead].textContent);
+
+                                if(tbody.rows[j].cells[index_thead].textContent == valore) {
+                                    console.log("simulazione trovata");
+                                    rows_match.push(tbody.rows[j]);
+                                }
+                            }
+                        }
+                        
+                        console.log("rows_match : ", rows_match);
+
+                        rows_match.reverse().forEach(function(riga) {
+                            tbody.insertBefore(riga, tbody.firstChild);
+
+                            riga.classList.add('evidenziato');
+                            
+                            setTimeout(function() {
+                                riga.classList.remove('evidenziato');
+                            }, 10000);
+                         });
+                    }
+                } else {
+                    console.log("La stringa non è nel formato previsto.");
+                }
+            }
+
         </script>
 </body>
 
