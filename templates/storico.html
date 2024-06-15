@@ -85,8 +85,8 @@
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="simulazione-singola"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="simulazioni-multiple"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="simulazione-singola"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li> --> 
+                    <li class="nav-item"><a class="nav-link" href="simulazioni"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="profilo">
                         <i class="far fa-user-circle"></i>
@@ -172,59 +172,14 @@
                                                 </td>
                                                 <td>
                                                     <form method="post">
+                                                        <input type="hidden" name="idJOB" value="{{ job[9] }}">
                                                         <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button>
                                                     </form>
                                                 </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
-                                        <!--
-                                        <tbody>
-                                            <tr>
-                                                <td>Napoli</td>
-                                                <td>19/03/2024</td>
-                                                <td>00</td>
-                                                <td>10</td>
-                                                <td>14.32745</td>
-                                                <td>40.84294</td>
-                                                <td>1200</td>
-                                                <td> // </td>
-                                                <td>75242</td>
-                                                <form action="{{ url_for('download') }}" method="post">
-                                                    <td>
-                                                        <button class="btn btn-success" type="submit" name="hdownloadbutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>
-                                                </form>
-                                                <form method="post">
-                                                    <button class="btn btn-warning" type="submit" name="hshowbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
-                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button></td>
-    
-                                                </td>
-                                                </form>
-                                            </tr>
-                                            <tr>
-                                                <td>Napoli</td>
-                                                <td>03/01/2023</td>
-                                                <td>03</td>
-                                                <td>3</td>
-                                                <td>14.32745</td>
-                                                <td>40.84294</td>
-                                                <td>1200</td>
-                                                <td>2023__001</td>
-                                                <td>73422</td>
-                                                <form action="{{ url_for('download') }}" method="post">
-                                                    <td>
-                                                        <button class="btn btn-success" type="submit" name="hdownloadbutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>
-                                                </form>
-                                                <form method="post">
-                                                    <button class="btn btn-warning" type="submit" name="hshowbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
-                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button></td>
-    
-                                                </td>
-                                                </form>
-                                            </tr>    
-                                            <tr></tr>
-                                        </tbody>
-                                        -->
+                                       
                                         <tfoot>
                                             <tr></tr>
                                         </tfoot>
@@ -247,13 +202,6 @@
                          <div class="card shadow mb-4" style="margin-left: 12px; margin-top: 20px; margin-right: 12px;">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h6 class="text-primary fw-bold m-0">Mappa interattiva</h6>
-                                    <!--
-                                    <form method="POST">
-                                        <button class="btn btn-danger" type="submit" name="hresetmap" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);">
-                                            <i class="fas fa-undo"></i>
-                                        </button>
-                                    </form>
-                                    -->
                                 </div>
                                 <div class="card-body">
                                     <div width="100%" style="height: 520px;" id="map"></div>
@@ -321,15 +269,11 @@
                 if (matches) {
                     const nomeCampo = matches[1];
                     const valore = matches[2];
-                    
-                    console.log("Nome del campo:", nomeCampo);
-                    console.log("Valore:", valore);
-
                     let tbody = document.getElementById("dataTable").getElementsByTagName("tbody")[0];
+
                     if(tbody.rows.length > 0) {
 
                         var thead = document.querySelector('#dataTable thead');
-                        // var rows_thead = thead.querySelectorAll('tr');  
                         var cells_th = thead.querySelectorAll('th');        
                         var valori = [];
 
@@ -337,36 +281,23 @@
                             valori.push(cella.textContent);
                         });
 
-                        console.log("valori thead : ", valori);
                         let index_thead = -1;
                         let rows_match = []
 
-
                         for(var i=0; i<valori.length; i++) {
-                            console.log("valore th : ", valori[i]);
-                            console.log("valore campo input : ", nomeCampo);
                             if(valori[i] == nomeCampo) {
-                                console.log("trovata corrispondenza con th");
                                 index_thead = i;
                                 break;
                             }
                         }
-
-                        console.log("index_thead : ", index_thead);
-                        console.log("num_rows : ", tbody.rows.length);
                         
                         if(index_thead!=-1) {
                             for(let j=0; j<tbody.rows.length; j++) {
-                                console.log("value cell : " , tbody.rows[j].cells[index_thead].textContent);
-
                                 if(tbody.rows[j].cells[index_thead].textContent == valore) {
-                                    console.log("simulazione trovata");
                                     rows_match.push(tbody.rows[j]);
                                 }
                             }
                         }
-                        
-                        console.log("rows_match : ", rows_match);
 
                         rows_match.reverse().forEach(function(riga) {
                             tbody.insertBefore(riga, tbody.firstChild);

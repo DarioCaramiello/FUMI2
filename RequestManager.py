@@ -28,8 +28,6 @@ from NcDumper import NCODump
 from ParserManager import Parser
 from DagonOnServiceManager import DagonOnServiceManager
 
-
-
 ##############
 ##  INIT   ##
 #############
@@ -119,6 +117,25 @@ def generate_unique_link(username, route):
     # we return the link
     return link
    
+def get_group_label(structure_label):
+    if(structure_label == "Regione Campania"):
+        return "regione_campania"
+    elif(structure_label == "IZSM"):
+        return "izsm"
+    elif(structure_label == "ASL Avellino"):
+        return "asl_avellino"
+    elif(structure_label == "ASL Benevento"):
+        return "asl_benevento"
+    elif(structure_label == "ASL Caserta"):
+        return "asl_caserta"
+    elif(structure_label == "ASL Napoli Centro"):
+        return "asl_napoli_centro"
+    elif(structure_label == "ASL Napoli Nord"):
+        return "asl_napoli_nord"
+    elif(structure_label == "ASL Napoli Sud"):
+        return "asl_napoli_sud"
+
+
 #############
 ## WEBSITE ##
 #############
@@ -175,29 +192,21 @@ def login():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
-    
-    # Redirect to login if user not in session
+
     if "user" not in session:
         return redirect(url_for('login'))
     
-    # Istanciate a db object to perform queries
     db = DBProxy()
 
-    # If the user is an admin trying to accessing the other routes pages, redirect him
-    # to the adminpane
     if db.is_admin(session["user"]):
         return redirect(url_for('adminpane'))
 
-    # Fetch username and last access
     user = session["user"]
-
-    # Fetch last access knowing the user
     last_access= session["access"]
 
-    # Rendering with those info 
     return render_template("dashboard.html", user=user, last_access=last_access)
 
-# @app.route('/interattivo', methods=['POST', 'GET'])
+'''
 @app.route('/simulazione-singola', methods=['POST', 'GET'])
 def simulazione_singola():
 
@@ -261,7 +270,7 @@ def simulazione_singola():
             else:
                 session['workflow_id'] = ""
                 flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
-                return redirect(url_for('interattivo'))
+                return redirect(url_for('interactive'))
 
     
         elif "dresetmap" in request.form:
@@ -291,21 +300,9 @@ def simulazione_singola():
                             # info=session["jobinfo_interactive"], 
                             hours=hours)
                             # kmlpath = session["kmlpath_dash"])
+'''
 
-@app.route('/getInfoJobsQueue')
-def getInfoJobsQueue():
-    return jsonify(session['info_jobs_queue'])
-
-@app.route('/getStatusJobsQueue', methods=['POST', 'GET'])
-def getStatusJobsQueue():
-    out_states = []
-    dagonManager = DagonOnServiceManager('http://193.205.230.6:1727', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
-    for job in session['info_jobs_queue']:
-        response_dagon = dagonManager.getStatusByID(str(job[0]))
-        out_states.append([response_dagon])
-    return jsonify(out_states)
-
-@app.route('/simulazioni-multiple', methods=['POST', 'GET'])
+@app.route('/simulazioni', methods=['POST', 'GET'])
 def coda():
     
     if "user" not in session:
@@ -560,6 +557,8 @@ def storico():
 
         
         elif "hdeletebutton" in request.form:
+            job_to_remove=request.form.get("idJOB")
+            db.delete_row('JOBINFO', 'JOBID', job_to_remove)
             print("[*] Delete Button - coda", flush=True)
 
           
@@ -585,7 +584,7 @@ def storico():
     # Set up pagination: we use the same approach used into the 'queue' section:
     # page = int(request.args.get('page', 1)) if search_page is None else search_page
     page = int(request.args.get('page', 1))
-    print(page)
+    # print(page)
     per_page = 5
     offset = (page - 1) * per_page
     pagination_data = jobs[offset: offset + per_page]
@@ -614,93 +613,126 @@ def adminpane():
         return render_template('blank.html')
 
     user = session["user"] 
-    last_access=db.get_last_access(user)
-    users = db.fetch_users()
 
-    # If a button has been pressed
+    last_access=db.get_last_access(user)
+
+    users = db.fetch_users()
+    # print("-coda - users : " + str(users), flush=True)
+
+    all_jobs = db.return_all_jobs()
+    # print("-coda - all-jobs : " + str(all_jobs), flush=True)
+
+    all_group_with_user = db.get_all_groups_with_user()
+    # print("- coda - all group of user : " + str(all_group_with_user), flush=True)
+
+
     if request.method=="POST":  
 
-        # Identify the button: we can have different cases.
-        # The first one, is the save button; we need to create an user with those info
         if "savebutton" in request.form: 
 
-            # Fetch the values
+            print("coda - savebutton", flush=True)
+
             username = request.form.get("username")
             firstname = request.form.get("firstname")
             lastname = request.form.get("lastname")
             email = request.form.get("email")
             struttura = request.form.get("struttura")
             ruolo = request.form.get("ruolo")
+            cellulare = request.form.get("cellulare")
 
-            # First thing: check if the username contains not-allowed character
             user_ok = validate_string(username)
 
-            # print(user_ok)
-            # If the value is false, that means the string contains special characters.
-            # We need to flash an error message and prompt the page again
             if user_ok==False: 
-
-                # We put the category of the error inside the variable and flash the message
-                # session["category"] = "alert-danger"
                 flash("Errore: caratteri non consentiti nell'username! (ammissibili: a-z A-z 0-9 . e _)")
-                
-                # we render again the pane passing category as input var
                 return redirect(url_for('adminpane'))
 
-            # Insert the user in a try catch block: this because 
-            # the insertion may fail if already an user exists with that infos, 
-            # also redirecting him to admin pane.
             try:
-                db.add_user(username.lower(), firstname, lastname, email, struttura, ruolo)
+                # crea utente
+                db.add_user(username.lower(), firstname, lastname, email, cellulare, struttura, ruolo)
+                # crea gruppo personale utente
+                db.add_group(username.lower())
+                # aggiungi l'utente al gruppo della struttura senza permessi di scrittura  
+                db.add_user_to_group(username.lower(), get_group_label(struttura), False, None)
+                # aggiungi l'utente al suo gruppo personale con i permessi di scrittura 
+                db.add_user_to_group(username.lower(), username.lower(), True, True)
             except Exception as e:
-
-                # We put the category of the error inside the variable
-                # session["category"] = "alert-danger"
-
-                flash("Errore nell'inserimento dell'utente. Riprovare!")       
+                flash("Errore nell'inserimento dell'utente e del gruppo. Riprovare!")       
                 return redirect(url_for('adminpane'))
 
-            # We generate an unique link for the registration form given the username 
             link = generate_unique_link(username, "registrazione")
-            # Send email with link
             msg = Message('Registrazione al sistema FUMI2', sender = 'regionefumi2@gmail.com', recipients = [email])
             msg.body = f"Benvenuto al sistema FUMI2, {username}!. Visitare il link per completare la registrazione: {link}"
 
             try:
                 mail.send(msg)
             except:
-                # Flash and category
-                # session["category"] = "alert-danger"
                 flash("Errore nell'invio della mail. Rimandarla con l'apposito pulsante per generazione password!")
                 return redirect(url_for('adminpane'))
                 
-            # We then flash a success message.
-            # session["category"] = "alert-success"
             flash("Utente {} registrato con successo! Link di registrazione generato.".format(username))
             return redirect(url_for('adminpane'))
+        
 
-        # The second case is the search button: we need to query again the 
-        # users specifying a particular element as query key.
-        elif "searchbutton" in request.form:
+        elif "button_change_group" in request.form:
+
+            print("coda - button change group ", flush=True)
+            db = DBProxy()
+
+            user = request.form['modify-user-group']
+            action = request.form['action-modify-group']
+            group = request.form['modify-group-group']
+
+            print("[*] modify user permission : " + str(user), flush=True)
+            print("[*] modify action permission : " + str(action), flush=True)
+            print("[*] modify group permission : " + str(group), flush=True)
+
+            if action == 'Rimuovi':
+                db.remove_user_to_group(user, group)
+            elif action == 'Aggiungi':
+                db.add_user_to_group(user, group, False, False)
             
+            return redirect(url_for('adminpane'))
+
+        elif "button_change_permissions" in request.form:
+
+            print("coda - button change permission ", flush=True)
+            user = request.form['username-modify-permission']
+            group = request.form['group-modify-permission']
+            write = request.form['write_permission']
+            read = request.form['read_permission']
+
+            if read == '1':
+                read = True
+            elif read == '0':
+                read = False
+            
+            if write == '1':
+                write = True
+            elif write == '0':
+                write = False
+        
+            db = DBProxy()
+            db.change_user_permissions(user, group, "READ_PERMISSION", read)
+            db.change_user_permissions(user, group, "WRITE_PERMISSION", write)
+
+            return redirect(url_for('adminpane'))
+
+
+        elif "searchbutton" in request.form:
+            print("coda - search button", flush=True)
             # Given the search value as filter 
-            search_filter = request.form.get("searchvalue").lower()
-
+            # search_filter = request.form.get("searchvalue").lower()
             # Update the list with filtered users
-            users = filters(search_filter, users)
-
-            # print(users)
-
+            # users = filters(search_filter, users)
             # Insert into session a value representing the actual search
             # session["searchval"] = search_filter
-
             # Reset search page 
-            search_page = 1
+            # search_page = 1
 
 
-        # The third case is the delete button: When the admin press this, we need to 
-        # the corrispondent user.
         elif "deletebutton" in request.form:
+
+            print("coda - delete button", flush=True)
 
             # We wait for the confirmation of the alert box. Basically, what happens 
             # When we click the confirm, is that the request is sent only when OK/BACK
@@ -736,10 +768,10 @@ def adminpane():
                 flash("Utente cancellato correttamente: {}".format(confirmed))
                     
 
-        # Fourth case, the password change request is pressed: we need to initi 
-        # the procedure for creating a new password with an automatic mail.
         elif "passwordbutton" in request.form:
             
+            print("coda - password button", flush=True)
+
             # We get the user in that row
             username = request.form.get("passwordbutton").lower()
 
@@ -791,39 +823,28 @@ def adminpane():
             # Redirect to adminpane to load users again
             return redirect(url_for('adminpane'))
 
-            
-        # Fifth case, we want to deactivate the user
+           
         elif "deactivatebutton" in request.form:
 
-            # We get the user in that row
+            print("coda - deactivate button", flush=True)
+
             username = request.form.get("deactivatebutton").lower()
 
-            # We try to submit a deactivation query 
             try:
                 db.update_column("\"USER\"", "ACTIVE", "USERNAME", [0, username])
 
             except Exception as e:
-
-                # We put the category of the error inside the variable
-                # session["category"] = "alert-danger"
-
-                # We flash the message
                 flash("Errore nella disattivazione dell'utente {}. Riprovare!".format(username))       
-
-                # Redirect to adminpane
                 return redirect(url_for('adminpane'))
 
-            # Flash success if no error given
-            # ession["category"] = "alert-success"
             flash("Utente {} disattivato con successo.".format(username))
-
-            # Redirect to adminpane to load users again
             return redirect(url_for('adminpane'))
 
-        # Sixth case, we want to activate the user 
+
         elif "activatebutton" in request.form: 
 
-            # We get the user in that row
+            print("coda - activate button", flush=True)
+
             username = request.form.get("activatebutton").lower()
 
             # Since an user can be inactive because he just got registered, we need to check
@@ -888,29 +909,36 @@ def adminpane():
         #if "searchval" in session:
         #    users = filters(session["searchval"], users)
         #    print(users)
-    
-    # Set up pagination: We follow the same approach used into the "storico" section.
-    # Refer there for more info.
-    # page = int(request.args.get('page', 1)) if search_page is None else search_page
+   
     page = int(request.args.get('page', 1))
     per_page = 5
     offset = (page - 1) * per_page
+
     pagination_data = users[offset: offset + per_page]
     pagination = Pagination(page=page, per_page=per_page, total=len(users), css_framework='bootstrap5')
     datainfo = [offset, offset + per_page, len(users)]
-    print("---adminpane - pagination_data : " + str(pagination_data), flush=True)
-    print("---adminpane - users : " + str(user), flush=True)
+  
+    pagination_data2 = all_group_with_user[offset: offset + per_page]
+    pagination2 = Pagination(page=page, per_page=per_page, total=len(all_group_with_user), css_framework='bootstrap5')
+    datainfo2 = [offset, offset+per_page, len(all_group_with_user)]
 
+    pagination_data3 = all_jobs[offset: offset + per_page]
+    pagination3 = Pagination(page=page, per_page=per_page, total=len(all_jobs), css_framework='bootstrap5')
+    datainfo3 = [offset, offset+per_page, len(all_jobs)]
 
-
-    # Render the adminpane with options
     return render_template('adminpane.html',
                            last_access=last_access,
                            users=pagination_data,
                            pagination=pagination,
-                           datainfo=datainfo)
-                           # category=session["category"])
-
+                           datainfo=datainfo,
+                           all_group_with_user=pagination_data2,
+                           pagination2=pagination2,
+                           datainfo2=datainfo2,
+                           all_jobs=pagination_data3,
+                           pagination3=pagination3,
+                           datainfo3=datainfo3
+                           )
+                    
 @app.route('/registrazione/<unique_id>', methods=['GET', 'POST'])
 def registration(unique_id):
 
@@ -932,7 +960,8 @@ def registration(unique_id):
         password = request.form.get("password")
         password_again = request.form.get("password-again")
         birthdate = request.form.get("date")
-        telephone = request.form.get("telephone")
+        
+        # telephone = request.form.get("telephone")
         
         # We compare the password: if they're not equal, we flash a message
         # and basically reload the page again
@@ -953,9 +982,9 @@ def registration(unique_id):
                 #db.update_column("USER", "BIRTHDATE", "USERNAME", [birthdate, decoded_name])
                 #db.update_column("USER", "TELEPHONE", "USERNAME", [telephone, decoded_name])
                 #db.update_column("USER", "ACTIVE", "USERNAME", [1, decoded_name])
+                # db.update_column("\"USER\"", "TELEPHONE", "USERNAME", [telephone, decoded_name])
                 db.update_column("\"USER\"", "\"PASSWORD\"", "USERNAME", [generate_password_hash(password), decoded_name])
                 db.update_column("\"USER\"", "BIRTHDATE", "USERNAME", [birthdate, decoded_name])
-                db.update_column("\"USER\"", "TELEPHONE", "USERNAME", [telephone, decoded_name])
                 db.update_column("\"USER\"", "ACTIVE", "USERNAME", [1, decoded_name])
 
                 # After the registration, we redirect for login
@@ -1074,6 +1103,19 @@ def download():
         response.headers.set('Content-Type', 'zip')
         response.headers.set('Content-Disposition', 'attachment', filename="{}.zip".format(jobid))
         return response
+
+@app.route('/getInfoJobsQueue')
+def getInfoJobsQueue():
+    return jsonify(session['info_jobs_queue'])
+
+@app.route('/getStatusJobsQueue', methods=['POST', 'GET'])
+def getStatusJobsQueue():
+    out_states = []
+    dagonManager = DagonOnServiceManager('http://193.205.230.6:1727', ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'], 11)
+    for job in session['info_jobs_queue']:
+        response_dagon = dagonManager.getStatusByID(str(job[0]))
+        out_states.append([response_dagon])
+    return jsonify(out_states)
 
 '''
 @app.route('/progress')

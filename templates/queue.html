@@ -29,26 +29,11 @@
                 </a>
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link" href="dashboard">
-                        <i class="fas fa-terminal"></i>
-                        <span style="color: var(--bs-accordion-bg);">Dashboard</span></a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="simulazione-singola">
-                        <i class="fas fa-eye"></i>
-                        <span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="simulazioni-multiple">
-                        <i class="fas fa-list"></i>
-                        <span style="color: var(--bs-accordion-bg);">Simulazioni multiple</span></a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="storico">
-                        <i class="fas fa-table"></i>
-                        <span style="color: var(--bs-accordion-bg);">Storico</span></a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="profilo">
-                        <i class="far fa-user-circle"></i>
-                        <span style="color: var(--bs-accordion-bg);">Profilo</span></a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
+                    <!--<li class="nav-item"><a class="nav-link" href="simulazione-singola"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li>-->
+                    <li class="nav-item"><a class="nav-link" href="simulazioni"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="profilo"><i class="far fa-user-circle"></i><span style="color: var(--bs-accordion-bg);">Profilo</span></a></li>
                     <li class="nav-item"></li>
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
@@ -78,13 +63,22 @@
                 </nav>
 
 
+            
+
                 <div class="container-fluid" style="width: auto;height: auto;">
-                    <form method="POST">
+
+                    <!-- style="margin-bottom: 25px;" --> 
+                    <div class="row" id="button-show" style="display: block;">
+                        <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
+                            <button class="btn btn-success btn-lg" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;" onclick='showInputForm()'>&nbsp;Mostra Form&nbsp;<i class="fas fa-edit"></i>&nbsp;</button>
+                        </div>
+                    </div>
+
+                    <form method="POST" id="row-input" style="display: none;">
                         <div class="d-sm-flex justify-content-between align-items-center mb-4" style="border-style: none;">
-                            <h3 class="text-dark mb-0">Simulazioni in Coda</h3>
+                            <h3 class="text-dark mb-0">Simulazioni</h3>
                         </div>
                         <div class="row">
-
                             <div class="col">
                                 <div class="row">
                                     <div class="col" style="margin-bottom: 20px;">
@@ -216,8 +210,11 @@
 
                         </div>
                         <div class="row" style="margin-bottom: 25px;">
-                            <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;"><button class="btn btn-danger btn-lg" type="submit" style="margin-left: 5px;font-weight: bold;width: auto;height: auto;margin-right: 8px;">&nbsp;Reset&nbsp;<i class="fas fa-eraser"></i>&nbsp; &nbsp;</button>
-                                <button class="btn btn-success btn-lg" type="submit" name="generate" id="start-button" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Genera&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button></div>
+                            <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
+                                <button class="btn btn-danger btn-lg" type="submit" style="margin-left: 5px;font-weight: bold;width: auto;height: auto;margin-right: 8px;">&nbsp;Reset&nbsp;<i class="fas fa-eraser"></i>&nbsp; &nbsp;</button>
+                                <button class="btn btn-success btn-lg" type="submit" name="generate" id="start-button" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Genera&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
+                                <button class="btn btn-success btn-lg" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;" onclick="showInputForm()">&nbsp;Nascondi Form&nbsp;&nbsp;</button>
+                            </div>
                         </div>
                     </form>
                     <div class="row">
@@ -233,7 +230,7 @@
                             <div class="col-lg-12 col-xl-12" style="color: var(--bs-card-bg);background: var(--bs-card-cap-bg);" id="options_simulation">
                                 <div class="card shadow mb-4">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h6 class="text-primary fw-bold m-0">Coda Operazioni</h6>
+                                        <h6 class="text-primary fw-bold m-0">Coda Simulazioni</h6>
                                     </div>
                                     <div class="card-body" style="height: 100%; margin-bottom: 0px;">
                                         <div class="table-responsive">
@@ -250,17 +247,18 @@
                                                         <th>Temp</th>
                                                         <th>Codice GISA</th>
                                                         <th>Comune</th>
-                                                        <th>calmet</th>
-                                                        <th>calpost</th>
-                                                        <th>calpufff</th>
-                                                        <th>calwrff</th>
                                                         <th>ctgproc</th>
-                                                        <th>dst</th>
+                                                        <th>terrel</th>
                                                         <th>lnd2</th>
                                                         <th>makegeo</th>
-                                                        <th>terrel</th>
+                                                        <th>calmet</th>
+                                                        <th>calpuff</th>
+                                                        <th>calpost</th>
                                                         <th>wrf2calwrf</th>
+                                                        <th>calwrff</th>
+                                                        <th>dst</th>
                                                         <th>www</th>
+                                                       
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -295,6 +293,7 @@
         //window.addEventListener('load', cotrolJobsQueue);
         setInterval(checkStatusJobsQueue, 5000);
 
+
         // Funzione per popolare la datalist con i comuni
         function populateDatalist() {
             comuniList.innerHTML = '';  // Pulisce eventuali opzioni esistenti
@@ -309,64 +308,78 @@
 
             let tot_jobs = parseInt("{{session['tot_jobs_queue']}}");
 
-            if( parseInt(tot_jobs) > 0 ) {
-                
+            if( parseInt(tot_jobs) > 0 ) {                
                 let tbody = document.getElementById("info-table").getElementsByTagName("tbody")[0];
-
-                if(tot_jobs > 0) {
-
-                    fetch('/getInfoJobsQueue')
-                    .then(response => response.json())
-                    .then(data =>{
-                        for(let i=0; i<tot_jobs; i++) {
-                            if(!tbody.rows[i]){
-                                let new_row = tbody.insertRow();
-                                for(let j=0; j<10; j++) {
-                                    new_row.insertCell().textContent = data[i][j];
-                                }
+                fetch('/getInfoJobsQueue')
+                .then(response => response.json())
+                .then(data =>{
+                    for(let i=0; i<tot_jobs; i++) {
+                        if(!tbody.rows[i]){
+                            let new_row = tbody.insertRow();
+                            for(let j=0; j<10; j++) {
+                                new_row.insertCell().textContent = data[i][j];
                             }
                         }
-                        console.log("rows : " , tbody.rows.length);
-                        console.log("tot_jobs : ", tot_jobs);
-                    })
-                    .catch(error => console.error('Errore durante il recupero del file:', error));           
+                    }
+                    //console.log("rows : " , tbody.rows.length);
+                    //console.log("tot_jobs : ", tot_jobs);
+                })
+                .catch(error => console.error('Errore durante il recupero del file:', error));           
                     
                     
-                    fetch('/getStatusJobsQueue')
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log("data completo : ", data);
-        
-                        /*
-                        let workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
-                        for(let i=0; i<tot_jobs; i++) {
-                            console.log("----------------------" + " JOB : " + i + "-----------------------------");                            
-                            let job = data[i]
-                            console.log("job :", job);
-                            for(let j=0; j<11; j++){
-                                console.log("value data[i][j]["+ workflow[j] +"] : ", job[0][workflow[j]]);
+                fetch('/getStatusJobsQueue')
+                .then(response => response.json())
+                .then(data => {
+                    /*
+                    console.log("data completo : ", data);
+                    let workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
+                    for(let i=0; i<tot_jobs; i++) {
+                        console.log("----------------------" + " JOB : " + i + "-----------------------------");                            
+                        let job = data[i]
+                        console.log("job :", job);
+                        for(let j=0; j<11; j++){
+                            console.log("value data[i][j]["+ workflow[j] +"] : ", job[0][workflow[j]]);
+                        }
+                        console.log("---------------------------------------------------------------------------------");
+                    }
+                    */
+                    for(let i=0; i<tot_jobs; i++) {
+                        let selected_row = tbody.rows[i];
+                        let workflow = ['ctgproc', 'terrel', 'lnd2', 'makegeo', 'wrf2calwrf', 'calwrff', 'calmet', 'calpufff', 'calpost', 'www', 'dst']
+
+                        for(let j=10; j<21; j++) {
+                            if(!selected_row.cells[j]){
+                                // selected_row.insertCell(j).textContent = data[0][i][workflow[j-10]];
+                                selected_row.insertCell(j).textContent = data[i][0][workflow[j-10]]
+                            } else {
+                                selected_row.cells[j].textContent = data[i][0][workflow[j-10]];
                             }
-                            console.log("---------------------------------------------------------------------------------");
-                            
-                        }
-                        */
 
-                        for(let i=0; i<tot_jobs; i++) {
-                            let selected_row = tbody.rows[i];
-                            let workflow = ['calmet', 'calpost', 'calpufff', 'calwrff', 'ctgproc', 'dst', 'lnd2', 'makegeo', 'terrel', 'wrf2calwrf', 'www'];
+                            /* TODO :  fare il controllo del colore */ 
+                            if(data[i][0][workflow[j-10]] == 'RUNNING') {
+                                selected_row.cells[j].style.color = 'blue';
+                            } else if(data[i][0][workflow[j-10]] == 'FINISHED') {
+                                selected_row.cells[j].style.color = 'green';
+                            } else if(data[i][0][workflow[j-10]] == 'WAITING') {
+                                selected_row.cells[j].style.color = 'yellow';
+                            }
+                        } 
+                    }
+                })
+                .catch(error => console.error('Errore durante il recupero del file:', error));
+            }      
+        }
 
-                            for(let j=10; j<21; j++) {
-                                if(!selected_row.cells[j]){
-                                    // selected_row.insertCell(j).textContent = data[0][i][workflow[j-10]];
-                                    selected_row.insertCell(j).textContent = data[i][0][workflow[j-10]]
-                                } else {
-                                    selected_row.cells[j].textContent = data[i][0][workflow[j-10]];
-                                }
-                            } 
-                        }
-                    })
-                    .catch(error => console.error('Errore durante il recupero del file:', error));
-                }      
+        function showInputForm() {
+            let form_input = document.getElementById('row-input');
+            let button_show = document.getElementById('button-show');
+
+            if(form_input.style.display == 'none' && button_show.style.display == 'block') {
+                form_input.style.display = 'block';
+                button_show.style.display = 'none';
+            } else if ( form_input.style.display == 'block' && button_show.style.display == 'none') {
+                form_input.style.display = 'none';
+                button_show.style.display = 'block';
             }
         }
         
@@ -378,6 +391,7 @@
             }
         })
         .catch(error => console.error('Errore durante il recupero del file:', error));
+
     </script>
 </body>
 

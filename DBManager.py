@@ -17,28 +17,20 @@ class DBManager():
     def __init__(self, dbpath='gdal/sqlite-autoconf-3400100/FUMI2.db'):
         self.connect(dbpath)
 
-    ############################
-    #  Basic function that operates on DB
-    # Function that wrap the execution step of the cursor to avoid rebundancy
+   
     def execute(self, query):
-
         # Execute query and return the records
         self.__cursor.execute(query)
         record = self.__cursor.fetchall()
         return record
 
-    # Function that takes care of updating existing/new tuples into the database
+  
     def update(self, query, values=None):
-        
-        # To update we use the execute command using the query and the update vector
-        # containing the updates. We then commit
         if values is not None: self.__cursor.execute(query, values)
         else: self.__cursor.execute(query)
         self.__connection.commit()
 
-    # Function that takes care of insertion of new tuples into the database
     def add(self, table, values):
-        # Create a generic query to insert all values into a table 
         query = "INSERT INTO \"{}\" VALUES ({})".format(table, values)
         self.update(query)
 
@@ -46,7 +38,7 @@ class DBManager():
     def remove(self, table, key, value):
 
         # Delete query and update
-        query = "DELETE FROM \"{}\" WHERE {}={}".format(table, key, value)
+        query = "DELETE FROM {} WHERE {}=\'{}\'".format(table, key, value)
         self.update(query)
 
     def add_specific(self, table, columns, values):
@@ -169,6 +161,11 @@ class DBProxy():
         record = self.__db.execute("select * from user")
         return record
 
+    # add to Dario
+    def return_all_jobs(self):
+        record = self.__db.execute(" SELECT J.JOBID, JI.NAME_SIM, JI.\"DATE\", JI.\"TIME\", JI.DURATION, JI.COMMON, JI.LONG, JI.LAT, JI.TEMPERATURE, JI.CODICE_GISA, U.USERNAME, U.FIRSTNAME, U.LASTNAME FROM JOBS J JOIN JOBINFO JI ON J.JOBID = JI.JOBID JOIN \"USER\" U ON J.USERNAME = U.USERNAME;")
+        return record
+   
     #  Specific functions that have some purpose for our application (i.e: check users)
     def user_exists(self, username, password):
 
@@ -276,13 +273,51 @@ class DBProxy():
         query = "SELECT firstname, lastname, username, telephone, email, struttura, ruolotec, active FROM \"USER\" WHERE \"ROLE\"!=1"
         return self.__db.execute(query)
 
-    # Simple function that will insert a tuple into the database representing a new user 
-    def add_user(self, username, firstname, lastname, email, struttura, ruolo):
-        values = [username, firstname, lastname, email, struttura, ruolo]
-        values.append(0)
-        values.append(0)
-        query = "INSERT INTO \"USER\" (USERNAME, FIRSTNAME, LASTNAME, EMAIL, STRUTTURA, RUOLOTEC,  ACTIVE, \"ROLE\") VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    def add_user(self, username, firstname, lastname, email, cellulare, struttura, ruolo):
+        values = [username, firstname, lastname, email, cellulare, struttura, ruolo, 0, 0]
+        query = "INSERT INTO \"USER\" (USERNAME, FIRSTNAME, LASTNAME, EMAIL, TELEPHONE, STRUTTURA, RUOLOTEC, \"ROLE\", ACTIVE) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         self.__db.update(query, values)
+
+    def add_group(self, name_group):
+        value = [name_group]
+        query = "INSERT INTO GROUPS (NAME_GROUP) VALUES (%s);"
+        self.__db.update(query, value)
+   
+    def add_user_to_group(self, user, group, read_permisssion, write_permission):
+        values = [user, group, read_permisssion, write_permission] 
+        query = "INSERT INTO USER_GROUP (USERNAME, NAME_GROUP, READ_PERMISSION, WRITE_PERMISSION) VALUES (%s, %s, %s, %s);"
+        # query = "INSERT INTO USER_GROUP (USERNAME, NAME_GROUP, READ_PERMISSION, WRITE_PERMISSION) VALUES \'{}\', {}, {}, {});".format(user, group, read_permisssion, write_permission)
+        #self.__db.update(query)
+        self.__db.update(query, values)
+    
+    def remove_user_to_group(self, user, group):
+        # query = "DELETE FROM USER_GROUP WHERE USERNAME=\'{}\' ;".format(user)
+        # self.__db.update(query)
+        value = [user, group]
+        query = "DELETE FROM USER_GROUP WHERE USERNAME=%s AND NAME_GROUP=%s;"
+        self.__db.update(query, value)
+ 
+    #def get_user_permissions(self, user):
+    #    query = "SELECT READ_USER, WRITE_USER FROM USER WHERE username=\'{}\';".format(user)
+    #    return self.__db.execute(query)
+
+    def change_user_permissions(self, user, group, permission, new_state):
+        values = [permission, new_state, user, group ]
+        query = "UPDATE USER_GROUP SET \"%s\"=%s WHERE USERNAME=%s AND NAME_GROUP=%s ;"
+        self.__db.update(query, values)
+
+
+
+        
+
+
+    def get_groups_user(self, user):
+        query = "SELECT g.NAME_GROUP FROM USER_GROUP ug JOIN GROUPS g ON ug.NAME_GROUP = g.NAME_GROUP WHERE ug.USERNAME = \'{}\';".format(user)
+        return self.__db.execute(query)
+
+    def get_all_groups_with_user(self):
+        query = "SELECT * FROM USER_GROUP;"
+        return self.__db.execute(query)
 
     # Simple function that delete an user given his name
     def delete_user(self, user):
@@ -294,10 +329,7 @@ class DBProxy():
         # Usin the update function to commit 
         self.__db.update(query, (user,))
 
-    # Simple function that will returns all the completed jobs given an user 
     def fetch_jobs(self, user):
-
-
         query = '''SELECT NAME_SIM,\"DATE\",\"TIME\",DURATION,COMMON,LONG,LAT,TEMPERATURE,CODICE_GISA,JOBINFO.JOBID
                     FROM JOBINFO 
                     JOIN JOBS ON JOBINFO.JOBID=JOBS.JOBID 
