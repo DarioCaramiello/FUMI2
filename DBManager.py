@@ -312,6 +312,10 @@ class DBProxy():
         # query = "UPDATE USER_GROUP SET %s=%s WHERE USERNAME=%s AND NAME_GROUP=%s ;"
         self.__db.update(query, values)
 
+    def get_info_job(self, id_job):
+        query = "SELECT  \"TIME\", DURATION, \"DATE\", LONG, LAT FROM JOBINFO WHERE JOBID=\'{}\';".format(id_job)
+        return self.__db.execute(query)
+
     # ritorna tutti i gruppi presenti nel sistema 
     def get_all_groups(self):
         query="SELECT NAME_GROUP FROM GROUPS;"
@@ -341,27 +345,34 @@ class DBProxy():
         # Usin the update function to commit 
         self.__db.update(query, (user,))
 
+    def create_group(self, name_group):
+        quey = "INSERT INTO GROUPS (NAME_GROUP) VALUES (\'{}\');".format(name_group)
+        self.__db.update(query)
+
     def fetch_jobs(self, user):
-        query = '''SELECT NAME_SIM,\"DATE\",\"TIME\",DURATION,COMMON,LONG,LAT,TEMPERATURE,CODICE_GISA,JOBINFO.JOBID
+        query = '''SELECT NAME_SIM,\"DATE\",\"TIME\",DURATION,COMMON,LONG,LAT,TEMPERATURE,CODICE_GISA,JOBINFO.JOBID,GROUPS.NAME_GROUP
                     FROM JOBINFO 
                     JOIN JOBS ON JOBINFO.JOBID=JOBS.JOBID 
                     JOIN \"USER\" ON JOBS.USERNAME=\"USER\".USERNAME 
+                    JOIN SIMULATION_GROUP ON JOBINFO.JOBID = SIMULATION_GROUP.JOBID
+                    JOIN GROUPS ON SIMULATION_GROUP.NAME_GROUP = GROUPS.NAME_GROUP
                     WHERE \"USER\".USERNAME=\'{}\' 
-                '''.format(user)
-
-        
-        #query = '''SELECT NAME_SIM,\"DATE\",\"TIME\",DURATION,LONG,LAT,TEMPERATURE,CODICE_GISA,JOBINFO.JOBID
-        #            FROM JOBINFO 
-        #            JOIN JOBS ON JOBINFO.JOBID=JOBS.JOBID 
-        #            JOIN \"USER\" ON JOBS.USERNAME=\"USER\".USERNAME 
-        #            WHERE \"USER\".USERNAME=\'{}\' 
-        #            AND JOBINFO.COMPLETED=1;
-        #        '''.format(user)
-        
-        
+                '''.format(user)        
         # returns values
         return self.__db.execute(query)
     
+    def fetch_user_group(self, user, group):
+        query = '''SELECT NAME_SIM,\"DATE\",\"TIME\",DURATION,COMMON,LONG,LAT,TEMPERATURE,CODICE_GISA,JOBINFO.JOBID,SIMULATION_GROUP.NAME_GROUP,JOBINFO.SEARCH_FIELD
+                    FROM JOBINFO 
+                    JOIN JOBS ON JOBINFO.JOBID=JOBS.JOBID 
+                    JOIN \"USER\" ON JOBS.USERNAME=\"USER\".USERNAME 
+                    JOIN SIMULATION_GROUP ON JOBINFO.JOBID = SIMULATION_GROUP.JOBID
+                    JOIN GROUPS ON SIMULATION_GROUP.NAME_GROUP = GROUPS.NAME_GROUP
+                    WHERE \"USER\".USERNAME=\'{}\' AND GROUPS.NAME_GROUP=\'{}\' ;
+                '''.format(user, group)        
+        # returns values
+        return self.__db.execute(query)
+        
     # Simple function that given a jobid, will return the output path associated 
     # with it
     def get_KML_path(self, jobid, basefolder="root"):
@@ -401,8 +412,18 @@ class DBProxy():
 
     # Simple function that insert a new job into the database, into the JOBINFO relative table.
     def new_job(self, jobinfo, user_groups, job_id):
+        
         completed = 0
-        query_jobinfo = "INSERT INTO JOBINFO VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')".format(
+
+        string_search = ""
+
+        for info in jobinfo:
+            string_search = string_search + "; " + info + "; "
+
+        print("- dbmanager - new job - " + str(string_search), flush=True)
+        
+         
+        query_jobinfo = "INSERT INTO JOBINFO VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')".format(
             jobinfo[0], # job_id
             jobinfo[1], # name_simul
             jobinfo[2], # date
@@ -413,8 +434,10 @@ class DBProxy():
             jobinfo[7], # lat
             jobinfo[8], # temp
             jobinfo[9], # codice_GISA
-            completed 
+            completed,
+            string_search
         )
+
         # print("[*] DBManager.py -- query_jobinfo = " + query_jobinfo, flush=True)
         query_jobs = "INSERT INTO JOBS VALUES(\'{}\', \'{}\')".format(jobinfo[0], jobinfo[10])
         # print("[*] DBManager -- query_job = " clear+ query_jobs, flush=True)

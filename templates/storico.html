@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <!-- <title>Storico</title> --> 
     <title>Simulazioni</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
@@ -12,60 +11,45 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/css/Login-Form-Basic-icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/VentasPro-Login.css') }}">
-
     <link rel="stylesheet" href="http://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
-    <script src="http://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
 
     <style>
         .evidenziato {
             background-color: yellow !important;
         }
 
-        .bottone {
-            width: 100px;
-            height: 40px;
-            margin: 5px; /* Aggiunto un margine tra i bottoni per separarli */
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px; /* Bordo arrotondato per i bottoni */
-            font-size: 13px;
-            cursor: pointer;
-            align-items: center;
-        }
-
         .slider {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 15px;
-        border-radius: 5px;
-        background: #d3d3d3;
-        outline: none;
-        opacity: 0.7;
-        -webkit-transition: .2s;
-        transition: opacity .2s;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
         }
 
         .slider:hover {
-        opacity: 1;
+            opacity: 1;
         }
 
         .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        background: #04AA6D;
-        cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #04AA6D;
+            cursor: pointer;
         }
 
         .slider::-moz-range-thumb {
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        background: #04AA6D;
-        cursor: pointer;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #04AA6D;
+            cursor: pointer;
         }
 
         form {
@@ -74,7 +58,7 @@
     </style>
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="controlKmlOnLoad()">
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
@@ -85,7 +69,6 @@
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="dashboard"><i class="fas fa-terminal"></i><span style="color: var(--bs-accordion-bg);">Dashboard</span></a></li>
-                    <!-- <li class="nav-item"><a class="nav-link" href="simulazione-singola"><i class="fas fa-eye"></i><span style="color: var(--bs-accordion-bg);">Simulazione singola</span></a></li> --> 
                     <li class="nav-item"><a class="nav-link" href="simulazioni"><i class="fas fa-list"></i><span style="color: var(--bs-accordion-bg);">Simulazioni</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="storico"><i class="fas fa-table"></i><span style="color: var(--bs-accordion-bg);">Storico</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="profilo">
@@ -120,7 +103,7 @@
                                 <!-- <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search"> -->
                                     <div class="input-group">
                                         <div class="col-sm-3">
-                                            <input class="bg-light form-control border-0 large" type="text" name="hsearchvalue" id="searchnamebar" placeholder="Cerca : nome-campo=valore">
+                                            <input class="bg-light form-control border-0 large" type="text" name="hsearchvalue" id="searchnamebar" placeholder="Cerca parola chiave">
                                         </div>
                                         <!-- sotto staba in button anche : type="submit" form="searchform" -->
                                         <button class="btn btn-primary py-0" id="searchnamebutton" name="hsearchbutton" onclick="search()"><i class="fas fa-search"></i></button>
@@ -140,9 +123,9 @@
                                                 <th>Longitudine</th>
                                                 <th>Latitudine</th>
                                                 <th>Temperatura</th>
-                                                <!-- <th>Dati Meteo</th>--> 
                                                 <th>Codice GISA</th>
                                                 <th>ID</th>
+                                                <th>Gruppo</th>
                                                 <th>Azioni</th>
                                             </tr>
                                         </thead>
@@ -159,6 +142,8 @@
                                                 <td>{{ job[7] }}</td>
                                                 <td>{{ job[8] }}</td>
                                                 <td>{{ job[9] }}</td>
+                                                <td>{{ job[10] }}</td>
+                                                
                                                 <!-- <form action="{{ url_for('download') }}" method="post"> -->
                                                 <td>
                                                     <form method="post">
@@ -167,6 +152,7 @@
                                                 </td>
                                                 <td>
                                                     <form method="post">
+                                                        <input type="hidden" name="idJOB" value="{{ job[9] }}">
                                                         <button class="btn btn-warning" type="submit" name="hshowbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Mostra&nbsp;<i class="fas fa-chalkboard-teacher"></i>&nbsp;</button>
                                                     </form> 
                                                 </td>
@@ -176,6 +162,9 @@
                                                         <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button>
                                                     </form>
                                                 </td>
+                                                <td style="display: none;">{{job[11]}}</td>
+
+                                                
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -224,8 +213,8 @@
         
                                 <div class="card-body">
                                     <button class="btn btn-primary btn-sm" id="bottoneSovrapposizione" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="sovraCheck()">Sovrapposizione</button>
-                                    <button class="btn btn-primary btn-sm" id="buffer500mt" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck500mt">Buffer 500MT</button>
-                                    <button class="btn btn-primary btn-sm" id="buffer3km" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck3km">Buffer 3KM</button>
+                                    <button class="btn btn-primary btn-sm" id="buffer500mt" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck500mt()">Buffer 500MT</button>
+                                    <button class="btn btn-primary btn-sm" id="buffer3km" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;" onclick="bufferCheck3km()">Buffer 3KM</button>
                                 </div> 
                             </div>
                         </div>
@@ -243,7 +232,21 @@
         <script src="{{ url_for('static', filename='js/KML.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/source/TileWMS.js"></script>
+        <script src="http://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> <!-- utile per la gestione della data per i file kml -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"></script> <!-- libreria utile per la generazione di un colore randomico in esadecimale -->
+    
         <script>
+            document.getElementById('myRange').addEventListener("input", changeInput);
+
+            var output = document.getElementById("demo");
+            var slider = document.getElementById("myRange");
+            var attivo=true;
+            var attivoBuffer3km = true;
+            var flag_buffer3km = false;
+            var attivoBuffer500mt = true;
+            var flag_buffer500mt = false;
+            var flag_sovrapposizione = false;
             var map = new ol.Map({
                 target: 'map',
                 layers: [
@@ -259,13 +262,44 @@
                 })
             });
 
+            output.innerHTML = slider.value;
+            slider.oninput = function() {
+                    output.innerHTML = this.value / 5;
+            }
+            
             function search() {
                 let text_input_search = document.getElementById('searchnamebar').value;
-                const regex = /^([^=]+)=(.*)$/;
-                let matches = text_input_search.match(regex);
+                let rows_match = []
+                let tbody = document.getElementById("dataTable").getElementsByTagName("tbody")[0];
+                
+                //console.log("text_input : ", text_input_search);
+                //console.log("tot rows : ", tbody.rows.length);
+                //console.log("tbody : ", tbody);
 
-                console.log("text_input : ", text_input_search);
+                if(tbody.rows.length > 0) {
 
+                    for(let i=0; i<tbody.rows.length; i++) {
+
+                        console.log("row : ", tbody.rows[i]);
+                        let field_search_of_row = tbody.rows[i].cells[14].textContent;
+                        console.log("text_search_field : ". field_search_of_row);
+
+                        if(field_search_of_row.includes(text_input_search)){
+                            rows_match.push(tbody.rows[i]);
+                            console.log("occorrenza trovata");
+                        }
+                    }
+
+                    rows_match.reverse().forEach(function(riga) {
+                        tbody.insertBefore(riga, tbody.firstChild);
+                            riga.classList.add('evidenziato');
+                            setTimeout(function() {
+                                riga.classList.remove('evidenziato');
+                            }, 10000);
+                        });      
+                }
+
+                /*
                 if (matches) {
                     const nomeCampo = matches[1];
                     const valore = matches[2];
@@ -312,9 +346,482 @@
                 } else {
                     console.log("La stringa non è nel formato previsto.");
                 }
+                */
             }
 
+            function controlKmlOnLoad(){
+                
+                /*
+                if("{{session['path_show_kml']}}"==""){
+                    console.log("[CHECK] session[path_show_kml] : empty");
+
+                    if("{{session['durata']}}"==""){
+                        console.log("[CHECK] session[durata] : empty");
+                    }
+
+                } else { */
+                    //var oraInizio = "{{ session['ora_inizio']}}";
+                    let oraInizio = "0"
+                    //sizeFlagsKML = parseInt("{{ session['durata'] }}")
+                    let sizeFlagsKML = 8
+                    // data = "{{ session['data'] }}";
+                    let data = "20240319"
+
+                    var targetVectorLayer = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            // url: '/static/KML/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}")).toString().padStart(2, '0') + ".kml",
+                            url: '/static/KML/out_job/' + data + "Z" + (parseInt(oraInizio)).toString().padStart(2, '0') + ".kml",
+                            // url: '/static/KML/' + "{{session['path_show_kml']}}" + '-out/out_job/' + data + 'Z' + (parseInt("{{ session['ora_inizio'] }}")).toString().padStart(2, '0') + '.kml',
+                            format: new ol.format.KML()
+                        })
+                    });
+
+                    //map.getView().setCenter(ol.proj.fromLonLat([parseFloat("{{session['lon']}}"), parseFloat("{{session['lat']}}")]));
+                    //map.getView().setZoom(13);
+                    map.addLayer(targetVectorLayer);
+
+                    /*
+                    document.getElementById('options_simulation').style.visibility = 'visible';
+                    document.getElementById('options_map').style.visibility = 'visible';
+                    
+                    document.getElementById('div_slider').style.visibility = 'visible';
+                    document.getElementById('bottoneSovrapposizione').style.visibility = 'visible';
+                    document.getElementById('buffer3km').style.visibility = 'visible';
+                    document.getElementById('buffer500mt').style.visibility = 'visible';
+                    document.getElementById('div_slider').style.visibility = 'visible';
+                    */ 
+
+                    let data_standard = moment(data);
+                    let data_formatted = data_standard.format('YYYY-MM-DD');
+                    let int_durata = parseInt("{{session['durata']}}");
+
+                    let object_option = document.createElement('option');
+                    object_option.value = data_formatted;
+                    object_option.text = data_formatted;
+                    document.getElementById("days_list").appendChild(object_option);
+
+                    if( int_durata > 24) {
+                        let tot_giorni = int_durata / 24;
+                        for(let k=1; k<=tot_giorni; k++) {
+                            var_object = document.createElement('option');
+                            let next_day = (data_standard.add(1, 'day')).format('YYYY-MM-DD');
+                            var_object.value = next_day;
+                            var_object.text = next_day;
+                            document.getElementById('days_list').appendChild(var_object);             
+                        }
+                    }
+                //}
+            }
+
+            function changeInput() {
+                console.log("cambio input slider");
+                let selected_choice = document.getElementById('days_list');
+                let value_selected_choice = selected_choice.options[selected_choice.selectedIndex].value;
+                let value_without_char = value_selected_choice.replace(/-/g, "");
+                // console.log("[*] data : ", value_without_char);
+
+                // prendo l'ora dall'input slider 
+                let selected_hour = slider.value / 5;
+                let selected_hour_str = selected_hour.toString();
+                if( selected_hour < 10 ) {
+                    selected_hour_str = selected_hour_str.padStart(2, '0')
+                }
+                // console.log("[*] ora : ", selected_hour_str);
+
+                // pulisce la mappa dai precedenti .kml
+                if(flag_sovrapposizione==false){
+                    var layers = map.getLayers().getArray();
+                    layers.forEach(function(layer) {
+                    if (layer instanceof ol.layer.Vector) {
+                            layer.getSource().clear();
+                        }
+                    });
+                }
+
+                // crea lo stile ( cambio colore ) per le linee del .kml
+                function changeKMLColor(feature, color) {
+                    feature.setStyle(new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: color,
+                            width: 1
+                        })
+                    }));
+                }
+
+                // creo dinamicamente il path del file kml in base ai parametri impostati dall'utente
+                // let url_var =  '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + value_without_char + 'Z' + selected_hour_str + '.kml';
+                let url_var = '/static/KML/out_job/' + value_without_char + 'Z' + selected_hour_str + '.kml';
+
+                // carica il file kml in un vector-layer
+                let targetVectorLayer = new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        url: url_var,
+                        format: new ol.format.KML(),
+                    })
+                });
+
+                // cambia effettivamente colore alle vector features nel kml
+                targetVectorLayer.getSource().once('change', function(event) {
+                    if (targetVectorLayer.getSource().getState() === 'ready') {
+                            var features = targetVectorLayer.getSource().getFeatures();
+                            color = tinycolor.random().toHexString();
+                            features.forEach(function(feature) {
+                                changeKMLColor(feature, color);
+                            });
+                        }
+                    });
+
+                
+                
+                // Controllo del buffer da 500m
+                if( flag_buffer500mt == true) {
+                    let lon = 14.32745; // for test
+                    let lat = 40.84294; // for test
+                    // let center = [parseFloat("{{session['lon']}}"), parseFloat("{{session['lat']}}")];  correct
+                    let center = [lon, lat];
+                    let radius = 500;
+                    let circle = new ol.geom.Circle(ol.proj.fromLonLat(center), radius);
+                    let circleFeature = new ol.Feature(circle);
+                    let circleStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+                        }),
+                    });
+
+                    circleFeature.setStyle(circleStyle);
+
+                    // Crea un'istanza di ol.source.Vector per contenere la circonferenza
+                    let vectorSource = new ol.source.Vector({
+                        features: [circleFeature]
+                        });
+
+                    // Crea un'istanza di ol.layer.Vector per visualizzare la circonferenza sulla mappa
+                    let vectorLayer = new ol.layer.Vector({
+                        source: vectorSource
+                        });
+
+                    map.addLayer(vectorLayer);
+                    console.log("flag_buffer section completed")
+                }
+                
+                // Controllo del buffer da 3km
+                if( flag_buffer3km == true ) {
+                    let lon = 14.32745; // for test
+                    let lat = 40.84294; // for test
+                    // let center = [parseFloat("{{session['lon']}}"), parseFloat("{{session['lat']}}")]; // correct
+                    let center = [lon, lat]; // for test
+                    let radius = 3000;
+                    let circle = new ol.geom.Circle(ol.proj.fromLonLat(center), radius);
+                    let circleFeature = new ol.Feature(circle);
+                    let circleStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'black',
+                            width: 1
+                        }),
+                    });
+
+                    circleFeature.setStyle(circleStyle);
+
+                    // Crea un'istanza di ol.source.Vector per contenere la circonferenza
+                    let vectorSource = new ol.source.Vector({
+                        features: [circleFeature]
+                        });
+
+                    // Crea un'istanza di ol.layer.Vector per visualizzare la circonferenza sulla mappa
+                    let vectorLayer = new ol.layer.Vector({
+                        source: vectorSource
+                        });
+
+                    map.addLayer(vectorLayer);
+                    console.log("BUFFER [3km] : Added to map")
+                }
+                map.addLayer(targetVectorLayer); 
+            }
+
+            function sovraCheck() {
+                attivo = !attivo;
+                var bottone = document.getElementById("bottoneSovrapposizione");
+                if (attivo) {
+                    bottone.classList.remove("disattivato");
+                    console.log("SOVRAPPOSIZIONE : disattivato");
+                    flag_sovrapposizione = false;
+                } else {
+                    bottone.classList.add("disattivato");
+                    console.log("SOVRAPPOSIZIONE : attivato");
+                    flag_sovrapposizione = true;
+                }
+            }
+
+            function nextKML(){
+                
+                if( i > parseInt("{{session['durata']}}")) {
+                    console.log("Max ora durata simulazione");
+                    return;
+                }
+
+                if( ((i+1)%24) == 0 && i!=0) {
+                    let data_var = moment(data);
+                    let new_data = data_var.add(1, 'day');
+                    let format_data = new_data.format('YYYY-MM-DD');
+                    data = format_data.replace(/-/g, "");
+                    // normalizzazione dell'indice ( che rappresenta l'ora )
+                    i = i - 23;
+                    document.getElementById("data_data").innerText = format_data.toString();
+                }
+
+                i+=1;
+
+                if(flag_sovrapposizione==false){
+
+                    // pulisce il layers kml precedente
+                    var layers = map.getLayers().getArray();
+                    layers.forEach(function(layer) {
+                    if (layer instanceof ol.layer.Vector) {
+                            layer.getSource().clear();
+                        }
+                    });
+                }
+
+                // crea lo stile ( cambio colore ) per le linee del .kml
+                function changeKMLColor(feature, color) {
+                    feature.setStyle(new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: color,
+                            width: 1
+                        })
+                    }));
+                }
+
+                // carica il file kml in un vector-layer
+                var targetVectorLayer = new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        url : '/static/KML/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}") + i ).toString().padStart(2, '0') + ".kml",
+                        // url : '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}") + i ).toString().padStart(2, '0') + ".kml",
+                        format: new ol.format.KML(),
+                    })
+                });
+
+                // cambia effettivamente colore alle vector features nel kml
+                targetVectorLayer.getSource().once('change', function(event) {
+                    if (targetVectorLayer.getSource().getState() === 'ready') {
+                            var features = targetVectorLayer.getSource().getFeatures();
+                            color = tinycolor.random().toHexString();
+                            features.forEach(function(feature) {
+                                changeKMLColor(feature, color);
+                            });
+                        }
+                    });
+
+
+                // Controllo del buffer da 500m
+                if( flag_buffer500mt == true) {
+                    let center = [parseFloat("{{session['lon']}}"), parseFloat("{{session['lat']}}")];
+                    let radius = 500;
+                    let circle = new ol.geom.Circle(ol.proj.fromLonLat(center), radius);
+                    let circleFeature = new ol.Feature(circle);
+                    let circleStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+                        }),
+                    });
+
+                    circleFeature.setStyle(circleStyle);
+
+                    // Crea un'istanza di ol.source.Vector per contenere la circonferenza
+                    let vectorSource = new ol.source.Vector({
+                        features: [circleFeature]
+                        });
+
+                    // Crea un'istanza di ol.layer.Vector per visualizzare la circonferenza sulla mappa
+                    var vectorLayer = new ol.layer.Vector({
+                        source: vectorSource
+                        });
+
+                    map.addLayer(vectorLayer);
+                    console.log("flag_buffer section completed")
+                }
+
+                // Controllo del buffer da 3km
+                if( flag_buffer3km == true ) {
+                    let center = [parseFloat("{{session['lon']}}"), parseFloat("{{session['lat']}}")];
+                    let radius = 3000;
+                    let circle = new ol.geom.Circle(ol.proj.fromLonLat(center), radius);
+                    let circleFeature = new ol.Feature(circle);
+                    let circleStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+                        }),
+                    });
+
+                    circleFeature.setStyle(circleStyle);
+
+                    // Crea un'istanza di ol.source.Vector per contenere la circonferenza
+                    let vectorSource = new ol.source.Vector({
+                        features: [circleFeature]
+                        });
+
+                    // Crea un'istanza di ol.layer.Vector per visualizzare la circonferenza sulla mappa
+                    var vectorLayer = new ol.layer.Vector({
+                        source: vectorSource
+                        });
+
+                    map.addLayer(vectorLayer);
+                    console.log("BUFFER [3km] : Added to map")
+                }
+
+map.addLayer(targetVectorLayer);  
+document.getElementById("data_ora").innerText = i.toString();
+console.log("Ora successiva - load kml path : ", '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}") + i ).toString().padStart(2, '0') + ".kml");
+}
+
+            function previousKML(){
+
+                if( ((i-1)%24) == 0 && i!=0) { 
+                    let data_var = moment(data);
+                    let new_data = data_var.subtract(1, 'day');
+                    let format_data = new_data.format('YYYY-MM-DD');
+                    data = format_data.replace(/-/g, "");
+                    i = i + 23;
+
+                    document.getElementById("data_data").innerText = format_data.toString();
+                }
+
+                i-=1;
+
+
+                if(flag_sovrapposizione==false) {
+                    var layers = map.getLayers().getArray();
+                    layers.forEach(function(layer) {
+                        if (layer instanceof ol.layer.Vector) {
+                            layer.getSource().clear();
+                        }
+                    });
+                }
+
+                function changeKMLColor(feature, color) {
+                    feature.setStyle(new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: color,
+                            width: 1
+                        })
+                    }));
+                }
+
+                var targetVectorLayer = new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        url: '/static/KML/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}") + (i-1) ).toString().padStart(2, '0') + ".kml",
+                        // url: '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}") + i ).toString().padStart(2, '0') + ".kml",
+                        format: new ol.format.KML(),
+                    })
+                });
+
+                targetVectorLayer.getSource().once('change', function(event) {
+                    if (targetVectorLayer.getSource().getState() === 'ready') {
+                            var features = targetVectorLayer.getSource().getFeatures();
+                            color = tinycolor.random().toHexString();
+                            features.forEach(function(feature) {
+                                changeKMLColor(feature, color);
+                            });
+                        }
+                    });
+
+
+                // Controllo del buffer da 500m
+                if( flag_buffer500mt == true) {
+                    let center = [parseFloat("{{session['lon']}}"), parseFloat("{{session['lat']}}")];
+                    let radius = 500;
+                    let circle = new ol.geom.Circle(ol.proj.fromLonLat(center), radius);
+                    let circleFeature = new ol.Feature(circle);
+                    let circleStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+                        }),
+                    });
+
+                    circleFeature.setStyle(circleStyle);
+
+                    // Crea un'istanza di ol.source.Vector per contenere la circonferenza
+                    let vectorSource = new ol.source.Vector({
+                        features: [circleFeature]
+                        });
+
+                    // Crea un'istanza di ol.layer.Vector per visualizzare la circonferenza sulla mappa
+                    var vectorLayer = new ol.layer.Vector({
+                        source: vectorSource
+                        });
+
+                    map.addLayer(vectorLayer);
+                    console.log("flag_buffer section completed")
+                }
+
+                // Controllo del buffer da 3km
+                if( flag_buffer3km == true ) {
+                    let center = [parseFloat("{{session['lon']}}"), parseFloat("{{session['lat']}}")];
+                    let radius = 3000;
+                    let circle = new ol.geom.Circle(ol.proj.fromLonLat(center), radius);
+                    let circleFeature = new ol.Feature(circle);
+                    let circleStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+                        }),
+                    });
+
+                    circleFeature.setStyle(circleStyle);
+
+                    // Crea un'istanza di ol.source.Vector per contenere la circonferenza
+                    let vectorSource = new ol.source.Vector({
+                        features: [circleFeature]
+                        });
+
+                    // Crea un'istanza di ol.layer.Vector per visualizzare la circonferenza sulla mappa
+                    var vectorLayer = new ol.layer.Vector({
+                        source: vectorSource
+                        });
+
+                    map.addLayer(vectorLayer);
+                    console.log("BUFFER [3km] : Added to map")
+                }
+
+                // Aggiunta kml della simulazione alla mappa
+                map.addLayer(targetVectorLayer);
+                document.getElementById("data_ora").innerText = i.toString();
+                console.log("Ora successiva - load kml path : ", '/static/KML/' + "{{session['user_dir_name']}}" + '-out/out_job/' + data + "Z" + (parseInt("{{ session['ora_inizio'] }}") + i ).toString().padStart(2, '0') + ".kml");
+
+            }
+            
+            function bufferCheck3km() {
+                attivoBuffer3km = !attivoBuffer3km;
+                var bottone = document.getElementById("buffer3km");
+                if (attivoBuffer3km) {
+                    bottone.classList.remove("disattivato");
+                    console.log("BUFFER [3km] : disattivato");
+                    flag_buffer3km = false;
+                } else {
+                    bottone.classList.add("disattivato");
+                    console.log("BUFFER [3km] : attivato");
+                    flag_buffer3km = true;
+                }
+            }
+
+            function bufferCheck500mt() {
+                attivoBuffer500mt = !attivoBuffer500mt;
+                var bottone = document.getElementById("buffer500mt");
+                if (attivoBuffer500mt) {
+                    bottone.classList.remove("disattivato");
+                    console.log("BUFFER [500mt] : disattivato");
+                    flag_buffer500mt = false;
+                } else {
+                    bottone.classList.add("disattivato");
+                    console.log("BUFFER [500mt]: attivato");
+                    flag_buffer500mt = true;
+                }
+            }
+            
         </script>
 </body>
-
 </html>

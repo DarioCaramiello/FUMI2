@@ -7,7 +7,6 @@ from flask_mail import Mail, Message
 from shutil import copyfile, rmtree
 from dotenv import load_dotenv
 from datetime import datetime
-# from DBManager import DBProxy
 from threading import Lock
 import secrets
 import zipfile
@@ -20,7 +19,6 @@ import requests
 import random
 import time
 import json
-
 # Custom Import
 from DBManager import DBProxy, DBManager
 from SbatchManager import SbatchManager
@@ -32,7 +30,6 @@ from DagonOnServiceManager import DagonOnServiceManager
 ##  INIT   ##
 #############
 
-# Load environment variables from .env file
 load_dotenv(dotenv_path='/home/fumi2/FUMI2/secrets/secrets.env')
 
 ### APP AND OBJECTS
@@ -172,6 +169,7 @@ def login():
                 session["tot_jobs_queue"] = 0
                 # tiene traccia dei dati sottomessi per le simulazioni nella queue
                 session["info_jobs_queue"] = []
+                session['path_show_kml'] = ""
 
                 db.update_access(session["user"])
                 session["access"] = db.get_last_access(session["user"])
@@ -327,12 +325,8 @@ def coda():
 
     db = DBProxy()
 
-    # if db.is_admin(session["user"]):
-    #    return redirect(url_for('adminpane'))
-
     user = session["user"]
     last_access = session["access"]
-
 
     '''
     1) prendere tutti i gruppi di cui fa parte l'utente 
@@ -341,16 +335,14 @@ def coda():
     4) alla fine della simulazione viene salvata associando la siulazione a tutti i gruppi dove l'utente ha i permessi di scrittura.
     '''
 
-    #2
     user_groups = db.get_groups_user(user)
-    #2
+    
     count_false = 0
     for group in user_groups:
         permissions = db.get_permission_of_group(user, group[0])
         for permission in permissions:
             if permission[1] == False:
                 count_false+=1
-    
     if count_false == len(user_groups):
         print("- simulazioni - User non ha i permessi di scrittura in nessun gruppo", flush=True)
         return redirect(url_for('dashboard'))
@@ -358,6 +350,7 @@ def coda():
     hours = [f"0{i}" if i < 10 else f"{i}" for i in range(24)]
 
     if request.method == "POST":
+        
         if "generate" in request.form:
             session["tot_jobs_queue"] += 1
             area = request.form.get("area")
@@ -378,7 +371,7 @@ def coda():
             job_info.append(str(user))
             
             id_workflow = sbatchmanager.run(user, job_info)
-
+           
             if id_workflow is not None:
                 job_info[0] = id_workflow
                 db.new_job(job_info, user_groups, id_workflow)
@@ -387,11 +380,24 @@ def coda():
                 # print("[*][from coda] session[info_jobs_queue] : " + str(session['info_jobs_queue']), flush=True)
             else:
                 flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
-                return redirect(url_for('interactive'))
-        
+                return redirect(url_for('dashboard'))
+
+        elif "hshowbutton" in request.form:
+            id_job = request.form.get("idJOB")
+            print("- coda - show button - id_job : " + id_job, flush=True)
+            session["kml_info_show"] = db.get_all_groups()
+            print("coda - show button - session['kml_info_show] : " + str(session['kml_info_show']), flush=True)
+            # da finire quando ottengo gli out del workflow
+
+        elif "hdeletebutton" in request.form:
+            print("-coda - delete button", flush=True)
+            id_job = request.form.get("idJOB")
+            db.delete_row("JOBINFO", "JOBID", id_job)
+
+        ''' 
         # Second case: the user want to cancel the job
-        # elif "qcancel" in request.form:
-            ''' 
+        elif "qcancel" in request.form:
+            
             # We lock the thread for the entire request to avoid multiple elimination request
             # at once, we may lost something
             queue_lock.acquire()
@@ -457,6 +463,7 @@ def coda():
                 # We flash a message 
                 flash("Operazione di eliminazione in finalizzazione. Riprovare tra qualche secondo.")
         '''
+
         # elif "qresetjob" in request.form:
         #    pass
 
@@ -477,20 +484,7 @@ def coda():
     page = int(request.args.get('page', 1))
     per_page = 10
     offset = (page - 1) * per_page
-
-    # Then we paginate the data: this is just showing a portion of the total data each time 
-    # we change pagination page. We use a slicing varying from offset to offset+perpage elements.
     pagination_data = session["jobinfo_queue"][offset: offset + per_page]
-
-    # Since the user can delete job based on his needs, we need to check if the new pagination 
-    # data array is empty; that could happen when, for example, on a new page there is only one job:
-    # deleting that very job will cause the data for that page to be empty, so we need to go back to 
-    # the last page. We also check if we do have more job in queue, so we avoid doing so if thats the case.
-    # print("------- len")
-    # print (session["jobinfo_queue"])
-    # print (len(pagination_data), len(session["jobinfo_queue"]))
-    # print(len(pagination_data) == 0 and len(session["jobinfo_queue"]) != 0)
-    # print("--------")
     
     if len(pagination_data) == 0 and len(session["jobinfo_queue"]) != 0: 
         # We subtract a page then doing the offset calculation again
@@ -500,17 +494,10 @@ def coda():
         # the lenght of the jobinfo queue is diff than 0 (still job in queue)
         pagination_data = session["jobinfo_queue"][offset: offset + per_page]
 
-    # print("NEW PAGINATION DATA-------------")
-    # print(page, offset, pagination_data)
-    # print("-----------------------------")
-
-    # Then we build the pagination element passing all the constructed values
+   
     pagination = Pagination(page=page, per_page=per_page, total=len(session["jobinfo_queue"]), css_framework='bootstrap5')
-    
-    # Building datainfo to show number of elements per page 
     datainfo = [offset, offset + per_page, len(session["jobinfo_queue"])]
-    
-    # We render the template with the associated info
+
     return render_template('queue.html', 
                            user=user, 
                            last_access=last_access, 
@@ -529,9 +516,6 @@ def profilo(alert_category=""):
         return redirect(url_for('login'))
 
     db = DBProxy()
-
-    if db.is_admin(session["user"]):
-        return redirect(url_for('adminpane'))
 
     user = session["user"]
     # session["searchval"] = ""
@@ -577,16 +561,32 @@ def storico():
 
     db = DBProxy()
 
-    if db.is_admin(session["user"]):
-        return redirect(url_for('adminpane'))
-    
     user = session["user"]
     last_access=db.get_last_access(user)
-    jobs = db.fetch_jobs(user)
 
+    user_groups = db.get_groups_user(user)
+    count_false = 0
+    for group in user_groups:
+        permissions = db.get_permission_of_group(user, group[0])
+        for permission in permissions:
+            if permission[0] == False:
+                count_false+=1
+    if count_false == len(user_groups):
+        print("- simulazioni - User non ha i permessi di scrittura in nessun gruppo", flush=True)
+        return redirect(url_for('dashboard'))
 
+    jobs = []
+    string_search = ""
+
+    for group in user_groups:
+        permissions = db.get_permission_of_group(user, group[0])
+        for permission in permissions:
+            if permission[0] == True:
+                jobs_of_user_group = db.fetch_user_group(user, group[0])
+                for jobs_var in jobs_of_user_group:
+                    jobs.append(jobs_var)
+   
     if request.method=="POST":  
-        
         if "hsearchbutton" in request.form:
             print("[*] Search Button - coda", flush=True)
  
@@ -599,6 +599,7 @@ def storico():
             job_to_remove=request.form.get("idJOB")
             db.delete_row('JOBINFO', 'JOBID', job_to_remove)
             print("[*] Delete Button - coda", flush=True)
+            return redirect(url_for('coda'))
 
           
         elif "hresetmap" in request.form:
@@ -611,35 +612,19 @@ def storico():
         elif "hdownloadbutton" in request.form:
             return redirect(url_for('download'))
 
-    # else: 
-    #     pass       
-        # If here, that means the user submitted a search and now is searching for the 
-        # next/prev pages in his search. Use the search val stored in session to resume his 
-        # search 
-        # if "searchval" in session:
-        #    jobs = filters(session["searchval"], jobs)
-
-
-    # Set up pagination: we use the same approach used into the 'queue' section:
-    # page = int(request.args.get('page', 1)) if search_page is None else search_page
     page = int(request.args.get('page', 1))
-    # print(page)
     per_page = 5
     offset = (page - 1) * per_page
     pagination_data = jobs[offset: offset + per_page]
     pagination = Pagination(page=page, per_page=per_page, total=len(jobs), css_framework='bootstrap5')
     datainfo = [offset, offset + per_page, len(jobs)]
 
-    # Finally, render the template
     return render_template('storico.html', 
                            user=user, 
                            last_access=last_access, 
                            jobs=pagination_data, 
                            pagination=pagination,
                            datainfo=datainfo)
-                           # kml_path=kml_path,
-                           # jobid=jobid, 
-                           # markers=markers)
 
 @app.route('/adminpane', methods=['POST', 'GET'])
 def adminpane():
@@ -766,6 +751,10 @@ def adminpane():
 
             return redirect(url_for('adminpane'))
 
+        elif "button_create_group" in request.form:
+            new_group_name = request.form['name_new_group']
+            db.create_group(new_group_name)
+            return redirect(url_for('adminpane'))
 
         elif "searchbutton" in request.form:
             print("coda - search button", flush=True)

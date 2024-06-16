@@ -353,7 +353,7 @@
 
 
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Modifica Gruppi</h6>
+                            <h6 class="text-primary fw-bold m-0">Modifica Gruppi Utenti</h6>
                         </div>
 
                         <div class="card-body">
@@ -386,14 +386,14 @@
                                 
                                 <div class="row" style="margin-bottom: 25px;">
                                     <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
-                                        <button class="btn btn-success btn-lg" name="button_change_group" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica gruppo&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
+                                        <button class="btn btn-success btn-lg" name="button_change_group" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
                                     </div>
                                 </div>
                             </form>
 
 
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h6 class="text-primary fw-bold m-0">Modifica Permessi</h6>
+                                <h6 class="text-primary fw-bold m-0">Modifica Permessi Utenti</h6>
                             </div>
 
                             <div class="card-body">
@@ -435,27 +435,27 @@
                                     
                                     <div class="row" style="margin-bottom: 25px;">
                                         <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
-                                            <button class="btn btn-success btn-lg" name="button_change_permissions" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica gruppo&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
+                                            <button class="btn btn-success btn-lg" name="button_change_permissions" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
                                         </div>
                                     </div>
                                 </form>
 
 
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h6 class="text-primary fw-bold m-0">Crea Gruppi</h6>
+                                <h6 class="text-primary fw-bold m-0">Crea Gruppo</h6>
                             </div>
 
                             <div class="card-body">
                                 <form method="POST">
                                     <div class="row my-3">
                                         <div class="col-md-2">
-                                            <input type="text"  class="form-control" name="modify-user-group" placeholder="Nome Gruppo">
+                                            <input type="text"  class="form-control" name="name_new_group" placeholder="Nome Gruppo">
                                         </div>
                                     </div>
 
                                     <div class="row" style="margin-bottom: 25px;">
                                         <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
-                                            <button class="btn btn-success btn-lg" name="button_change_group" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica gruppo&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
+                                            <button class="btn btn-success btn-lg" name="button_create_group" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Crea&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
                                         </div>
                                     </div>
                                 </form>
@@ -504,6 +504,7 @@
                                             <th>Latitudine</th>
                                             <th>Temperatura</th>
                                             <th>Codice GISA</th>
+                                            <th>Gruppo</th>
                                             <th>Azioni</th>
                                         </tr>
                                     </thead>
@@ -521,7 +522,7 @@
                                             <td>{{ jobs_admin[7] }}</td>
                                             <td>{{ jobs_admin[8] }}</td>
                                             <td>{{ jobs_admin[9] }}</td>
-                                            <td>{{ jobs_admin[11] }}</td>
+                                            <td>{{ jobs_admin[10] }}</td>
                                             <td>
                                                 <form method="POST">
                                                     <input type="hidden" name="idJOB" value="{{ jobs_admin[0] }}">

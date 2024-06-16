@@ -349,19 +349,17 @@
 
                         for(let j=10; j<21; j++) {
                             if(!selected_row.cells[j]){
-                                // selected_row.insertCell(j).textContent = data[0][i][workflow[j-10]];
                                 selected_row.insertCell(j).textContent = data[i][0][workflow[j-10]]
                             } else {
                                 selected_row.cells[j].textContent = data[i][0][workflow[j-10]];
                             }
 
-                            /* TODO :  fare il controllo del colore */ 
                             if(data[i][0][workflow[j-10]] == 'RUNNING') {
                                 selected_row.cells[j].style.color = 'blue';
                             } else if(data[i][0][workflow[j-10]] == 'FINISHED') {
                                 selected_row.cells[j].style.color = 'green';
                             } else if(data[i][0][workflow[j-10]] == 'WAITING') {
-                                selected_row.cells[j].style.color = 'yellow';
+                                selected_row.cells[j].style.color = 'gray';
                             }
                         } 
                     }
