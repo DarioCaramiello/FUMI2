@@ -270,12 +270,13 @@ class DBProxy():
     def fetch_users(self):
         # We build up a custom query because we'd like to show only users that are not admin. 
         #query = "SELECT FIRSTNAME, LASTNAME, USERNAME, TELEPHONE, EMAIL, ACTIVE FROM USER WHERE ROLE!=1"
-        query = "SELECT firstname, lastname, username, telephone, email, struttura, ruolotec, active FROM \"USER\" WHERE \"ROLE\"!=1"
+        # query = "SELECT firstname, lastname, username, telephone, email, struttura, ruolotec, active FROM \"USER\" WHERE \"ROLE\"!=1"
+        query = "SELECT firstname, lastname, username, telephone, email, struttura, ruolotec, active FROM \"USER\" ;"
         return self.__db.execute(query)
 
     def add_user(self, username, firstname, lastname, email, cellulare, struttura, ruolo):
-        values = [username, firstname, lastname, email, cellulare, struttura, ruolo, 0, 0]
-        query = "INSERT INTO \"USER\" (USERNAME, FIRSTNAME, LASTNAME, EMAIL, TELEPHONE, STRUTTURA, RUOLOTEC, \"ROLE\", ACTIVE) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values = [username, firstname, lastname, email, cellulare, struttura, ruolo, 0]
+        query = "INSERT INTO \"USER\" (USERNAME, FIRSTNAME, LASTNAME, EMAIL, TELEPHONE, STRUTTURA, RUOLOTEC, ACTIVE) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         self.__db.update(query, values)
 
     def add_group(self, name_group):
@@ -297,24 +298,35 @@ class DBProxy():
         query = "DELETE FROM USER_GROUP WHERE USERNAME=%s AND NAME_GROUP=%s;"
         self.__db.update(query, value)
  
-    #def get_user_permissions(self, user):
-    #    query = "SELECT READ_USER, WRITE_USER FROM USER WHERE username=\'{}\';".format(user)
-    #    return self.__db.execute(query)
-
     def change_user_permissions(self, user, group, permission, new_state):
-        values = [permission, new_state, user, group ]
-        query = "UPDATE USER_GROUP SET \"%s\"=%s WHERE USERNAME=%s AND NAME_GROUP=%s ;"
+
+        query = ""
+
+        if permission == True : 
+            query = "UPDATE USER_GROUP SET READ_PERMISSION=%s WHERE USERNAME=%s AND NAME_GROUP=%s ;"
+        elif permission == False:
+            query = "UPDATE USER_GROUP SET WRITE_PERMISSION=%s WHERE USERNAME=%s AND NAME_GROUP=%s ;"
+            
+
+        values = [new_state, user, group ]
+        # query = "UPDATE USER_GROUP SET %s=%s WHERE USERNAME=%s AND NAME_GROUP=%s ;"
         self.__db.update(query, values)
 
-
-
-        
-
-
+    # ritorna tutti i gruppi presenti nel sistema 
+    def get_all_groups(self):
+        query="SELECT NAME_GROUP FROM GROUPS;"
+        return self.__db.execute(query)
+    
+    # ritorna tutti i gruppi di cui fa parte l'user
     def get_groups_user(self, user):
         query = "SELECT g.NAME_GROUP FROM USER_GROUP ug JOIN GROUPS g ON ug.NAME_GROUP = g.NAME_GROUP WHERE ug.USERNAME = \'{}\';".format(user)
         return self.__db.execute(query)
 
+    def get_permission_of_group(self, user, group):
+        query = "SELECT READ_PERMISSION, WRITE_PERMISSION FROM USER_GROUP WHERE USERNAME=\'{}\' AND NAME_GROUP=\'{}\' ;".format(user, group)
+        return self.__db.execute(query)
+
+    # ritorna tutte le associazioni gruppi-user
     def get_all_groups_with_user(self):
         query = "SELECT * FROM USER_GROUP;"
         return self.__db.execute(query)
@@ -388,7 +400,7 @@ class DBProxy():
         self.__db.update_column("JOBINFO", "COMPLETED", "JOBID", [1, jobid])
 
     # Simple function that insert a new job into the database, into the JOBINFO relative table.
-    def new_job(self, jobinfo):
+    def new_job(self, jobinfo, user_groups, job_id):
         completed = 0
         query_jobinfo = "INSERT INTO JOBINFO VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')".format(
             jobinfo[0], # job_id
@@ -408,6 +420,10 @@ class DBProxy():
         # print("[*] DBManager -- query_job = " clear+ query_jobs, flush=True)
         self.__db.update(query_jobs)
         self.__db.update(query_jobinfo)
+
+        for group in user_groups:
+            query = "INSERT INTO SIMULATION_GROUP VALUES(\'{}\', \'{}\')".format(job_id, group[0])
+            self.__db.update(query)
 
     # Simple function that will insert values into the JOBIDENTIFER table 
     def new_jobidentifier(self, jobidentifier_info):

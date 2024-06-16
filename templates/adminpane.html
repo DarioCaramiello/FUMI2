@@ -319,53 +319,30 @@
                             </div>
                             
                             <div class="table-responsive table mt-2" id="group_permission_table" role="grid" aria-describedby="group_permission_table_info">
-                                <form method="POST">
-                                    <table class="table my-0" id="group_permission_table">
-                                        <thead>
-                                            <tr>
-                                                <th>Username</th>
-                                                <th>Gruppo</th>
-                                                <th>Permesso scrittura</th>
-                                                <th>Permesso lettura</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for permission in all_group_with_user %}
-                                            <tr>
-                                                <td>
-                                                    {{ permission [0] }}
-                                                    <input type="hidden" name="username-modify-permission" value="{{permission[0]}}">
-                                                </td>
-                                                <td>
-                                                    {{ permission [1] }}
-                                                    <input type="hidden" name="group-modify-permission" value="{{permission[1]}}">
-                                                </td>                
-                                                
-                                                {% if permission[2] %}
-                                                    <td><input type="checkbox" name="write_permission" value="1" checked></td>
-                                                {% else %}
-                                                    <td><input type="checkbox" name="write_permission" value="0"></td>
-                                                {% endif %}
-
-                                                {% if permission[3] %}
-                                                    <td><input type="checkbox" name="read_permission" value="1" checked></td>
-                                                {% else %}
-                                                    <td><input type="checkbox" name="read_permission" value="0"></td>
-                                                {% endif %}
-
-                                                <td>
-                                                    <button class="btn btn-primary btn-sm" type="submit" name="button_change_permissions" style="width: 158.023px;height: 38px;font-weight: bold;background: var(--bs-teal);border-style: none;">Conferma</button>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </form>
-
+                                
+                                <table class="table my-0" id="group_permission_table">
+                                    <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Gruppo</th>
+                                            <th>Permesso lettura</th>
+                                            <th>Permesso scrittura</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for permission in all_group_with_user %}
+                                        <tr>
+                                            <td>{{ permission[0] }}</td>
+                                            <td>{{ permission[1] }}</td>     
+                                            <td>{{ permission[2] }}</td>
+                                            <td>{{ permission[3] }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                                 <div class="pagination">
                                     {{ pagination2.links }}
-                                </div>
-                                
+                                </div> 
                             </div>
                             <div class="row">
                                 <div class="col-md-6 align-self-center">
@@ -373,13 +350,13 @@
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h6 class="text-primary fw-bold m-0">Modifica Gruppi</h6>
                         </div>
 
-
                         <div class="card-body">
-
                             <form method="POST">
                                 <div class="row my-3">
                                     <div class="col-md-2">
@@ -400,13 +377,13 @@
                                     <div class="col-md-2">
                                         <input list="groups"  class="form-control" name="modify-group-group" placeholder="Seleziona gruppo">
                                         <datalist id="groups">
-                                            {% for permission in all_group_with_user %}
-                                                <option value="{{permission[1]}}">
+                                            {% for group in all_names_groups %}
+                                                <option value="{{group[0]}}">
                                             {% endfor %}     
                                         </datalist>
                                     </div>
                                 </div>
-
+                                
                                 <div class="row" style="margin-bottom: 25px;">
                                     <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
                                         <button class="btn btn-success btn-lg" name="button_change_group" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica gruppo&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
@@ -414,48 +391,75 @@
                                 </div>
                             </form>
 
-                            <!-- 
-                            <form method="POST">
-                                <div class="row my-3">
-                                    <div class="col-md-2">
-                                        <input list="users_permission" class="form-control" name="modify-user-permission" placeholder="Seleziona utente">
-                                        <datalist id="users_permission">
-                                            {% for user in users %}
-                                                <option value="{{ user[2] }}">
-                                            {% endfor %}       
-                                        </datalist>
-                
-                                    <div class="col-md-2">
-                                        <input list="groups_permission" class="form-control" name="modify-user-choice-group" placeholder="Nome del gruppo">
-                                        <datalist id="groups_permission">
-                                            {% for permission in all_group_with_user %}
-                                                <option value="{{permission[1]}}">
-                                            {% endfor %}   
-                                        </datalist>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input list="permissions" class="form-control" name="modify-action-group" placeholder="Seleziona azione permesso">
-                                        <datalist id="permissions">
-                                            <option value="Aggiungi">
-                                            <option value="Rimuovi">
-                                        </datalist>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input list="permissions" class="form-control" name="modify-type-permission-group" placeholder="Seleziona permesso">
-                                        <datalist id="permissions">
-                                            <option value="Lettura">
-                                            <option value="Scrittura">
-                                        </datalist>
-                                    </div>
-                                </div>
 
-                                <div class="row" style="margin-bottom: 25px;">
-                                    <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
-                                        <button class="btn btn-success btn-lg" name="button_change_permissions" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica permessi&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="text-primary fw-bold m-0">Modifica Permessi</h6>
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST">
+                                    <div class="row my-3">
+                                        <div class="col-md-2">
+                                            <input list="users-permission"  class="form-control" name="modify-permission-user" placeholder="Seleziona utente">
+                                            <datalist id="users-permission">
+                                                {% for user in users %}
+                                                    <option value="{{ user[2] }}">
+                                                {% endfor %}       
+                                            </datalist>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input list="actions-permission"  class="form-control" name="modify-permission-action" placeholder="Seleziona azione">
+                                            <datalist id="actions-permission">
+                                                <option value="Aggiungi">
+                                                <option value="Rimuovi">
+                                            </datalist>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <input list="type-permission"  class="form-control" name="modify-permission-type" placeholder="Seleziona tipo">
+                                            <datalist id="type-permission">
+                                                <option value="Lettura">
+                                                <option value="Scrittura">
+                                            </datalist>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <input list="groups-permission"  class="form-control" name="modify-permission-group" placeholder="Seleziona gruppo">
+                                            <datalist id="groups-permission">
+                                                {% for group in all_names_groups %}
+                                                    <option value="{{group[0]}}">
+                                                {% endfor %}     
+                                            </datalist>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
-                            -->
+                                    
+                                    <div class="row" style="margin-bottom: 25px;">
+                                        <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
+                                            <button class="btn btn-success btn-lg" name="button_change_permissions" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica gruppo&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="text-primary fw-bold m-0">Crea Gruppi</h6>
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST">
+                                    <div class="row my-3">
+                                        <div class="col-md-2">
+                                            <input type="text"  class="form-control" name="modify-user-group" placeholder="Nome Gruppo">
+                                        </div>
+                                    </div>
+
+                                    <div class="row" style="margin-bottom: 25px;">
+                                        <div class="col" style="width: auto;margin-left: auto;margin-right: auto;text-align: center;">
+                                            <button class="btn btn-success btn-lg" name="button_change_group" type="submit" style="margin-left: 8px; font-weight: bold;width: auto;height: auto;">&nbsp;Modifica gruppo&nbsp;<i class="fas fa-globe-americas"></i>&nbsp;</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                             
                         </div>
                     </div>
@@ -658,6 +662,16 @@
                 field_role.style.visibility = 'hidden';
             } 
         }
+
+        function updateHiddenField(checkbox, hiddenFieldName) {
+            var hiddenField = document.getElementsByName(hiddenFieldName)[0];
+            if (checkbox.checked) {
+                hiddenField.value = 'on';
+            } else {
+                hiddenField.value = 'off';
+            }
+        }
+
     </script>
 
 </body>

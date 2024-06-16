@@ -148,9 +148,9 @@ def workflowStatus(id):
 
 @app.route('/', methods=['POST', 'GET'])
 def login():
-
     if "user" in session:   
-        return redirect_to_dashboard(session["user"])
+        return redirect(url_for('dashboard'))
+        # return redirect_to_dashboard(session["user"])
  
     if request.method == "POST":
 
@@ -162,8 +162,7 @@ def login():
         exists = db.user_exists(username, password)
         is_active = db.user_active(username)
 
-        if exists:
-            
+        if exists:            
             if is_active:
                 session["user"] = username
                 session["jobinfo_queue"] = []
@@ -176,34 +175,52 @@ def login():
 
                 db.update_access(session["user"])
                 session["access"] = db.get_last_access(session["user"])
-                return redirect_to_dashboard(session["user"])
+
+                groups_user = db.get_groups_user(username)
+
+                if 'admin' in str(groups_user):
+                    return redirect(url_for('redirectTo'))
+
+                # return redirect_to_dashboard(session["user"])
+                return redirect(url_for('dashboard'))
+
             else:
                 flash("Utente non attivo. Richiederne l'attivazione!")
                 return redirect(url_for('login'))
-
         else:
-
             flash("Username o Password non corrette.")
             return redirect(url_for('login'))
-
 
     # Assign the redirectionn to the template login
     return render_template('login.html')
 
+@app.route('/redirect_to', methods=['POST', 'GET'])
+def redirectTo():
+    if "user" not in session:
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+
+        if 'button_admin_panel' in request.form:
+            return redirect(url_for('adminpane'))
+        
+        if 'button_user_panel' in request.form:
+           return redirect(url_for('dashboard'))
+
+    return render_template("redirect_to.html")
+ 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
 
     if "user" not in session:
         return redirect(url_for('login'))
     
-    db = DBProxy()
-
-    if db.is_admin(session["user"]):
-        return redirect(url_for('adminpane'))
+    #if db.is_admin(session["user"]):
+    #    return redirect(url_for('adminpane'))
 
     user = session["user"]
     last_access= session["access"]
-
+   
     return render_template("dashboard.html", user=user, last_access=last_access)
 
 '''
@@ -310,11 +327,33 @@ def coda():
 
     db = DBProxy()
 
-    if db.is_admin(session["user"]):
-        return redirect(url_for('adminpane'))
+    # if db.is_admin(session["user"]):
+    #    return redirect(url_for('adminpane'))
 
     user = session["user"]
     last_access = session["access"]
+
+
+    '''
+    1) prendere tutti i gruppi di cui fa parte l'utente 
+    2) se per tutti i gruppi l'utente non ha i permessi di scrittura , non puo accedere alle simulazioni 
+    3) se ha dei permessi di scrittura di qualche gruppo su true allora puo generare una simulazione.
+    4) alla fine della simulazione viene salvata associando la siulazione a tutti i gruppi dove l'utente ha i permessi di scrittura.
+    '''
+
+    #2
+    user_groups = db.get_groups_user(user)
+    #2
+    count_false = 0
+    for group in user_groups:
+        permissions = db.get_permission_of_group(user, group[0])
+        for permission in permissions:
+            if permission[1] == False:
+                count_false+=1
+    
+    if count_false == len(user_groups):
+        print("- simulazioni - User non ha i permessi di scrittura in nessun gruppo", flush=True)
+        return redirect(url_for('dashboard'))
 
     hours = [f"0{i}" if i < 10 else f"{i}" for i in range(24)]
 
@@ -342,13 +381,13 @@ def coda():
 
             if id_workflow is not None:
                 job_info[0] = id_workflow
-                db.new_job(job_info)
+                db.new_job(job_info, user_groups, id_workflow)
                 var_info = [id_workflow, area, data, ora, durata, longit, latit, temp, codice_GISA, comune]
                 session["info_jobs_queue"].append(var_info)
                 # print("[*][from coda] session[info_jobs_queue] : " + str(session['info_jobs_queue']), flush=True)
             else:
                 flash("Non è stato possibile inserire l'operazione in coda. Riprovare!")
-                return redirect(url_for('interattivo'))
+                return redirect(url_for('interactive'))
         
         # Second case: the user want to cancel the job
         # elif "qcancel" in request.form:
@@ -607,10 +646,11 @@ def adminpane():
 
     if "user" not in session:
         return redirect(url_for('login'))
+
     db = DBProxy()
 
-    if not db.is_admin(session["user"]):
-        return render_template('blank.html')
+    # if not db.is_admin(session["user"]):
+    #   return render_template('blank.html')
 
     user = session["user"] 
 
@@ -624,6 +664,9 @@ def adminpane():
 
     all_group_with_user = db.get_all_groups_with_user()
     # print("- coda - all group of user : " + str(all_group_with_user), flush=True)
+
+    all_names_groups = db.get_all_groups()
+    # print("-code - all names group : " + str(all_names_groups), flush=True)
 
 
     if request.method=="POST":  
@@ -652,7 +695,7 @@ def adminpane():
                 # crea gruppo personale utente
                 db.add_group(username.lower())
                 # aggiungi l'utente al gruppo della struttura senza permessi di scrittura  
-                db.add_user_to_group(username.lower(), get_group_label(struttura), False, None)
+                db.add_user_to_group(username.lower(), get_group_label(struttura), False, False)
                 # aggiungi l'utente al suo gruppo personale con i permessi di scrittura 
                 db.add_user_to_group(username.lower(), username.lower(), True, True)
             except Exception as e:
@@ -696,24 +739,30 @@ def adminpane():
         elif "button_change_permissions" in request.form:
 
             print("coda - button change permission ", flush=True)
-            user = request.form['username-modify-permission']
-            group = request.form['group-modify-permission']
-            write = request.form['write_permission']
-            read = request.form['read_permission']
 
-            if read == '1':
-                read = True
-            elif read == '0':
-                read = False
+            user = request.form['modify-permission-user']
+            action = request.form['modify-permission-action']
+            type_permission = request.form['modify-permission-type']
+            group = request.form['modify-permission-group']
             
-            if write == '1':
-                write = True
-            elif write == '0':
-                write = False
-        
+
+            print("-coda user : " + user, flush=True)
+            print("-coda action : " + action, flush=True)
+            print("-coda type : " + type_permission, flush=True)
+            print("-coda group : " + group, flush=True)
+
+            if action == 'Rimuovi':
+                action = False
+            elif action == 'Aggiungi':
+                action = True
+            
+            if type_permission == 'Lettura':
+                type_permission = True
+            elif type_permission == 'Scrittura':
+                type_permission = False
+
             db = DBProxy()
-            db.change_user_permissions(user, group, "READ_PERMISSION", read)
-            db.change_user_permissions(user, group, "WRITE_PERMISSION", write)
+            db.change_user_permissions(user, group, type_permission, action)
 
             return redirect(url_for('adminpane'))
 
@@ -936,7 +985,8 @@ def adminpane():
                            datainfo2=datainfo2,
                            all_jobs=pagination_data3,
                            pagination3=pagination3,
-                           datainfo3=datainfo3
+                           datainfo3=datainfo3,
+                           all_names_groups=all_names_groups
                            )
                     
 @app.route('/registrazione/<unique_id>', methods=['GET', 'POST'])
