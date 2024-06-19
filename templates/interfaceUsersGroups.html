@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Pannello Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/Login-Form-Basic-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/VentasPro-Login.css') }}">
+    <style>
+        .evidenziato {
+           background-color: yellow !important;
+       }
+   </style>
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <!--
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+            <div class="container-fluid d-flex flex-column p-0">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                    <div class="sidebar-brand-icon rotate-n-15">
+                        <i class="far fa-calendar-minus"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3">
+                        <span><br>FUMI2 ADMIN</span>
+                    </div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        -->
+
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid">
+                        <button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="col fs-5 fw-semibold">
+                            <small class="form-text">Benvenuto all'interfaccia gestione utenti e gruppi ! La tua&nbsp;ultima visita risale al: {{ last_access }}&nbsp;</small>
+                        </div>
+                        <a href="{{ url_for('adminpane') }}" class="btn btn-primary">Indetro</a>
+                    </div>
+                </nav>
+            </div>
+
+            <h6>Utente : {{user}}</h6>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Gruppi Utente</h6>
+                                </div>
+                                <form method="POST">
+                                    <div class="table-responsive table mt-2" role="grid">
+                                        <table class="table my-0" >
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome Gruppo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for group in user_groups %}
+                                                    <tr onclick="evidenziaRiga(this)">
+
+                                                        <td>{{ group[0] }}</td>
+                                                        <td>
+                                                            <!-- <input type="hidden" name="name_group_to_remove_{{ group[0] }}" value="{{ group[0]}}"> -->
+                                                            <button class="btn btn-info" name="button_remove_to_group" value="{{ group[0] }}">Rimuovi gruppo</button>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!--
+                        <div class="col-md-2 justify-content-between align-items-center">
+                            <button class="btn btn-info">Aggiungi gruppo </button>
+                            <button class="btn btn-danger"> Rimuovi gruppo&nbsp;<i class="fas fa-trash"></i></button>
+                        </div>
+                        -->
+                        
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Gruppi Disponibili</h6>
+                                </div>
+                                <form method="POST">
+                                    <div class="table-responsive table mt-2" role="grid">
+                                        <table class="table my-0" >
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome Gruppo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for group in all_names_groups %}
+                                                    <tr>
+                                                        <td>{{ group[1] }}</td>
+                                                        <td>
+                                                            <!-- group[0] == index -- group[1] == name_group -->
+                                                            <input type="hidden" name="hidden_username" value="{{user}}">
+                                                            <input type="hidden" name="add_name_group_{{group[0]}}" value="{{group[1]}}">
+                                                            <button class="btn btn-info" name="add_group_action" value="{{group[0]}}" type="submit">Aggiungi gruppo</button>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <h3 class="text-dark mb-4"  style="margin-top:20px" >Lista Utenti</h3> -->
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="text-primary fw-bold m-0">Permessi gruppo : </h6> 
+                    </div>
+                    <div class="table-responsive table mt-2" role="grid">
+                        <table class="table my-0">
+                            <thead>
+                                <tr>
+                                    <th>Gruppo</th>
+                                    <th>Lettura</th>
+                                    <th>Scrittura</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th id="group_selected">Non selezionato</th>
+                                    <th id="read_selected">
+                                        <input class="form-check-input" type="checkbox" id="writePermission">
+                                    </th>
+                                    <th id="write_selected">
+                                        <input class="form-check-input" type="checkbox" id="readPermission">
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>   
+    <script src="{{ url_for('static', filename='js/adminutils.js') }}"></script>
+    <script>
+        function evidenziaRiga(riga) {
+            var righe = document.querySelectorAll('tr');
+            righe.forEach(function(row) {
+                row.classList.remove('evidenziato');
+            });
+            riga.classList.add('evidenziato');
+
+
+            console.log("riga : ", riga);
+            let name_group = riga.cells[0].textContent;
+            console.log("name_group : ", name_group);
+            document.getElementById('group_selected').textContent = name_group;
+
+        }
+    </script>
+</body>
+</html>

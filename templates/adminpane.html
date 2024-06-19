@@ -15,6 +15,7 @@
 
 <body id="page-top">
     <div id="wrapper">
+
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
                 <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
@@ -34,6 +35,7 @@
         </nav>
 
         <div class="d-flex flex-column" id="content-wrapper">
+
             <div id="content">
 
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
@@ -202,22 +204,23 @@
                             </div>
                         </div>
                     </form>
-                    
-                    <!--
+                                    
                     <div class="row">
                         <p>{% for mesg in get_flashed_messages() %}
                             <div class="alert {{ category }} text-center"><b>{{ mesg }}</b></div>
                             {% endfor %}</p>
                     </div>
-                    -->
+                    
 <!------------------------------------------------------------------------- TABELLA LISTA UTENTI ------------------------------------------------------------------------->
                     <h3 class="text-dark mb-4"  style="margin-top:20px" >Lista Utenti</h3>
+
                     <div class="card shadow">
+
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h6 class="text-primary fw-bold m-0">Info Utenti</h6>
                         </div>
-                        <div class="card-body">
 
+                        <div class="card-body">
                             <div class="row">
                                 <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
                                     <div class="input-group">
@@ -263,16 +266,20 @@
 
                                             
                                             <form method="POST"> 
-                                                <input type="hidden" name="confirmed" value="{{user[2]}}"> 
+                                                <!-- <input type="hidden" name="confirmed" value="{{user[2]}}"> -->
                                                 <td>
+                                                    <input type="hidden" value="{{user[2]}}" name="username_hidden">
+
                                                     <button class="btn btn-warning" name="passwordbutton" style="margin: 0px;margin-right: 2px;color: var(--bs-card-bg);font-weight: bold;">Password&nbsp;<i class="fas fa-key"></i></button>
                                                     
                                                     <button class="btn btn-danger" name="deletebutton" style="margin-left: 2px;font-weight: bold;">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button>
                                             
+                                                    <button class="btn btn-info" name="show_interface_usergroup" style="margin-left: 2px;font-weight: bold;">Gestione gruppi e permessi</button>
+
                                                     {% if user[7] %}
-                                                        <button class="btn btn-secondary" name="deactivatebutton" form="form_change_stauts_user" value="{{ user[2] }}" style="margin-left: 2px;font-weight: bold;"> &nbsp;Disattiva&nbsp;<i class="fas fa-user-alt-slash"></i></button>
+                                                        <button class="btn btn-secondary" name="deactivatebutton" style="margin-left: 2px;font-weight: bold;"> &nbsp;Disattiva&nbsp;<i class="fas fa-user-alt-slash"></i></button>
                                                     {% else %}
-                                                        <button class="btn btn-success" name="activatebutton" form="form_change_stauts_user" value="{{ user[2] }}"style="margin-left: 2px;font-weight: bold;">Attiva<i class="fas fa-user-check"></i></button>
+                                                        <button class="btn btn-success" name="activatebutton" style="margin-left: 2px;font-weight: bold;">Attiva<i class="fas fa-user-check"></i></button>
                                                     {% endif %}
                                                 </td>                                      
                                             </form>
@@ -291,18 +298,114 @@
                             </div>
                         </div>
                     </div>
-<!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+            
+<!----------------------------------------------------------------------------------------------------- TABELLA SIMULAZIONI TOTALI  ----------------------------------------------------------------------------------------------------->
+                 
 
-<!---------------------------------------------------------------------------------------- TABELLA PERMESSI GRUPPI UTENTI  ---------------------------------------------------------------------------------------------->
-                    <h3 class="text-dark mb-4" style="margin-top:20px">Permessi Gruppi Utenti </h3>
+                    <h3 class="text-dark mb-4" style="margin-top: 25px;">Totale Simulazioni Utenti</h3>
                     <div class="card shadow">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Permessi Gruppi</h6>
-                            <!-- 
+                            <h6 class="text-primary fw-bold m-0">Info Simulazioni</h6>
                             <form method="POST">
                                 <button class="btn btn-danger" type="submit" name="aresetusers" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
                             </form>
-                            -->
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                
+                                    <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                        <div class="input-group">
+                                            <div class="col-sm-3">
+                                            <input class="bg-light form-control border-0 large" type="text" name="searchvalue" id="searchnamebar" placeholder="Cerca ...">
+                                            </div>
+                                            <button class="btn btn-primary py-0" id="searchnamebutton" name="searchbutton" form="searchform" type="submit"><i class="fas fa-search"></i></button>
+                                        
+                                    </form>
+                                    <label class="form-label"></label> 
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                                <table class="table my-0" id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Utente</th>
+                                            <th>Descrizione</th>
+                                            <th>Data</th>
+                                            <th>Ora</th>
+                                            <th>Durata</th>
+                                            <th>Comune</th>
+                                            <th>Longitudine</th>
+                                            <th>Latitudine</th>
+                                            <th>Temperatura</th>
+                                            <th>Codice GISA</th>
+                                            <th>Gruppo</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for jobs_admin in all_jobs %}
+                                        <tr>
+                                            <td>{{ jobs_admin[0] }}</td>
+                                            <td>{{ jobs_admin[10] }}</td>
+                                            <td>{{ jobs_admin[1] }}</td>
+                                            <td>{{ jobs_admin[2] }}</td>
+                                            <td>{{ jobs_admin[3] }}</td>
+                                            <td>{{ jobs_admin[4] }}</td>
+                                            <td>{{ jobs_admin[5] }}</td>
+                                            <td>{{ jobs_admin[6] }}</td>
+                                            <td>{{ jobs_admin[7] }}</td>
+                                            <td>{{ jobs_admin[8] }}</td>
+                                            <td>{{ jobs_admin[9] }}</td>
+                                            <td>{{ jobs_admin[10] }}</td>
+                                            <td>
+                                                <form method="POST">
+                                                    <input type="hidden" name="idJOB" value="{{ jobs_admin[0] }}">
+                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form method="POST">
+                                                    <button class="btn btn-success" type="submit" name="hdownloadbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>   
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                <div class="pagination">
+                                    {{ pagination3.links }}
+                                </div>     
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 align-self-center">
+                                    <p id="datatable_info_admin" role="status" aria-live="polite">{{ datainfo3[0] }} - {{ datainfo3[1] }} elementi di {{ datainfo3[2] }} totali.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+<!---------------------------------------------------------------------------------------- TABELLA PERMESSI GRUPPI UTENTI  ---------------------------------------------------------------------------------------------->
+
+                    
+
+<!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+                    
+                    <!--
+                    <h3 class="text-dark mb-4" style="margin-top:20px">Permessi Gruppi Utenti</h3>
+
+                    <div class="card shadow">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="text-primary fw-bold m-0">Permessi Gruppi</h6>
+                            
+                            <form method="POST">
+                                <button class="btn btn-danger" type="submit" name="aresetusers" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
+                            </form>
+                            
                         </div>
                         <div class="card-body">
 
@@ -460,97 +563,11 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                         </div>
                     </div>
+                -->
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-
-<!----------------------------------------------------------------------------------------------------- TABELLA SIMULAZIONI TOTALI  ----------------------------------------------------------------------------------------------------->
-                    <h3 class="text-dark mb-4">Totale Simulazioni Utenti</h3>
-                    <div class="card shadow">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Info Simulazioni</h6>
-                            <form method="POST">
-                                <button class="btn btn-danger" type="submit" name="aresetusers" style="margin-left: 2px;font-weight: bold;width: auto;height: auto;color: var(--bs-gray);background: var(--bs-card-cap-bg);border-color: var(--bs-card-cap-bg);"><i class="fas fa-undo"></i></button>
-                            </form>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                
-                                    <form method="POST" id="searchform" class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
-                                        <div class="input-group">
-                                            <div class="col-sm-3">
-                                            <input class="bg-light form-control border-0 large" type="text" name="searchvalue" id="searchnamebar" placeholder="Cerca ...">
-                                            </div>
-                                            <button class="btn btn-primary py-0" id="searchnamebutton" name="searchbutton" form="searchform" type="submit"><i class="fas fa-search"></i></button>
-                                        
-                                    </form>
-                                    <label class="form-label"></label> 
-                                </div>
-                            </div>
-                            
-                            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
-                                <table class="table my-0" id="dataTable">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Utente</th>
-                                            <th>Descrizione</th>
-                                            <th>Data</th>
-                                            <th>Ora</th>
-                                            <th>Durata</th>
-                                            <th>Comune</th>
-                                            <th>Longitudine</th>
-                                            <th>Latitudine</th>
-                                            <th>Temperatura</th>
-                                            <th>Codice GISA</th>
-                                            <th>Gruppo</th>
-                                            <th>Azioni</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for jobs_admin in all_jobs %}
-                                        <tr>
-                                            <td>{{ jobs_admin[0] }}</td>
-                                            <td>{{ jobs_admin[10] }}</td>
-                                            <td>{{ jobs_admin[1] }}</td>
-                                            <td>{{ jobs_admin[2] }}</td>
-                                            <td>{{ jobs_admin[3] }}</td>
-                                            <td>{{ jobs_admin[4] }}</td>
-                                            <td>{{ jobs_admin[5] }}</td>
-                                            <td>{{ jobs_admin[6] }}</td>
-                                            <td>{{ jobs_admin[7] }}</td>
-                                            <td>{{ jobs_admin[8] }}</td>
-                                            <td>{{ jobs_admin[9] }}</td>
-                                            <td>{{ jobs_admin[10] }}</td>
-                                            <td>
-                                                <form method="POST">
-                                                    <input type="hidden" name="idJOB" value="{{ jobs_admin[0] }}">
-                                                    <button class="btn btn-danger" type="submit" name="hdeletebutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Elimina&nbsp;<i class="fas fa-eraser"></i>&nbsp;</button>
-                                                </form>
-                                            </td>
-                                            <td>
-                                                <form method="POST">
-                                                    <button class="btn btn-success" type="submit" name="hdownloadbutton" style="margin-left: 2px;font-weight: bold;color: var(--bs-card-bg);">&nbsp;Scarica&nbsp;&nbsp;<i class="fas fa-file-download"></i>&nbsp;</button>   
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-
-                                <div class="pagination">
-                                    {{ pagination3.links }}
-                                </div>     
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 align-self-center">
-                                    <p id="datatable_info_admin" role="status" aria-live="polite">{{ datainfo3[0] }} - {{ datainfo3[1] }} elementi di {{ datainfo3[2] }} totali.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
             <footer class="bg-white sticky-footer"><small class="form-text" style="text-align: center;margin-left: auto;margin-right: auto;"></small>

@@ -479,7 +479,6 @@ def coda():
 
             # Now we iterate the jobinfo queue
             # print("RESET JOB")
-
     
     page = int(request.args.get('page', 1))
     per_page = 10
@@ -493,7 +492,6 @@ def coda():
         # We do assign the new pagination data belonging to the previous page, only if 
         # the lenght of the jobinfo queue is diff than 0 (still job in queue)
         pagination_data = session["jobinfo_queue"][offset: offset + per_page]
-
    
     pagination = Pagination(page=page, per_page=per_page, total=len(session["jobinfo_queue"]), css_framework='bootstrap5')
     datainfo = [offset, offset + per_page, len(session["jobinfo_queue"])]
@@ -580,11 +578,17 @@ def storico():
 
     for group in user_groups:
         permissions = db.get_permission_of_group(user, group[0])
+        if permission[0] == True:
+            jobs_of_user_group = db.fetch_user_group(user, group[0])
+            for jobs_var in jobs_of_user_group:
+                jobs.append(jobs_var)
+        '''
         for permission in permissions:
             if permission[0] == True:
                 jobs_of_user_group = db.fetch_user_group(user, group[0])
                 for jobs_var in jobs_of_user_group:
                     jobs.append(jobs_var)
+        '''
    
     if request.method=="POST":  
         if "hsearchbutton" in request.form:
@@ -599,7 +603,7 @@ def storico():
             job_to_remove=request.form.get("idJOB")
             db.delete_row('JOBINFO', 'JOBID', job_to_remove)
             print("[*] Delete Button - coda", flush=True)
-            return redirect(url_for('coda'))
+            return redirect(url_for('storico'))
 
           
         elif "hresetmap" in request.form:
@@ -626,6 +630,56 @@ def storico():
                            pagination=pagination,
                            datainfo=datainfo)
 
+@app.route('/interfaceUserGroup', methods=['POST', 'GET'])
+def interfaceUserGroup():
+    db = DBProxy()
+    all_names_groups = db.get_all_groups()
+    username = session['user']
+    last_access=db.get_last_access(username)
+    user_groups = db.get_groups_user(username)
+    all_names_group_whitout_user_group = all_names_groups
+
+    for group in all_names_groups:
+        for user_group in user_groups:
+            if group == user_group:
+                all_names_group_whitout_user_group.remove(group)
+
+    x = []
+
+    for i in range(len(all_names_group_whitout_user_group)):
+        # ex [ 0, 'asl_napoli_nord ] , [1, 'asl_napolis_sud'], ... 
+        x.append([str(i), all_names_group_whitout_user_group[i][0]])
+
+    print("- interfaceUserGroup - x : " + str(x), flush=True)
+
+    # TODO : controllare se l'user fa parte del gruppo admin , se non fa parte ritorna al login
+
+    if request.method == "POST":
+        
+        if "add_group_action" in request.form:
+            button_value = request.form.get('add_group_action')
+            if button_value is not None:
+                #index = int(button_value)
+                index = str(button_value)
+                print("- interfaceUserGroup - add group button", flush=True)
+                print("- interfaceUserGroup - index : " + index, flush=True)
+                # username = request.form.get(f'hidden_username_{index}')
+                add_group_name = request.form.get(f'add_name_group_{index}')
+                print("- interfaceUserGroup - username : " + str(username), flush=True)
+                print("- interfaceUserGroup - add_group_name : " + str(add_group_name), flush=True)
+                db.add_user_to_group(username, add_group_name, True, False)
+            return redirect(url_for('interfaceUserGroup'))
+        
+        elif "button_remove_to_group" in request.form:
+            button_value = request.form.get('button_remove_to_group')
+            if button_value is not None:
+                print("- interfaceUserGroup - remove group button", flush=True)
+                db.remove_user_to_group(username, button_value)
+            return redirect(url_for('interfaceUserGroup'))
+
+
+    return render_template('interfaceUsersGroups.html', last_access=last_access, user=username, user_groups=user_groups, all_names_groups=x)
+    
 @app.route('/adminpane', methods=['POST', 'GET'])
 def adminpane():
 
@@ -645,6 +699,7 @@ def adminpane():
     # print("-coda - users : " + str(users), flush=True)
 
     all_jobs = db.return_all_jobs()
+    print("-adminpane- all jobs : " + str(all_jobs))
     # print("-coda - all-jobs : " + str(all_jobs), flush=True)
 
     all_group_with_user = db.get_all_groups_with_user()
@@ -699,7 +754,6 @@ def adminpane():
                 
             flash("Utente {} registrato con successo! Link di registrazione generato.".format(username))
             return redirect(url_for('adminpane'))
-        
 
         elif "button_change_group" in request.form:
 
@@ -767,11 +821,13 @@ def adminpane():
             # Reset search page 
             # search_page = 1
 
-
         elif "deletebutton" in request.form:
-
             print("coda - delete button", flush=True)
+            username = request.form('username_hidden')
+            db.delete_user(username)
+            return redirect(url_for('adminpane'))
 
+            '''
             # We wait for the confirmation of the alert box. Basically, what happens 
             # When we click the confirm, is that the request is sent only when OK/BACK
             # is presed. So it's an extension of the POST method.
@@ -804,9 +860,9 @@ def adminpane():
                 # We flash the success of the elimination for that user
                 session["category"] = "alert-success"
                 flash("Utente cancellato correttamente: {}".format(confirmed))
-                    
+            '''   
 
-        elif "passwordbutton" in request.form:
+        elif "passwordbuttclon" in request.form:
             
             print("coda - password button", flush=True)
 
@@ -860,8 +916,7 @@ def adminpane():
 
             # Redirect to adminpane to load users again
             return redirect(url_for('adminpane'))
-
-           
+       
         elif "deactivatebutton" in request.form:
 
             print("coda - deactivate button", flush=True)
@@ -877,7 +932,6 @@ def adminpane():
 
             flash("Utente {} disattivato con successo.".format(username))
             return redirect(url_for('adminpane'))
-
 
         elif "activatebutton" in request.form: 
 
@@ -930,6 +984,22 @@ def adminpane():
             # return redirect('adminpane.html')
             return render_template('adminpane.html')
 
+        # TODO
+        elif "show_interface_usergroup" in request.form:
+            return redirect(url_for('interfaceUserGroup'))
+
+            '''
+            print("adminpane - button showinterface", flush=True)
+            username = request.form.get('username_hidden')
+            user_groups = db.get_groups_user(username)
+            all_names_group_whitout_user_group = all_names_groups
+
+            for group in all_names_group_whitout_user_group:
+                for user_group in user_groups:
+                    if group == user_group:
+                        all_names_group_whitout_user_group.remove(group)
+            return render_template('interfaceUsersGroups.html', last_access=last_access, user=username, user_groups=user_groups, all_names_groups=all_names_group_whitout_user_group)
+            '''
 
         # Last case: we want to reset the user info in the original search
         elif "aresetusers" in request.form:
@@ -937,6 +1007,7 @@ def adminpane():
 
             # We reset the search val 
             # session["searchval"] = ""
+        
 
     else: 
         pass

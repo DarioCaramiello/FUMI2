@@ -163,6 +163,8 @@ class DBProxy():
 
     # add to Dario
     def return_all_jobs(self):
+        # query = "SELECT J.JOBID, JI.NAME_SIM, JI.\"DATE\", JI.\"TIME\", JI.DURATION, JI.COMMON, JI.LONG, JI.LAT, JI.TEMPERATURE, JI.CODICE_GISA, U.USERNAME, U.FIRSTNAME, U.LASTNAME, (SELECT STRING_AGG(G.NAME_GROUP, ', ') FROM SIMULATION_GROUP SG JOIN GROUPS G ON SG.NAME_GROUP = G.NAME_GROUP WHERE SG.JOBID = J.JOBID) AS GROUP_NAME FROM JOBS J JOIN JOBINFO JI ON J.JOBID = JI.JOBID JOIN \"USER\" U ON J.USERNAME = U.USERNAME;"
+        # return self.__db.execute(query)
         record = self.__db.execute(" SELECT J.JOBID, JI.NAME_SIM, JI.\"DATE\", JI.\"TIME\", JI.DURATION, JI.COMMON, JI.LONG, JI.LAT, JI.TEMPERATURE, JI.CODICE_GISA, U.USERNAME, U.FIRSTNAME, U.LASTNAME FROM JOBS J JOIN JOBINFO JI ON J.JOBID = JI.JOBID JOIN \"USER\" U ON J.USERNAME = U.USERNAME;")
         return record
    
@@ -346,7 +348,7 @@ class DBProxy():
         self.__db.update(query, (user,))
 
     def create_group(self, name_group):
-        quey = "INSERT INTO GROUPS (NAME_GROUP) VALUES (\'{}\');".format(name_group)
+        query = "INSERT INTO GROUPS (NAME_GROUP) VALUES (\'{}\');".format(name_group)
         self.__db.update(query)
 
     def fetch_jobs(self, user):
