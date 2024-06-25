@@ -630,6 +630,17 @@ def storico():
                            pagination=pagination,
                            datainfo=datainfo)
 
+@app.route('/getPermissionsUser', methods=['POST'])
+def getPermissionsUser():
+    data = request.get_json()
+    user = session['user']
+    group = data.get('group')
+    db = DBProxy()
+    print("- getPermissionsUser - user : " + str(session['user']), flush=True)
+    print("- getPermissionsUser - group : " + str(group), flush=True)
+    return jsonify(db.get_permission_of_group(user, group))
+
+
 @app.route('/interfaceUserGroup', methods=['POST', 'GET'])
 def interfaceUserGroup():
     db = DBProxy()
@@ -661,21 +672,43 @@ def interfaceUserGroup():
             if button_value is not None:
                 #index = int(button_value)
                 index = str(button_value)
-                print("- interfaceUserGroup - add group button", flush=True)
-                print("- interfaceUserGroup - index : " + index, flush=True)
+                # print("- interfaceUserGroup - add group button", flush=True)
+                # print("- interfaceUserGroup - index : " + index, flush=True)
                 # username = request.form.get(f'hidden_username_{index}')
                 add_group_name = request.form.get(f'add_name_group_{index}')
-                print("- interfaceUserGroup - username : " + str(username), flush=True)
-                print("- interfaceUserGroup - add_group_name : " + str(add_group_name), flush=True)
+                # print("- interfaceUserGroup - username : " + str(username), flush=True)
+                # print("- interfaceUserGroup - add_group_name : " + str(add_group_name), flush=True)
                 db.add_user_to_group(username, add_group_name, True, False)
             return redirect(url_for('interfaceUserGroup'))
         
         elif "button_remove_to_group" in request.form:
             button_value = request.form.get('button_remove_to_group')
             if button_value is not None:
-                print("- interfaceUserGroup - remove group button", flush=True)
+                # print("- interfaceUserGroup - remove group button", flush=True)
                 db.remove_user_to_group(username, button_value)
             return redirect(url_for('interfaceUserGroup'))
+        
+        elif "button_change_permissions" in request.form:
+            write_permission = request.form.get('writePermission')
+            read_permission = request.form.get('readPermission')
+            user = session['user']
+            group = request.form.get('group_selected')
+
+            if write_permission == 'on':
+                pass
+            elif write_permission == 'off':
+                pass
+
+            if read_permission == 'on':
+                pass
+            elif read_permission == 'off':
+                pass
+
+            print("- interfaceUsersGroup - writePermission : " + write_permission, flush=True)
+            print("- interfaceUsersGroup - readPermission : " + read_permission, flush=True)
+            print("- interfaceUsersGroup - group : " + str(group), flush=True)
+            print("- interfaceUsersGroup - user : " + str(user), flush=True)
+
 
 
     return render_template('interfaceUsersGroups.html', last_access=last_access, user=username, user_groups=user_groups, all_names_groups=x)

@@ -16,7 +16,6 @@ class DBManager():
     # Init function that will store a cursor object once 
     def __init__(self, dbpath='gdal/sqlite-autoconf-3400100/FUMI2.db'):
         self.connect(dbpath)
-
    
     def execute(self, query):
         # Execute query and return the records
@@ -24,7 +23,6 @@ class DBManager():
         record = self.__cursor.fetchall()
         return record
 
-  
     def update(self, query, values=None):
         if values is not None: self.__cursor.execute(query, values)
         else: self.__cursor.execute(query)

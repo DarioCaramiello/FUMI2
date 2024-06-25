@@ -55,7 +55,7 @@
                 </nav>
             </div>
 
-            <h6>Utente : {{user}}</h6>
+            <h6 id="name_user">Utente : {{user}}</h6>
 
             <div class="card shadow">
                 <div class="card-body">
@@ -76,7 +76,6 @@
                                             <tbody>
                                                 {% for group in user_groups %}
                                                     <tr onclick="evidenziaRiga(this)">
-
                                                         <td>{{ group[0] }}</td>
                                                         <td>
                                                             <!-- <input type="hidden" name="name_group_to_remove_{{ group[0] }}" value="{{ group[0]}}"> -->
@@ -140,28 +139,35 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6 class="text-primary fw-bold m-0">Permessi gruppo : </h6> 
                     </div>
-                    <div class="table-responsive table mt-2" role="grid">
-                        <table class="table my-0">
-                            <thead>
-                                <tr>
-                                    <th>Gruppo</th>
-                                    <th>Lettura</th>
-                                    <th>Scrittura</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th id="group_selected">Non selezionato</th>
-                                    <th id="read_selected">
-                                        <input class="form-check-input" type="checkbox" id="writePermission">
-                                    </th>
-                                    <th id="write_selected">
-                                        <input class="form-check-input" type="checkbox" id="readPermission">
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+
+                    <form method="POST">
+                        <div class="table-responsive table mt-2" role="grid">
+                            <table class="table my-0">
+                                <thead>
+                                    <tr>
+                                        <th>Gruppo</th>
+                                        <th>Scrittura</th>
+                                        <th>Lettura</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th id="group_selected" name="group_selected">Non selezionato</th>
+                                        <th id="read_selected">
+                                            <input class="form-check-input" type="checkbox" id="writePermission" name="writePermission">
+                                        </th>
+                                        <th id="write_selected">
+                                            <input class="form-check-input" type="checkbox" id="readPermission" name="readPermission">
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-info" name="button_change_permissions" type="submit">Conferma</button>
+                                        </th>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -183,6 +189,48 @@
             let name_group = riga.cells[0].textContent;
             console.log("name_group : ", name_group);
             document.getElementById('group_selected').textContent = name_group;
+
+            let name_user = document.getElementById('name_user');
+
+            let url = "/getPermissionsUser/" + name_user + "/" + name_group;
+
+            let dati = {
+                'group': name_group
+            };
+
+            fetch('/getPermissionsUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dati)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                console.log('Risposta dal server:', data);
+                //data[0][0] --> read permission
+                //data[0][1] --> write permission
+
+                if(data[0][0] == true){
+                    document.getElementById('readPermission').checked = true;
+                } else {
+                    document.getElementById('readPermission').checked = false;
+                }
+
+                if(data[0][1] == true) {
+                    document.getElementById('writePermission').checked = true;
+                } else {
+                    document.getElementById('writePermission').checked = false;
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante la richiesta:', error);
+            });
 
         }
     </script>
