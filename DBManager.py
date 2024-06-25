@@ -301,6 +301,7 @@ class DBProxy():
     def change_user_permissions(self, user, group, permission, new_state):
 
         query = ""
+        print("query")
 
         if permission == True : 
             query = "UPDATE USER_GROUP SET READ_PERMISSION=%s WHERE USERNAME=%s AND NAME_GROUP=%s ;"
