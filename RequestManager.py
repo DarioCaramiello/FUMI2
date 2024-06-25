@@ -695,21 +695,21 @@ def interfaceUserGroup():
             group = request.form.get('group_selected')
 
             if write_permission == 'on':
-                pass
-            elif write_permission == 'off':
-                pass
-
+                db.change_user_permissions(user, group, False, True)
+            elif write_permission == None:
+                db.change_user_permissions(user, group, False, False)
+                
             if read_permission == 'on':
-                pass
-            elif read_permission == 'off':
-                pass
-
-            print("- interfaceUsersGroup - writePermission : " + write_permission, flush=True)
-            print("- interfaceUsersGroup - readPermission : " + read_permission, flush=True)
+                db.change_user_permissions(user, group, True, True)
+            elif read_permission == None:
+                db.change_user_permissions(user, group, True, False)
+               
+            print("- interfaceUsersGroup - writePermission : " + str(write_permission), flush=True)
+            print("- interfaceUsersGroup - readPermission : " + str(read_permission), flush=True)
             print("- interfaceUsersGroup - group : " + str(group), flush=True)
             print("- interfaceUsersGroup - user : " + str(user), flush=True)
 
-
+            return redirect(url_for('interfaceUserGroup'))
 
     return render_template('interfaceUsersGroups.html', last_access=last_access, user=username, user_groups=user_groups, all_names_groups=x)
     

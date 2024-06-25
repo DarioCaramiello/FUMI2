@@ -152,7 +152,11 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <th id="group_selected" name="group_selected">Non selezionato</th>
+                                        <!-- <th id="group_selected" name="group_selected"> -->
+                                        <th>
+                                            <!-- Non selezionato -->
+                                            <input id="group_selected" name="group_selected" type="text">
+                                        </th>
                                         <th id="read_selected">
                                             <input class="form-check-input" type="checkbox" id="writePermission" name="writePermission">
                                         </th>
@@ -188,7 +192,8 @@
             console.log("riga : ", riga);
             let name_group = riga.cells[0].textContent;
             console.log("name_group : ", name_group);
-            document.getElementById('group_selected').textContent = name_group;
+            document.getElementById('group_selected').value = name_group;
+            // document.getElementById('group_selected_input').value = name_group;
 
             let name_user = document.getElementById('name_user');
 
